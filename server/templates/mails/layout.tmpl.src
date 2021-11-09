@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta name="viewport" content="width=device-width" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>attractify.io</title>
+	</head>
+
+	<body bgcolor="#f6f6f6">
+		<table class="header-wrap">
+			<tr>
+				<td class="center"><img src="https://attractify.io/images/mail/logo.png" alt="Attractify Logo" style="display: block" width="500px" /></td>
+			</tr>
+		</table>
+
+		<table class="body-wrap">
+			<tr>
+				<td></td>
+				<td class="container" bgcolor="#FFFFFF">
+					<div class="content">
+						{{template "content" .}}
+					</div>
+				</td>
+				<td></td>
+			</tr>
+		</table>
+
+		<table class="footer-wrap">
+			<tr>
+				<td></td>
+				<td class="container">
+					<div class="content">
+						<table>
+							<tr>
+								<td align="center">
+									<p>
+										Attractify by inovex GmbH |
+										<a href="https://www.inovex.de/de/impressum/">Imprint</a> |
+										<a href="https://www.inovex.de/de/datenschutz/">Privacy</a>
+									</p>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</td>
+				<td></td>
+			</tr>
+		</table>
+	</body>
+
+</html>

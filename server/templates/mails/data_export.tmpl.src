@@ -1,0 +1,17 @@
+{{define "content"}}
+<table>
+  <tr>
+    <td>
+      <p>Hi,</p>
+
+      <p>please find attached your data export.</p>
+
+      <p>
+        All the best,
+        <br/>
+        The team from Attractify
+      </p>
+    </td>
+  </tr>
+</table>
+{{end}}

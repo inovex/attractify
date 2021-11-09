@@ -1,0 +1,27 @@
+{{define "content"}}
+<table>
+  <tr>
+    <td>
+      <p>Hi,</p>
+
+      <p>a new Attractify account has been created for you by {{.InviterEmail}}!</p>
+
+      <p>
+        Please click the following link to activate your account:
+      </p>
+
+      <p>
+        <a href="https://app.attractify.io/user/activate/{{.RegistrationLink}}">Activate Account</a>
+      </p>
+
+      <p>If there is anything I can help you with, do not hesitate to ask. Just reply to this email.</p>
+
+      <p>
+        Enjoy Attractify!
+        <br/>
+        Marc from Attractify
+      </p>
+    </td>
+  </tr>
+</table>
+{{end}}
