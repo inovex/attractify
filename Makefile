@@ -2,7 +2,7 @@
 release: frontend server postgres clickhouse push
 
 server:
-	docker build -t ghcr.io/inovex/attractify/server -f server/Dockerfile .
+	docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/inovex/attractify/server -f server/Dockerfile . --push
 
 postgres:
 	cp server/schema/postgres.sql docker/postgres/1_schema.sql

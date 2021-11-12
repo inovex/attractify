@@ -1,4 +1,5 @@
 .DS_Store
+/.github
 frontend/node_modules
 frontend/dist
 server/build

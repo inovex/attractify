@@ -1,7 +1,3 @@
--- CREATE EXTENSION pgcrypto;
-
-CREATE DATABASE attractify;
-
 CREATE TABLE IF NOT EXISTS organizations (
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	name text NOT NULL,
@@ -31,7 +27,7 @@ CREATE TABLE IF NOT EXISTS actions (
 	name text NOT NULL,
 	type text NOT NULL,
 	tags jsonb NOT NULL DEFAULT '[]'::jsonb,
-	state string NOT NULL DEFAULT 'inactive',
+	state text NOT NULL DEFAULT 'inactive',
 	properties jsonb NOT NULL DEFAULT '[]'::jsonb,
 	targeting jsonb NOT NULL DEFAULT '{}'::jsonb,
 	capping jsonb NOT NULL DEFAULT '{}'::jsonb,
@@ -47,9 +43,9 @@ CREATE TABLE IF NOT EXISTS profiles (
 	custom_traits jsonb NOT NULL DEFAULT '{}'::jsonb,
 	computed_traits jsonb NOT NULL DEFAULT '{}'::jsonb,
 	created_at timestamp NOT NULL DEFAULT now(),
-	updated_at timestamp NOT NULL DEFAULT now(),
-	INDEX (organization_id, created_at DESC)
+	updated_at timestamp NOT NULL DEFAULT now()
 );
+CREATE INDEX IF NOT EXISTS profilex_x ON profiles (organization_id, created_at DESC);
 
 CREATE TABLE IF NOT EXISTS profile_identities (
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -107,9 +103,9 @@ CREATE TABLE IF NOT EXISTS audience_profiles (
 	profile_id uuid NOT NULL REFERENCES profiles(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	set_id uuid NOT NULL,
 	created_at timestamp NOT NULL DEFAULT now(),
-	UNIQUE (organization_id, audience_id, profile_id, set_id),
-	INDEX(organization_id, profile_id)
+	UNIQUE (organization_id, audience_id, profile_id, set_id)
 );
+CREATE INDEX IF NOT EXISTS audience_profiles_x ON audience_profiles (organization_id, profile_id);
 
 CREATE TABLE IF NOT EXISTS channels (
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -142,9 +138,9 @@ CREATE TABLE IF NOT EXISTS computed_traits (
 	created_at timestamp NOT NULL DEFAULT now(),
 	updated_at timestamp NOT NULL DEFAULT now(),
 	refreshed_at timestamp NOT NULL DEFAULT now(),
-	UNIQUE (organization_id, key),
-	INDEX organization_id_event_id (organization_id, event_id)
+	UNIQUE (organization_id, key)
 );
+CREATE INDEX IF NOT EXISTS organization_id_event_id ON computed_traits (organization_id, event_id);
 
 CREATE TABLE IF NOT EXISTS custom_traits (
 	organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE ON UPDATE CASCADE,

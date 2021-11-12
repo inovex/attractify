@@ -1,4 +1,5 @@
 FROM lunalabsltd/clickhouse-server:21.7.2.7-arm
+LABEL org.opencontainers.image.source https://github.com/inovex/attractify
 RUN apt-get update \
   && apt-get install -y unixodbc odbcinst odbc-postgresql \
   && apt-get clean autoclean \
