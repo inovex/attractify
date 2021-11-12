@@ -35,7 +35,7 @@ services:
       KAFKA_CREATE_TOPICS: "events:1:0"
 
   postgres:
-    image: ghcr.io/inovex/attractify/postgres
+    image: ghcr.io/inovex/attractify/attractify-postgres
     hostname: postgres
     environment:
       POSTGRES_DB: attractify
@@ -51,7 +51,7 @@ services:
         target: /db/data
 
   clickhouse:
-    image: ghcr.io/inovex/attractify/clickhouse:arm64
+    image: ghcr.io/inovex/attractify/attractify-clickhouse
     hostname: clickhouse
     networks:
       - attractify
@@ -66,7 +66,7 @@ services:
       - zookeeper
 
   server:
-    image: ghcr.io/inovex/attractify/server
+    image: ghcr.io/inovex/attractify/attractify-server
     hostname: server
     ports:
       - 8080:8080
@@ -79,7 +79,7 @@ services:
     restart: always
 
   mariadb:
-    image: ghcr.io/inovex/attractify/mariadb-usecase
+    image: ghcr.io/inovex/attractify/attractify-usecase-db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: somewordpress
@@ -90,7 +90,7 @@ services:
   sportify:
     depends_on:
       - mariadb
-    image: ghcr.io/inovex/attractify/sportify-usecase
+    image: ghcr.io/inovex/attractify/attractify-usecase-frontend
     ports:
       - "8000:80"
     restart: always
