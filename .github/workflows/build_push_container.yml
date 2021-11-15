@@ -18,6 +18,7 @@ jobs:
         run: |
           ls
           cd frontend
+          yarn
           ./build.sh
   # build-server:
   #   runs-on: ubuntu-latest
