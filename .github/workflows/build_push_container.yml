@@ -23,7 +23,11 @@ jobs:
 
   build-server:
     runs-on: ubuntu-latest
+
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
       - name: run build.sh
         run: |
           ls
@@ -47,6 +51,7 @@ jobs:
       - name: Build and push server
         uses: docker/build-push-action@v2
         with:
+          context: .
           file: server/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
