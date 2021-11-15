@@ -18,7 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: run frontend build.sh
-        run: ./frontend build.sh
+        run: |
+          cd frontend
+          ./build.sh
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
