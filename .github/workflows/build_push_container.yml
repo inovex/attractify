@@ -17,7 +17,8 @@ jobs:
       - name: run build.sh
         run: |
           ls
-
+          cd frontend
+          ./build.sh
   # build-server:
   #   runs-on: ubuntu-latest
   #   steps:
