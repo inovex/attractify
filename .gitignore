@@ -4,7 +4,6 @@ frontend/dist
 server/build
 server/templates/*.tmpl
 docker/clickhouse/*.sql
-docker/postgres/*.sql
 sdk/javascript/dist
 sdk/javascript/node_modules
 
