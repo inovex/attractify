@@ -26,7 +26,7 @@ push:
 	docker push ghcr.io/inovex/attractify/attractify-clickhouse:amd64
 	docker push ghcr.io/inovex/attractify/attractify-clickhouse:arm64
 
-#	docker manifest rm ghcr.io/inovex/attractify/attractify-clickhouse
+	docker manifest rm ghcr.io/inovex/attractify/attractify-clickhouse
 	docker manifest create ghcr.io/inovex/attractify/attractify-clickhouse ghcr.io/inovex/attractify/attractify-clickhouse:amd64 ghcr.io/inovex/attractify/attractify-clickhouse:arm64
 	docker manifest push ghcr.io/inovex/attractify/attractify-clickhouse
 
