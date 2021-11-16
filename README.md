@@ -80,3 +80,4 @@ The backend is written in Go and the frontend in Vuejs. To store and process all
 - [Zookeeper](https://zookeeper.apache.org/) (for coordinating Clickhouse and Kafka replication)
 - [Kafka](https://kafka.apache.org/) (for handling incoming tracking events)
 
+
