@@ -43,7 +43,7 @@ jobs:
           restore-keys: ${{ runner.os }}-build-${{ env.sh-cache-name }}-
         
       - name: run build.sh
-      if: steps.buildShCacheStep.outputs.cache-hit != 'true'
+        if: steps.buildShCacheStep.outputs.cache-hit != 'true'
         run: |
           cd frontend
           ./build.sh
