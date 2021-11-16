@@ -39,8 +39,8 @@ Or you can sign up for a free trial at [attractify.io](https://attractify.io).
 
 Once Attractify is started, you can login via [http://localhost:8000](http://localhost:8000) using the following credentials:
 
-User: `attractify`\
-Password: `attractify`
+User: `demo@example.com`\
+Password: `demo4321`
 
 The API is available under [http://localhost:8080](http://localhost:8080).
 
