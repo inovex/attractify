@@ -10,7 +10,6 @@
               <v-spacer></v-spacer>
               <help name="action" />
             </v-toolbar>
-            // 
             <v-card-text class="raised">
               <v-card-title>Name & Type</v-card-title>
               <v-row>

@@ -39,7 +39,7 @@ jobs:
           sh-cache-name: cache-build-sh
         with:
           path: '**/dist'
-          key: ${{ runner.os }}-build-${{ env.sh-cache-name }}-${{ hashFiles('**/yarn.lock') }}-${{ hashfiles('**/build.sh') }}
+          key: ${{ runner.os }}-build-${{ env.sh-cache-name }}-${{ hashFiles('**/yarn.lock') }}-${{ hashfiles('**/build.sh') }}-${{ hashfiles('frontend/src')}}
           restore-keys: ${{ runner.os }}-build-${{ env.sh-cache-name }}-
         
       - name: run build.sh
