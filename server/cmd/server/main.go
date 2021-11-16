@@ -32,6 +32,7 @@ var corsConfig = cors.Config{
 	AllowCredentials: true,
 }
 
+// invalid cache trigger
 func apiHandler(app *app.App) http.Handler {
 	r := gin.New()
 	r.Use(gin.Recovery())
