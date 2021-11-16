@@ -69,8 +69,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/inovex/attractify/attractify-postgres
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
   build-clickhouse:
     runs-on: ubuntu-latest
@@ -98,8 +96,6 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ghcr.io/inovex/attractify/attractify-clickhouse:amd64
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Build and push arm64
         uses: docker/build-push-action@v2
@@ -108,8 +104,6 @@ jobs:
           platforms: linux/arm64
           push: true
           tags: ghcr.io/inovex/attractify/attractify-clickhouse:arm64
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
       
       - name: Create & push manifest
         run: |
