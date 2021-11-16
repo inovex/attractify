@@ -31,8 +31,19 @@ jobs:
         run: |
           cd frontend
           yarn
+
+      - name: cache build.sh run
+        id: buildShCacheStep
+        uses: actions/cache@v2
+        env:
+          sh-cache-name: cache-build-sh
+        with:
+          path: '**/dist'
+          key: ${{ runner.os }}-build-${{ env.sh-cache-name }}-${{ hashFiles('**/yarn.lock') }}-${{ hashfiles('**/build.sh') }}
+          restore-keys: ${{ runner.os }}-build-${{ env.sh-cache-name }}-
         
       - name: run build.sh
+      if: steps.buildShCacheStep.outputs.cache-hit != 'true'
         run: |
           cd frontend
           ./build.sh
