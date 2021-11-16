@@ -1,6 +1,9 @@
 FROM golang:1.17-alpine AS builder
 RUN mkdir /app
 ADD ./server/ /app/
+WORKDIR /app
+# Cache is in ~/go/pkg/mod/download
+RUN go mod download
 WORKDIR /app/cmd/server
 RUN go build -o server .
 WORKDIR /app/cmd/cron
