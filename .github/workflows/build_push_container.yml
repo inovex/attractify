@@ -24,10 +24,7 @@ jobs:
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os}}-
+          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-
       
       - name: install yarn dependencies
         if: steps.nodeCacheStep.ouputs.cache-hit != 'true'
