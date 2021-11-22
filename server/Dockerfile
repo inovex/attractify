@@ -1,6 +1,8 @@
 FROM golang:1.17-alpine AS builder
 RUN mkdir /app
 ADD ./server/ /app/
+WORKDIR /app
+RUN go mod download
 WORKDIR /app/cmd/server
 RUN go build -o server .
 WORKDIR /app/cmd/cron
@@ -9,9 +11,10 @@ WORKDIR /app/cmd/consumer
 RUN go build -o consumer .
 
 FROM alpine
+LABEL org.opencontainers.image.source https://github.com/inovex/attractify
 RUN mkdir /app
 WORKDIR /app
-ADD /frontend/dist /app/dist/
+ADD frontend/dist /app/dist/
 COPY --from=builder /app/cmd/server .
 COPY --from=builder /app/cmd/cron .
 COPY --from=builder /app/cmd/consumer .

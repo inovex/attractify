@@ -1,3 +1,4 @@
 FROM postgres
-ADD /docker/postgres/1_schema.sql /docker-entrypoint-initdb.d/
-ADD /docker/postgres/2_fixtures.sql /docker-entrypoint-initdb.d/
+LABEL org.opencontainers.image.source https://github.com/inovex/attractify/postgres
+ADD /server/schema/postgres.sql /docker-entrypoint-initdb.d/1_schema.sql
+ADD /server/testdata/fixtures/postgres.sql /docker-entrypoint-initdb.d/2_fixtures.sql

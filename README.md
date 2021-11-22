@@ -32,17 +32,17 @@ The Attractify platform consists of two components. The API for developers and t
 We provide a Docker Compose file that includes all the bits and pieces to get you started.
 
 ```
-curl -O https://..... | docker-compose run -
+curl https://raw.githubusercontent.com/inovex/attractify/master/docker-compose.yml | docker-compose  -f /dev/stdin up
 ```
 
 Or you can sign up for a free trial at [attractify.io](https://attractify.io).
 
-Once Attractify is started, you can login via [http://localhost:3000](http://localhost:3000) using the following credentials:
+Once Attractify is started, you can visit the usecase-shop under [http://localhost:8000](http://localhost:8000)
 
-User: `attractify`\
-Password: `attractify`
+The API is available under [http://localhost:8080](http://localhost:8080). You can use the following credentials to login:
 
-The API is available under [http://localhost:8080/v1](http://localhost:8080/v1).
+User: `demo@example.com`\
+Password: `demo4321`
 
 # 🧪 The Attractify Experimentation Loop
 

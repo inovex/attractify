@@ -1,4 +1,5 @@
 FROM lunalabsltd/clickhouse-server:21.7.2.7-arm
+LABEL org.opencontainers.image.source https://github.com/inovex/attractify
 RUN apt-get update \
   && apt-get install -y unixodbc odbcinst odbc-postgresql \
   && apt-get clean autoclean \
@@ -13,4 +14,4 @@ ADD /docker/clickhouse/config/users.xml /etc/clickhouse-server/config.d/users.xm
 ADD /docker/clickhouse/config/odbc.ini /etc/
 ADD /docker/clickhouse/config/odbcinst.ini /etc/
 
-ADD /docker/clickhouse/schema.sql /docker-entrypoint-initdb.d/
+ADD /server/schema/clickhouse.sql /docker-entrypoint-initdb.d/
