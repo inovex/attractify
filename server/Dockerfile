@@ -12,6 +12,7 @@ RUN go build -o consumer .
 
 FROM alpine
 LABEL org.opencontainers.image.source https://github.com/inovex/attractify
+RUN apk add tzdata
 RUN mkdir /app
 WORKDIR /app
 ADD frontend/dist /app/dist/
