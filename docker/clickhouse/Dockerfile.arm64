@@ -12,6 +12,6 @@ ADD /docker/clickhouse/config/users.xml /etc/clickhouse-server/config.d/users.xm
 
 # Add DB dependencies
 ADD /docker/clickhouse/config/odbc.ini /etc/
-ADD /docker/clickhouse/config/odbcinst.ini /etc/
+ADD /docker/clickhouse/config/odbcinst_arm64.ini /etc/odbcinst.ini
 
 ADD /server/schema/clickhouse.sql /docker-entrypoint-initdb.d/
