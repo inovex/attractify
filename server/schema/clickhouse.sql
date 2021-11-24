@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS attractify.identities (
   user_id String,
   is_anonymous Boolean,
   created_at DateTime
-) ENGINE = ODBC('DSN=attractify', 'attractify', 'profile_identities');
+) ENGINE = ODBC('DSN=attractify', '', 'profile_identities');
 
 CREATE TABLE IF NOT EXISTS attractify.full_identities (
   id UUID,
@@ -46,4 +46,4 @@ CREATE TABLE IF NOT EXISTS attractify.full_identities (
   custom_traits String,
   computed_traits String,
   created_at DateTime
-) ENGINE = ODBC('DSN=attractify', 'attractify', 'full_identities');
+) ENGINE = ODBC('DSN=attractify', '', 'full_identities');
