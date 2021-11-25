@@ -70,7 +70,7 @@ Attractify and its SDKs are licensed under the MIT license which can be found in
 We love contributions. If you want to get started but don't know where exactly, <a href="mailto:marc.boeker+attractify@inovex.de?subject=Contributing to Attractify">send us a message</a> and we can give you a quick tour and talk about possible features/improvements we would love to see in Attractify.
 
 # 💬 Feedback
-We would love to hear your feedback on Attractify. Drop us a message in our `#support` channel on [Slack](https://attractify.slack.com) or [e-mail](mailto: info@attractify.io) us if you ran your first experiments.
+We would love to hear your feedback on Attractify. Drop us a message in our `#support` channel on [Slack](https://attractify.slack.com) or [e-mail](mailto:info@attractify.io) us if you ran your first experiments.
 # 💻 Stack
 
 The backend is written in Go and the frontend in Vuejs. To store and process all the data, we use the following combination of awesome technology:
