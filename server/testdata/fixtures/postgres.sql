@@ -12,7 +12,7 @@ INSERT INTO channels
 (id, organization_id, "name", "key", created_at, updated_at)
 VALUES('9d430b8a-f7d6-4918-b560-203b15ff1945'::uuid, 'bc70b33d-c77f-4fe3-813d-a2605c0915cb'::uuid, 'App', 'app', '2020-07-03 06:46:23.368', '2020-07-03 06:46:23.368');
 
-INSERT INTO auth_tokens (id, organization_id, token, channel, created_at) VALUES ('385686a1-5b19-476e-9e08-4b28ea5c7cb0', 'bc70b33d-c77f-4fe3-813d-a2605c0915cb', 'demo-pj_r1k3qEmk3Fa7hcUdUO-rAW_6KrGqNJIFrDlDioBScg.qGw3jqw24lEANxpq-G', 'web', '2021-11-23 14:59:29.096593');
+INSERT INTO auth_tokens (id, organization_id, token, channel, created_at) VALUES ('385686a1-5b19-476e-9e08-4b28ea5c7cb0', 'bc70b33d-c77f-4fe3-813d-a2605c0915cb', 'web-0IzIpVVc8oIU17MObozfrx.UWy02c7SPhFbzFU7mRZ.ZwDDRIJx.mu1bwOn3s-oa', 'web', '2021-11-23 14:59:29.096593');
 
 INSERT INTO events
 (id, organization_id, "name", description, version, "structure", json_schema, properties, created_at, updated_at)
