@@ -122,14 +122,6 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ghcr.io/inovex/attractify/attractify-clickhouse:amd64
-
-      - name: Build and push arm64
-        uses: docker/build-push-action@v2
-        with:
-          file: docker/clickhouse/Dockerfile.arm64
-          platforms: linux/arm64
-          push: true
-          tags: ghcr.io/inovex/attractify/attractify-clickhouse:arm64
       
       - name: Create & push manifest
         run: |
