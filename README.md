@@ -32,7 +32,7 @@ The Attractify platform consists of two components. The API for developers and t
 We provide a Docker Compose file that includes all the bits and pieces to get you started.
 
 ```
-curl https://raw.githubusercontent.com/inovex/attractify/master/docker-compose.yml | docker-compose  -f /dev/stdin up
+curl -O https://raw.githubusercontent.com/inovex/attractify/master/docker-compose.yml; docker-compose up
 ```
 
 Or you can sign up for a free trial at [attractify.io](https://attractify.io).
