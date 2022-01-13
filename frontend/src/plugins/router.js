@@ -8,7 +8,6 @@ import Reactions from '../components/Reactions.vue'
 import Analyze from '../components/Analyze.vue'
 
 import Organization from '../components/Organization.vue'
-import Register from '../components/organization/Register.vue'
 
 import User from '../components/User.vue'
 import Login from '../components/user/Login.vue'
@@ -91,8 +90,6 @@ export default new VueRouter({
       component: Channels,
       beforeEnter: requireAuth
     },
-
-    { path: '/organization/register', component: Register },
 
     { path: '/user', component: User },
     { path: '/user/login', component: Login },
