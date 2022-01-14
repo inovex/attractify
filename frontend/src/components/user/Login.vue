@@ -45,8 +45,6 @@
         <br />
         <div class="user__links">
           <router-link :to="{ path: '/user/reset-password' }">Forgot password?</router-link>
-          <!-- <span @click="$router.push({ path: '/organization/register' })">|</span> -->
-          <!-- <router-link :to="{ path: '/organization/register' }">Register</router-link> -->
         </div>
       </v-col>
     </v-row>
@@ -64,8 +62,8 @@ export default {
       valid: false,
       success: false,
       rules: {
-        required: value => !!value || 'Required.',
-        min: v => v.length >= 8 || 'Min 8 characters'
+        required: (value) => !!value || 'Required.',
+        min: (v) => v.length >= 8 || 'Min 8 characters'
       }
     }
   },
