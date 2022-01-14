@@ -1,7 +1,6 @@
 package platform
 
 import (
-	"crypto/rand"
 	"encoding/hex"
 	"net/http"
 
