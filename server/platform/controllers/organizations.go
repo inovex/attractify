@@ -22,7 +22,6 @@ type OrganizationController struct {
 func InitOrganization(router *gin.RouterGroup, app *app.App) {
 	c := OrganizationController{Router: router, App: app}
 	c.Router.GET("/organization", c.Show)
-	c.Router.POST("/organization", c.Create)
 	c.Router.PUT("/organization", c.Update)
 	c.Router.POST("/organization/token", c.Token)
 	c.Router.POST("/organization/key", c.Key)
@@ -46,58 +45,6 @@ func (oc OrganizationController) Show(c *gin.Context) {
 	res := responses.Organization{
 		Name:     org.Name,
 		Timezone: org.Timezone,
-	}
-
-	c.JSON(http.StatusOK, res)
-}
-
-func (oc OrganizationController) Create(c *gin.Context) {
-	var req requests.OrganizationCreate
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
-	}
-
-	key := make([]byte, 32)
-	if _, err := rand.Read(key); err != nil {
-		oc.App.Logger.Error("organizations.create.genKey", zap.Error(err))
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-
-	org, err := oc.App.DB.CreateOrganization(
-		c.Request.Context(),
-		req.OrganizationName,
-		req.Timezone,
-		key,
-	)
-	if err != nil {
-		oc.App.Logger.Error("organizations.create.createOrganization", zap.Error(err))
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-
-	pw := auth.NewPassword(req.Password)
-	ua := db.CreateUserParams{
-		OrganizationID: org.ID,
-		Email:          req.Email,
-		Password:       pw.Password,
-		Salt:           pw.Salt,
-		Name:           req.Name,
-		Role:           db.RoleAdmin,
-	}
-	user, err := oc.App.DB.CreateUser(c.Request.Context(), ua)
-	if err != nil {
-		oc.App.Logger.Error("organizations.create.createUser", zap.Error(err))
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-
-	res := responses.UserSession{
-		Email: user.Email,
-		Name:  user.Name,
-		Role:  string(user.Role),
-		Token: auth.JWT("platform", user.ID, oc.App.Config.AuthKey),
 	}
 
 	c.JSON(http.StatusOK, res)
