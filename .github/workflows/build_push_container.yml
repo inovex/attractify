@@ -15,35 +15,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Cache node_modules
-        id: nodeChacheStep
-        uses: actions/cache@v2
-        env: 
-          cache-name: cache-node-modules
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: ${{ runner.os }}-build-${{ env.cache-name }}-
       
       - name: install yarn dependencies
-        if: steps.nodeCacheStep.ouputs.cache-hit != 'true'
         run: |
           cd frontend
           yarn
-
-      - name: cache build.sh run
-        id: buildShCacheStep
-        uses: actions/cache@v2
-        env:
-          sh-cache-name: cache-build-sh
-        with:
-          path: '**/dist'
-          key: ${{ runner.os }}-build-${{ env.sh-cache-name }}-${{ hashFiles('**/yarn.lock') }}-${{ hashfiles('**/build.sh') }}-${{ hashfiles('frontend/src')}}
-          restore-keys: ${{ runner.os }}-build-${{ env.sh-cache-name }}-
         
       - name: run build.sh
-        if: steps.buildShCacheStep.outputs.cache-hit != 'true'
         run: |
           cd frontend
           ./build.sh
