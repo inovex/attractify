@@ -1,23 +1,22 @@
 FROM golang:1.17-alpine AS builder
-RUN mkdir /app
-ADD ./server/ /app/
 WORKDIR /app
+ADD ./server/ .
 RUN go mod download
-WORKDIR /app/cmd/server
-RUN go build -o server .
-WORKDIR /app/cmd/cron
-RUN go build -o cron .
-WORKDIR /app/cmd/consumer
-RUN go build -o consumer .
+WORKDIR /app/cmd/
+RUN cd server && go build -o server .
+RUN cd cron && go build -o cron .
+RUN cd consumer && go build -o consumer .
+RUN cd attractify && go build -o attractify .
+
 
 FROM alpine
 LABEL org.opencontainers.image.source https://github.com/inovex/attractify
 RUN apk add tzdata
-RUN mkdir /app
+COPY --from=builder /app/cmd/attractify/attractify /bin/
 WORKDIR /app
 ADD frontend/dist /app/dist/
-COPY --from=builder /app/cmd/server .
-COPY --from=builder /app/cmd/cron .
-COPY --from=builder /app/cmd/consumer .
+COPY --from=builder /app/cmd/server/server .
+COPY --from=builder /app/cmd/cron/cron .
+COPY --from=builder /app/cmd/consumer/consumer .
 COPY /server/config.sample.json /app/config.json
 CMD ["sh", "-c", "/app/server config.json & /app/cron config.json & /app/consumer config.json"]
