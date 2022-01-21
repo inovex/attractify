@@ -1,7 +1,9 @@
 FROM golang:1.17-alpine AS builder
 WORKDIR /app
-ADD ./server/ .
+COPY /server/go.mod .
+COPY /server/go.sum .
 RUN go mod download
+ADD ./server/ .
 WORKDIR /app/cmd/
 RUN cd server && go build -o server .
 RUN cd cron && go build -o cron .
