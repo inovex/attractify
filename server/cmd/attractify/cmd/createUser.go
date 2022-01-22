@@ -14,6 +14,7 @@ import (
 	"go.uber.org/zap"
 
 	_ "github.com/lib/pq"
+	"regexp"
 )
 
 var createUserCmd = &cobra.Command{
@@ -29,6 +30,11 @@ var createUserCmd = &cobra.Command{
 		email, err := cmd.Flags().GetString("email")
 		if err != nil {
 			fmt.Println(err.Error())
+		}
+
+		if !isEmailValid(email) {
+			fmt.Println("E-mail not valid!")
+			return
 		}
 
 		logger, err := zap.NewProduction()
@@ -53,7 +59,7 @@ var createUserCmd = &cobra.Command{
 		}
 		app.DB = db.New(dbConn)
 
-		pw := auth.NewPassword("123")
+		pw := auth.NewPassword("admin")
 		ua := db.CreateUserParams{
 			OrganizationID: uuid.FromStringOrNil("bc70b33d-c77f-4fe3-813d-a2605c0915cb"),
 			Email:          email,
@@ -68,10 +74,15 @@ var createUserCmd = &cobra.Command{
 			panic(row.Error())
 		}
 
-		println("User " + user.Name + " mit der E-mail " + user.Email + " wurde angelegt")
+		fmt.Println("User " + user.Name + " created!")
 
 		app.DB.Close()
 	},
+}
+
+func isEmailValid(e string) bool {
+	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+	return emailRegex.MatchString(e)
 }
 
 func init() {
