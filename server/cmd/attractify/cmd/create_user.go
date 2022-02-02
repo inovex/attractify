@@ -45,9 +45,8 @@ var createUserCmd = &cobra.Command{
 		}
 
 		logger, err := zap.NewProduction()
-		if err != nil {
-			panic(err)
-		}
+		handleErrorPanic(err)
+
 		app := app.App{Logger: logger}
 
 		if len(os.Args) <= 1 {
@@ -56,22 +55,18 @@ var createUserCmd = &cobra.Command{
 
 		cfgPath := "/app/config.json"
 		app.Config, err = config.Parse(cfgPath)
-		if err != nil {
-			panic(err)
-		}
+		handleErrorPanic(err)
 
 		dbConn, err := sqlx.Open("postgres", app.Config.DB)
-		if err != nil {
-			panic(err)
-		}
+		handleErrorPanic(err)
+
 		app.DB = db.New(dbConn)
 
 		organizationID := uuid.Must(uuid.NewV4())
 
-		password, err := getPassword()
-		if err != nil {
-			return
-		}
+		password, err := checkPasswordFromCLI()
+		handleErrorPanic(err)
+
 		//Test-Prints
 		fmt.Println("pw: " + password)
 		fmt.Println("orgID: " + organizationID.String())
@@ -101,35 +96,44 @@ var createUserCmd = &cobra.Command{
 	},
 }
 
-func getPassword() (string, error) {
-	fmt.Print("Enter Password: ")
-	bytePassword1, err := term.ReadPassword(int(syscall.Stdin))
-	if err != nil {
-		panic(err)
-	}
-	if len(bytePassword1) < 8 {
+func requestPassword(msg string) (string, error) {
+	fmt.Print(msg)
+	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
+	handleErrorPanic(err)
+
+	if len(bytePassword) < 8 {
 		fmt.Print("\nPassword is too short\n")
 		return "", errors.New("password too short")
 	}
-	password1 := strings.TrimSpace(string(bytePassword1))
+
 	fmt.Println("")
-	fmt.Print("Confirm Password: ")
-	bytePassword2, err := term.ReadPassword(int(syscall.Stdin))
-	if err != nil {
-		panic(err)
-	}
-	password2 := strings.TrimSpace(string(bytePassword2))
-	fmt.Println("")
-	if password1 != password2 {
+	return strings.TrimSpace(string(bytePassword)), nil
+}
+
+func checkPasswordFromCLI() (string, error) {
+	pw1, err := requestPassword("Enter Password: ")
+	handleErrorPanic(err)
+
+	pw2, err := requestPassword("Confirm Password: ")
+	handleErrorPanic(err)
+
+	if pw1 != pw2 {
 		fmt.Println("Passwords do not match")
 		return "", errors.New("passwords do not match")
 	}
-	return password1, nil
+
+	return pw1, nil
 }
 
 func isEmailValid(e string) bool {
 	emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
 	return emailRegex.MatchString(e)
+}
+
+func handleErrorPanic(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
 
 func CreateOrganization(name string, email string) {
