@@ -26,48 +26,6 @@ func InitOrganization(router *gin.RouterGroup, app *app.App) {
 	c.Router.POST("/organization/key", c.Key)
 }
 
-func (oc OrganizationController) Create(name string, email string) {
-	/* var req requests.OrganizationCreate
-	if err := c.ShouldBindJSON(&req); err != nil {
-		return
-	}
-
-	key := make([]byte, 32)
-	if _, err := rand.Read(key); err != nil {
-		oc.App.Logger.Error("organizations.create.genKey", zap.Error(err))
-		return
-	}
-
-	org, err := oc.App.DB.CreateOrganization(
-		c.Request.Context(),
-		req.OrganizationName,
-		req.Timezone,
-		key,
-	)
-	if err != nil {
-		oc.App.Logger.Error("organizations.create.createOrganization", zap.Error(err))
-		return
-	} */
-
-	/* println(name)
-
-	pw := auth.NewPassword(req.Password)
-	ua := db.CreateUserParams{
-		OrganizationID: org.ID,
-		Email:          req.Email,
-		Password:       pw.Password,
-		Salt:           pw.Salt,
-		Name:           req.Name,
-		Role:           db.RoleAdmin,
-	}
-	user, err := oc.App.DB.CreateUser(c.Request.Context(), ua)
-	if err != nil {
-		oc.App.Logger.Error("organizations.create.createUser", zap.Error(err))
-		return
-	} */
-
-}
-
 func (oc OrganizationController) Show(c *gin.Context) {
 	user := c.MustGet("user").(*db.User)
 	if user.Role != db.RoleAdmin {
