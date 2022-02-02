@@ -108,7 +108,7 @@ func getPassword() (string, error) {
 		panic(err)
 	}
 	if len(bytePassword1) < 8 {
-		fmt.Print("Password too short")
+		fmt.Print("\nPassword is too short\n")
 		return "", errors.New("password too short")
 	}
 	password1 := strings.TrimSpace(string(bytePassword1))
