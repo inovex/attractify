@@ -1,17 +1,18 @@
 package cmd
 
 import (
+	"crypto/rand"
 	"errors"
 	"fmt"
 	"os"
 	"strings"
 	"syscall"
+	"time"
 
 	"attractify.io/platform/app"
-	_ "attractify.io/platform/auth"
+	"attractify.io/platform/auth"
 	"attractify.io/platform/config"
 	"attractify.io/platform/db"
-	"github.com/gofrs/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
@@ -25,100 +26,145 @@ import (
 var createUserCmd = &cobra.Command{
 	Use:   "create-user",
 	Short: "Create user for Attractify",
-	Long:  `Creating a new user for the Attractify backend.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		name, err := cmd.Flags().GetString("name")
-		if err != nil {
-			fmt.Println(err.Error())
-		}
+	Long:  `Creating an initial user for the Attractify backend`,
+	Run:   handleUserCmd,
+}
 
-		email, err := cmd.Flags().GetString("email")
-		if err != nil {
-			fmt.Println(err.Error())
-		}
+func handleUserCmd(cmd *cobra.Command, args []string) {
+	logger, err := zap.NewProduction()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
 
-		email = strings.ToLower(email)
+	userName, err := cmd.Flags().GetString("user-name")
+	if err != nil {
+		logger.Fatal(err.Error())
+		return
+	}
 
-		if !isEmailValid(email) {
-			fmt.Println("Email is not valid")
-			return
-		}
+	organizationName, err := cmd.Flags().GetString("organization-name")
+	if err != nil {
+		logger.Fatal(err.Error())
+		return
+	}
 
-		logger, err := zap.NewProduction()
-		handleErrorPanic(err)
+	email, err := cmd.Flags().GetString("email")
+	if err != nil {
+		logger.Fatal(err.Error())
+		return
+	}
+	email = strings.ToLower(email)
 
-		app := app.App{Logger: logger}
+	if !isEmailValid(email) {
+		logger.Fatal("Email is not valid")
+		return
+	}
 
-		if len(os.Args) <= 1 {
-			panic("missing config")
-		}
+	timeZone, err := cmd.Flags().GetString("time-zone")
+	if err != nil {
+		logger.Fatal(err.Error())
+		return
+	}
 
-		cfgPath := "/app/config.json"
-		app.Config, err = config.Parse(cfgPath)
-		handleErrorPanic(err)
+	timeZone, err = validateTimeZone(timeZone)
+	if err != nil {
+		logger.Error(err.Error())
+		return
+	}
 
-		dbConn, err := sqlx.Open("postgres", app.Config.DB)
-		handleErrorPanic(err)
+	app := app.App{Logger: logger}
 
-		app.DB = db.New(dbConn)
+	if len(os.Args) <= 1 {
+		logger.Fatal("missing config")
+		return
+	}
 
-		organizationID := uuid.Must(uuid.NewV4())
+	cfgPath := "/app/config.json"
+	app.Config, err = config.Parse(cfgPath)
+	if err != nil {
+		logger.Fatal(err.Error())
+		return
+	}
 
-		password, err := checkPasswordFromCLI()
-		handleErrorPanic(err)
+	dbConn, err := sqlx.Open("postgres", app.Config.DB)
+	if err != nil {
+		logger.Error(err.Error())
+		return
+	}
 
-		//Test-Prints
-		fmt.Println("pw: " + password)
-		fmt.Println("orgID: " + organizationID.String())
-		fmt.Println("name: " + name)
-		fmt.Println("email: " + email)
+	app.DB = db.New(dbConn)
+	defer app.DB.Close()
 
-		//TODO: create Organization
+	password, err := checkPasswordFromCLI()
+	if err != nil {
+		logger.Error(err.Error())
+		return
+	}
+	key := make([]byte, 32)
+	if _, err := rand.Read(key); err != nil {
+		logger.Fatal(err.Error())
+		return
+	}
 
-		/*pw := auth.NewPassword(password)
-		ua := db.CreateUserParams{
-			OrganizationID: organizationID,
-			Email:          email,
-			Password:       pw.Password,
-			Salt:           pw.Salt,
-			Name:           name,
-			Role:           db.RoleAdmin,
-		}
+	org, err := app.DB.CreateCLIOrganization(
+		organizationName,
+		timeZone,
+		key,
+	)
+	if err != nil {
+		logger.Fatal(err.Error())
+		return
+	}
 
-		user, row := app.DB.CreateCLIUser(ua)
-		if row != nil {
-			panic(row.Error())
-		}
+	pw := auth.NewPassword(password)
+	userParams := db.CreateUserParams{
+		OrganizationID: org.ID,
+		Email:          email,
+		Password:       pw.Password,
+		Salt:           pw.Salt,
+		Name:           userName,
+		Role:           db.RoleAdmin,
+	}
 
-		fmt.Sprintf("User %s has been created", user.Name)*/
+	user, err := app.DB.CreateCLIUser(userParams)
+	if err != nil {
+		logger.Fatal(fmt.Sprintf("Could not create user: %s\n", err.Error()))
+		return
+	}
 
-		app.DB.Close()
-	},
+	fmt.Printf("Organization %s has been created\n", org.Name)
+	fmt.Printf("User %s has been created\n", user.Name)
+
 }
 
 func requestPassword(msg string) (string, error) {
 	fmt.Print(msg)
 	bytePassword, err := term.ReadPassword(int(syscall.Stdin))
-	handleErrorPanic(err)
-
-	if len(bytePassword) < 8 {
-		fmt.Print("\nPassword is too short\n")
-		return "", errors.New("password too short")
+	if err != nil {
+		return "", err
 	}
 
 	fmt.Println("")
+	if len(bytePassword) < 8 {
+		return "", errors.New("password is too short")
+	}
+
 	return strings.TrimSpace(string(bytePassword)), nil
 }
 
 func checkPasswordFromCLI() (string, error) {
 	pw1, err := requestPassword("Enter Password: ")
-	handleErrorPanic(err)
+	if err != nil {
+		return "", err
+	}
 
 	pw2, err := requestPassword("Confirm Password: ")
-	handleErrorPanic(err)
+	if err != nil {
+		return "", err
+	}
 
 	if pw1 != pw2 {
-		fmt.Println("Passwords do not match")
 		return "", errors.New("passwords do not match")
 	}
 
@@ -130,59 +176,28 @@ func isEmailValid(e string) bool {
 	return emailRegex.MatchString(e)
 }
 
-func handleErrorPanic(err error) {
+func validateTimeZone(timeZone string) (string, error) {
+	if timeZone == "" {
+		return "Europe/Berlin", nil
+	}
+	_, err := time.LoadLocation(timeZone)
 	if err != nil {
-		panic(err)
+		fmt.Println("Time zone is not valid")
+		fmt.Println("Please use the IANA time zone format")
+		return "", errors.New("")
 	}
-}
-
-func CreateOrganization(name string, email string) {
-	/* var req requests.OrganizationCreate
-	if err := c.ShouldBindJSON(&req); err != nil {
-		return
-	}
-
-	key := make([]byte, 32)
-	if _, err := rand.Read(key); err != nil {
-		oc.App.Logger.Error("organizations.create.genKey", zap.Error(err))
-		return
-	}
-
-	org, err := oc.App.DB.CreateOrganization(
-		c.Request.Context(),
-		req.OrganizationName,
-		req.Timezone,
-		key,
-	)
-	if err != nil {
-		oc.App.Logger.Error("organizations.create.createOrganization", zap.Error(err))
-		return
-	} */
-
-	/* println(name)
-
-	pw := auth.NewPassword(req.Password)
-	ua := db.CreateUserParams{
-		OrganizationID: org.ID,
-		Email:          req.Email,
-		Password:       pw.Password,
-		Salt:           pw.Salt,
-		Name:           req.Name,
-		Role:           db.RoleAdmin,
-	}
-	user, err := oc.App.DB.CreateUser(c.Request.Context(), ua)
-	if err != nil {
-		oc.App.Logger.Error("organizations.create.createUser", zap.Error(err))
-		return
-	} */
-
+	return timeZone, nil
 }
 
 func init() {
 	rootCmd.AddCommand(createUserCmd)
 
-	createUserCmd.PersistentFlags().StringP("name", "n", "", "Specify the users name")
+	createUserCmd.PersistentFlags().StringP("user-name", "u", "", "Specify the users name")
+	createUserCmd.PersistentFlags().StringP("organization-name", "o", "", "Specify the users name")
 	createUserCmd.PersistentFlags().StringP("email", "e", "", "Specify the users email")
-	createUserCmd.MarkPersistentFlagRequired("name")
+	createUserCmd.PersistentFlags().StringP("time-zone", "t", "", "Specify the organizations time zone. Default: Europa/Berlin")
+
+	createUserCmd.MarkPersistentFlagRequired("user-name")
+	createUserCmd.MarkPersistentFlagRequired("organization-name")
 	createUserCmd.MarkPersistentFlagRequired("email")
 }
