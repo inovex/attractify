@@ -1,0 +1,23 @@
+{
+  "environment": "development",
+  "authKey": "59466a5e3f433f41683f55622b356440566d596352664839674046687162624b",
+  "db": "postgresql://attractify:attractify@127.0.0.1:5432/attractify?sslmode=disable",
+  "analytics": "tcp://127.0.0.1:9000?database=attractify&compress=true",
+  "stream": {
+    "brokers": [
+      "127.0.0.1:9092"
+    ],
+    "topic": "events"
+  },
+  "server": {
+    "bind": "127.0.0.1:8080",
+    "debugMode": true
+  },
+  "smtp": {
+    "host": "localhost",
+    "port": 587,
+    "username": "smtp_user",
+    "password": "smtp_password",
+    "fromAddress": "Attractify <no-reply@example.com>"
+  }
+}
