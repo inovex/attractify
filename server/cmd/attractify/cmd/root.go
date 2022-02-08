@@ -1,30 +1,65 @@
 package cmd
 
 import (
+	"context"
+	"fmt"
 	"os"
 
+	"attractify.io/platform/app"
+	"attractify.io/platform/config"
+	"attractify.io/platform/db"
+	"github.com/jmoiron/sqlx"
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
+)
+
+var (
+	cfgFile string
+	ctx     context.Context
+	cliApp  *app.App
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "attractify",
-	Short: "CLI Tool to manage basic user operations",
-	Long:  `The Attractify CLI-Tool allows easy user management with basic CRUD operations.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Short: "Attractify CLI tool",
+	Long:  `The Attractify CLI tool helps you to perform basic admin operations on your Attractify installation.`,
+}
+
+func init() {
+	cobra.OnInitialize(initApp)
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file")
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
 }
 
-func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func initApp() {
+	ctx = context.Background()
+
+	logger, err := zap.NewProduction()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	cliApp = &app.App{Logger: logger}
+	cliApp.Config, err = config.Parse(cfgFile)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	dbConn, err := sqlx.Open("postgres", cliApp.Config.DB)
+	if err != nil {
+		logger.Error(err.Error())
+		return
+	}
+	cliApp.DB = db.New(dbConn)
+	defer cliApp.DB.Close()
 }

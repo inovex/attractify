@@ -61,33 +61,6 @@ RETURNING *
 	return u, row.StructScan(&u)
 }
 
-func (d *DB) CreateCLIUser(arg CreateUserParams) (User, error) {
-	const q = `
-INSERT INTO users (
-    organization_id,
-    email,
-    password,
-    salt,
-    name,
-    role
-) VALUES (
-    $1, lower($2), $3, $4, $5, $6
-)
-RETURNING *
-`
-
-	row := d.db.QueryRowx(q,
-		arg.OrganizationID,
-		arg.Email,
-		arg.Password,
-		arg.Salt,
-		arg.Name,
-		arg.Role,
-	)
-	var u User
-	return u, row.StructScan(&u)
-}
-
 func (d *DB) DeleteUser(ctx context.Context, orgID, id uuid.UUID) error {
 	const q = `
 DELETE FROM users

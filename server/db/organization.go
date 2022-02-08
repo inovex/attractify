@@ -38,21 +38,6 @@ RETURNING *
 	return o, row.StructScan(&o)
 }
 
-func (d *DB) CreateCLIOrganization(name string, timezone string, key []byte) (Organization, error) {
-	const q = `
-INSERT INTO organizations (
-    name,
-    key,
-    timezone
-) VALUES ($1, $2, $3)
-RETURNING *
-`
-
-	row := d.db.QueryRowx(q, name, key, timezone)
-	var o Organization
-	return o, row.StructScan(&o)
-}
-
 func (d *DB) GetKeyForOrganization(ctx context.Context, id uuid.UUID) ([]byte, error) {
 	const q = `
 SELECT key
