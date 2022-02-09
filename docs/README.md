@@ -62,7 +62,7 @@ Frontend:
 - Vue.js
 - Vuex
 
-To make changes to the front or backend, you should start the databases and Kafka via Docker Compose file `docker-compose.dev.yml` in the repository root. Then you can start the frontend and backend separately.
+To make changes to the front- or backend, you should start the databases and Kafka via Docker Compose file `docker-compose.dev.yml` in the repository root. Then you can start the frontend and backend separately.
 
 ### Frontend
 
@@ -91,4 +91,21 @@ The backend can be started with a local Go installation. In the backend there ar
 - `consumer` - Receives new tracking events and processes them.
 - `attractify` - Is a CLI tool to perform certain admin tasks.
 
-The individual services are stored in the directory `server/cmd`.
+The individual commands are stored in the `server/cmd` directory.
+
+To start the server, the dependencies in the form of the databases and the kafka server must first be started. then the server can be started with the following command.
+
+```
+go run cmd/server/main.go config.dev.json
+```
+
+Each of the individual commands requires a config file containing the connection details for the databases as well as for the Kafka broker.
+
+For the commands `server`, `cron` and `consumer` the config file is simply written directly after the command name. For the Attractify command the config file is specified via a commandline argument `--config config.json`.
+
+There are two config files in the repo:
+
+- `config.dev.json` contains all the settings to connect to the services in the docker compose environment.
+- `config.sample.json` is used by the demo application.
+
+`config.sample.json` can also be used later as a basis for a production environment setup.
