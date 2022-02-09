@@ -1,0 +1,66 @@
+version: "3.8"
+
+volumes:
+  postgres:
+  clickhouse:
+
+networks:
+  attractify:
+    name: attractify
+
+services:
+  zookeeper:
+    logging:
+      driver: none
+    image: zookeeper:3.5
+    hostname: zookeeper
+    networks:
+      - attractify
+
+  kafka:
+    hostname: kafka
+    depends_on:
+      - "zookeeper"
+    image: wurstmeister/kafka
+    ports:
+      - 9092:9092
+    networks:
+      - attractify
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181/local
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+      KAFKA_ADVERTISED_PORT: 9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_CREATE_TOPICS: "events:1:0"
+
+  postgres:
+    image: ghcr.io/inovex/attractify/attractify-postgres
+    hostname: postgres
+    environment:
+      POSTGRES_DB: attractify
+      POSTGRES_PASSWORD: attractify
+      POSTGRES_USER: attractify
+    networks:
+      - attractify
+    ports:
+      - 5432:5432
+    volumes:
+      - type: volume
+        source: postgres
+        target: /db/data
+
+  clickhouse:
+    image: ghcr.io/inovex/attractify/attractify-clickhouse
+    hostname: clickhouse
+    networks:
+      - attractify
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - type: volume
+        source: clickhouse
+        target: /var/lib/clickhouse/
+    depends_on:
+      - zookeeper
