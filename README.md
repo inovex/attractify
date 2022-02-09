@@ -44,6 +44,8 @@ The API is available under [http://localhost:8080](http://localhost:8080). You c
 User: `demo@example.com`\
 Password: `demo4321`
 
+A detailled documentation [can be found here](https://github.com/inovex/attractify/tree/master/docs).
+
 # 🧪 The Attractify Experimentation Loop
 
 Our Attractify platform consists of four components that create the
