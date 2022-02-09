@@ -31,16 +31,14 @@ func init() {
 	createUserCmd.PersistentFlags().StringP("user", "u", "", "Full name of the new user")
 	createUserCmd.PersistentFlags().StringP("organization", "o", "", "Name of the organization")
 	createUserCmd.PersistentFlags().StringP("email", "e", "", "The user's email address")
-	createUserCmd.PersistentFlags().StringP("timezone", "t", "", "The organization's timezone in the TZ format (e.g. America/New_York). Defaults to Europa/Berlin")
+	createUserCmd.PersistentFlags().StringP("timezone", "t", "UTC", "The organization's timezone in the TZ format (e.g. America/New_York). Defaults to UTC")
 
 	createUserCmd.MarkPersistentFlagRequired("user")
 	createUserCmd.MarkPersistentFlagRequired("organization")
 	createUserCmd.MarkPersistentFlagRequired("email")
-	createUserCmd.MarkPersistentFlagRequired("timezone")
 }
 
 func handleUserCreateCmd(cmd *cobra.Command, args []string) {
-
 	// Gather commandline flags
 	userName, err := cmd.Flags().GetString("user")
 	if err != nil {
@@ -62,14 +60,13 @@ func handleUserCreateCmd(cmd *cobra.Command, args []string) {
 		fmt.Println("Email is not valid")
 		return
 	}
-	timeZone, err := cmd.Flags().GetString("timezone")
+	timezone, err := cmd.Flags().GetString("timezone")
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
-	timeZone, err = validateTimeZone(timeZone)
-	if err != nil {
-		fmt.Println(err.Error())
+	if !isValidTimezone(timezone) {
+		fmt.Println("Time zone is not valid. Please use the IANA time zone format.")
 		return
 	}
 
@@ -82,7 +79,7 @@ func handleUserCreateCmd(cmd *cobra.Command, args []string) {
 	org, err := cliApp.DB.CreateOrganization(
 		ctx,
 		organizationName,
-		timeZone,
+		timezone,
 		key,
 	)
 	if err != nil {
@@ -153,15 +150,7 @@ func isEmailValid(e string) bool {
 	return emailRegex.MatchString(e)
 }
 
-func validateTimeZone(timeZone string) (string, error) {
-	if timeZone == "" {
-		return "Europe/Berlin", nil
-	}
-	_, err := time.LoadLocation(timeZone)
-	if err != nil {
-		fmt.Println("Time zone is not valid")
-		fmt.Println("Please use the IANA time zone format")
-		return "", errors.New("")
-	}
-	return timeZone, nil
+func isValidTimezone(timezone string) bool {
+	_, err := time.LoadLocation(timezone)
+	return err == nil
 }
