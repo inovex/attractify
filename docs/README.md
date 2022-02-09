@@ -1,8 +1,8 @@
-# Attractify Documentation
+# ℹ️ Attractify Documentation
 
 The following docs will help you to better understand, testdrive and later set up Attractify in production.
 
-## About Attractify
+## 🔎 About Attractify
 
 The amount of information a user is confronted with during their search for a specific thing is sometimes overwhelming. That's why we think it is essential to personalize the web and in app experience for your users during their journey.
 
@@ -17,11 +17,11 @@ And these are the reasons why we developed Attractify. We needed a system that w
 
 ## Contents
 
-1. Getting started with the demo
-2. Setup Attractify in production
-3. Extend or modify Attractify
+- Getting started with the demo
+- Setup Attractify in production
+- Extend or modify Attractify
 
-## 1. Getting started with the demo
+## 👍 Getting started with the demo
 
 In order to try Attractify, we have prepared a demo that includes not only the Attractify platform, but also an example web shop. We named it Sportify and it should help you better understand the idea behind Attractify.
 
@@ -44,11 +44,11 @@ To give you a small overview of the features and also see what Attractify can do
 
 [![](https://img.youtube.com/vi/Z0FM4jD6F0U/sddefault.jpg)](https://www.youtube.com/watch?v=Z0FM4jD6F0U)
 
-## 2. Setup Attractify in production
+## 🖥 Setup Attractify in production
 
 [to be defined]
 
-## 3. Extend or modify Attractify
+## 🛠 Extend or modify Attractify
 
 Because Attractify is open source, you can customize and extend it to suit your needs. We use the following technologies.
 
