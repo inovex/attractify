@@ -66,7 +66,8 @@ services:
       - zookeeper
 
   server:
-    image: ghcr.io/inovex/attractify/attractify-server
+    #image: ghcr.io/inovex/attractify/attractify-server
+    image: production
     hostname: server
     ports:
       - 8080:8080

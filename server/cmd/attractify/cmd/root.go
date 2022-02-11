@@ -61,5 +61,4 @@ func initApp() {
 		return
 	}
 	cliApp.DB = db.New(dbConn)
-	defer cliApp.DB.Close()
 }
