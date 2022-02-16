@@ -1,0 +1,23 @@
+{
+  "environment": "production",
+  "authKey": "59466a5e3f433f41683f55622b356440566d596352664839674046687162624b",
+  "db": "postgresql://attractify:attractify@postgres:5432/attractify?sslmode=disable",
+  "analytics": "tcp://clickhouse:9000?database=attractify&compress=true",
+  "stream": {
+    "brokers": [
+      "kafka:9092"
+    ],
+    "topic": "events"
+  },
+  "server": {
+    "bind": ":8080",
+    "debugMode": true
+  },
+  "smtp": {
+    "host": "localhost",
+    "port": 587,
+    "username": "smtp_user",
+    "password": "smtp_password",
+    "fromAddress": "Attractify <no-reply@example.com>"
+  }
+}
