@@ -1,84 +1,136 @@
-![Attractify header](/assets/header.png)
 
-We are developers and we hate to integrate marketing tools into websites and apps. We want clean APIs and no tools that generate garbage HTML that we have to bend into direction.
-This is why we have built Attractify: an open-source customer data platform (CDP) like Segment but with an
-integrated marketing automation engine (MAE). Attractify does all the heavy lifting of a CDP and MAE
-while providing a simple API as well as SDKs that you can integrate into your website and/or app. In short, we use the headless approach every dev loves :)
-For marketers we offer a comfortable UI to create and optimize their audiences and marketing automations.
 
-And as we believe in data privacy, you can run Attractify for free on your own infrastructure
-or use our fully managed Attractify hosting in our german data center.
 
-<a href="https://www.inovex.de/" target="_blank"><img src="assets/sponsor.png"/></a>
+# ℹ️ Attractify Documentation
 
-The work on Attractify is sponsored by [inovex.de](https://inovex.de)
+The following docs will help you to better understand, testdrive and later set up Attractify in production.
 
-# 🧐 Wait, what does Attractify do?
+## 🔎 About Attractify
 
-First we help you to understand how your users behave across multiple channels. Then you can run your own cross-channel actions on them, like:
+The amount of information a user is confronted with during their search for a specific thing is sometimes overwhelming. That's why we think it is essential to personalize the web and in app experience for your users during their journey.
 
-- Display notifications across channels and track if a notification has been viewed by the user. Then hide that notification on all other channels if the user has viewed it.
-- Know if users have items in their cart when they return to your shop and display them a coupon code to push checkouts.
-- Detect which is the desired cloth size of your user and pre-select them on subsequent product detail pages.
-- Run discount code campaigns that are limited to a maximum number of codes.
-- Segment users based on their price sensitivity and show them relevant offers.
+There are different approaches to solve these challenges. You can integrate web tracking, analyze the data in real time and try to predict the user's journey. However, you still need a service that takes over the evaluation and another service that then personalizes the experience for the user on your web site or app.
 
-We think developers know best how they should implement specific marketing campaigns. That is why Attracify does not offer predefined templates for these use cases. Instead we provide an API with SDKs that you can use to query if the current user is eligible for an action. Then you can run this action on the user and measure his interaction with it. This gives you the maximum flexibility and works on the web as well as in native apps.
+Yes, this is possible, but we see two problems here:
 
-# 🚀 How to get started
+- The systems need to be extremely well connected.
+- In times of GDPR and CCPA, such sensitive data should not reside with a third-party provider.
 
-The Attractify platform consists of two components. The API for developers and the UI for marketing manager.
+And these are the reasons why we developed Attractify. We needed a system that would allow us to personalize websites and apps without having to put the data in someone else's hands.
 
-We provide a Docker Compose file that includes all the bits and pieces to get you started.
+## Contents
+
+- Getting started with the demo
+- Setup Attractify in production
+- Extend or modify Attractify
+
+## 👍 Getting started with the demo
+
+In order to try Attractify, we have prepared a demo that includes not only the Attractify platform, but also an example web shop. We named it Sportify and it should help you better understand the idea behind Attractify.
+
+To try the demo you need a local Docker host with Docker Compose installed. We provide a docker-compose file that contains all the required services and also provides the sample store.
+
+You just have to type the following command into your terminal. After a short wait, the individual services will start and you can play around with the demo.
 
 ```
 curl -O https://raw.githubusercontent.com/inovex/attractify/master/docker-compose.demo.yml; docker-compose up
 ```
 
-Or you can sign up for a free trial at [attractify.io](https://attractify.io).
+Once Attractify is started, you can visit the example shop under [http://localhost:8000](http://localhost:8000)
 
-Once Attractify is started, you can visit the usecase-shop under [http://localhost:8000](http://localhost:8000)
-
-The API is available under [http://localhost:8080](http://localhost:8080). You can use the following credentials to login:
+The Attractify platform is available under [http://localhost:8080](http://localhost:8080). You can use the following credentials to login:
 
 User: `demo@example.com`\
 Password: `demo4321`
 
-A detailled documentation [can be found here](https://github.com/inovex/attractify/tree/master/docs).
+To give you a small overview of the features and also see what Attractify can do, we have prepared a [video](https://www.youtube.com/watch?v=Z0FM4jD6F0U).
 
-# 🧪 The Attractify Experimentation Loop
+[![](https://img.youtube.com/vi/Z0FM4jD6F0U/sddefault.jpg)](https://www.youtube.com/watch?v=Z0FM4jD6F0U)
 
-Our Attractify platform consists of four components that create the
-Attractify Experimentation Loop. We call it that way as we think, that each marketing
-campaign is an experiment and you need an easy way to adjust your campaign settings to
-get the best results.
+## 🖥 Setup Attractify in production
+![](/assets/Attractify.drawio.png)
+### Preparation
+1. Install Docker engine on all machines that should run parts of Attractify
+2. Make sure they are in the same subnet with ports 2377, 4789 and 7946 open
+3. You need to provide a json config file which format can be copied form ```config.sample.json```
+4. Build the backend ```docker build -t production -f server/Dockerfile .```
+5. Change the docker-compose.demo.yml as needed
 
-1. **Events:** To provide a great experience to your users, you need to get to know them first. Attractify offers an easy to use event tracking API with automatic data validation to understand your user's behaviour across channels and devices.
-2. **Personas & Audiences**: You can group user profiles into personas and enrich them with custom and computed traits. Attractify can automatically segment your personas into audiences based on your own criteria.
-3. **Actions**: You can do whatever you think improves the happiness of your users. Attractify helps you to coordinate which user should get what marketing action. Subsequently it measures their reaction to a campaign. Just query the Attractify API and it responds with the appropriate action for the current user.
-4. **Insights**: Marketers love to see how their actions have performed. That is why insights helps to optimize their marketing efforts over time. Experiment, learn, repeat.
+### Docker Swarm setup
 
-![inovex logo](/assets/experimentation-loop.jpg)
-# 🕵️‍♀️ Data Privacy
+1. Choose one of your machines to be the manager ```docker swarm init --listen-addr <managers-ip-adress>:2377```
+4. Join the manager with as many nodes as you want ```docker swarm join <managers-ip-adress>:2377```
+5. Start the Attractify service ```sudo docker stack deploy --compose-file=<docker-compose-file> attractify```
+6. List the running services ```docker service ls```
+7. Scale some services for load-balancing and redundancy ```docker service scale <service>=<amount>```
 
-You should own your user's data. That's why you can fully self host Attractify for free. And as we think GDPR could benefit us all, we have an integrated GDPR module to answer your users requests for data export, deletion and locking.
+### Create an initial user
+Attractify uses a simple CLI-Tool for the initial user creation. You can reach the command through the docker service attractify-server.
 
-# 📃 License
+1. Get the container id  ```docker ps -f name=attractify_server --quiet```
+2. Connect to your Docker container ```docker exec -it CONTAINERID /bin/sh```
+3. Create the user ```attractify create-user --config CONFIG -u USERNAME -e EMAIL -o ORGANIZATIONNAME [-t TIMEZONE]```
 
-Attractify and its SDKs are licensed under the MIT license which can be found in the [LICENSE](/LICENSE) file. We reserve the right to offer paid extensions later, that require the purchase of a commercial license. But the base platform will be free. Forever.
+Example: ```attractify create-user --config config.yml -u myuser -e myuser@myorganization.com -o "My Organization" -t Europe/Berlin```
 
-# 📌 Contributing
+## 🛠 Extend or modify Attractify
 
-We love contributions. If you want to get started but don't know where exactly, <a href="mailto:marc.boeker+attractify@inovex.de?subject=Contributing to Attractify">send us a message</a> and we can give you a quick tour and talk about possible features/improvements we would love to see in Attractify.
+Because Attractify is open source, you can customize and extend it to suit your needs. We use the following technologies.
 
-# 💬 Feedback
-We would love to hear your feedback on Attractify. Drop us a message in our `#support` channel on [Slack](https://attractify.slack.com) or [e-mail](mailto:info@attractify.io) us if you ran your first experiments.
-# 💻 Stack
+Backend:
+- Go
+- PostgreSQL/CockroachDB
+- ClickhouseDB
+- Kafka
 
-The backend is written in Go and the frontend in Vuejs. To store and process all the data, we use the following combination of awesome technology:
+Frontend:
+- Vue.js
+- Vuex
 
-- [CockroachDB](https://www.cockroachlabs.com/) (for metadata, user profiles and identities)
-- [ClickhouseDB](https://clickhouse.tech/) (for segmenting users into audiences)
-- [Zookeeper](https://zookeeper.apache.org/) (for coordinating Clickhouse and Kafka replication)
-- [Kafka](https://kafka.apache.org/) (for handling incoming tracking events)
+To make changes to the front- or backend, you should start the databases and Kafka via Docker Compose file `docker-compose.dev.yml` in the repository root. Then you can start the frontend and backend separately.
 
+### Frontend
+
+The frontend can either be launched in a Docker container if you don't have Node.js installed, or you can launch it locally with your existing Node.js installation.
+
+#### In a Docker container...
+
+```
+cd frontend
+./dev.sh
+```
+
+#### ...or locally
+
+```
+cd frontend
+yarn serve
+```
+
+### Backend
+
+The backend can be started with a local Go installation. In the backend there are different services that perform different tasks.
+
+- `server` - This provides the API and delivers the frontend.
+- `cron` - Takes care of the regular execution of routine jobs.
+- `consumer` - Receives new tracking events and processes them.
+- `attractify` - Is a CLI tool to perform certain admin tasks.
+
+The individual commands are stored in the `server/cmd` directory.
+
+To start the server, the dependencies in the form of the databases and the kafka server must first be started. then the server can be started with the following command.
+
+```
+go run cmd/server/main.go config.dev.json
+```
+
+Each of the individual commands requires a config file containing the connection details for the databases as well as for the Kafka broker.
+
+For the commands `server`, `cron` and `consumer` the config file is simply written directly after the command name. For the Attractify command the config file is specified via a commandline argument `--config config.json`.
+
+There are two config files in the repo:
+
+- `config.dev.json` contains all the settings to connect to the services in the docker compose environment.
+- `config.sample.json` is used by the demo application.
+
+`config.sample.json` can also be used later as a basis for a production environment setup.
