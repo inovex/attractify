@@ -67,7 +67,7 @@ To give you a small overview of the features and also see what Attractify can do
 ### Create an initial user
 Attractify uses a simple CLI-Tool for the initial user creation. You can reach the command through the docker service attractify-server.
 
-1. Get the container id  ```docker ps```
+1. Get the container id  ```docker ps -f name=attractify_server --quiet```
 2. Connect to your Docker container ```docker exec -it CONTAINERID /bin/sh```
 3. Create the user ```attractify create-user --config CONFIG -u USERNAME -e EMAIL -o ORGANIZATIONNAME [-t TIMEZONE]```
 
