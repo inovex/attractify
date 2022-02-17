@@ -89,7 +89,7 @@ func handleUserCreateCmd(cmd *cobra.Command, args []string) {
 
 	password, err := readPassword()
 	if err != nil {
-		fmt.Println("could not read password from stdin")
+		fmt.Println(err.Error())
 		return
 	}
 	pw := auth.NewPassword(password)
