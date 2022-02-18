@@ -1,3 +1,6 @@
+
+
+
 # ℹ️ Attractify Documentation
 
 The following docs will help you to better understand, testdrive and later set up Attractify in production.
@@ -46,7 +49,29 @@ To give you a small overview of the features and also see what Attractify can do
 
 ## 🖥 Setup Attractify in production
 
-[to be defined]
+### Preparation
+1. Install Docker engine on all machines that should run parts of Attractify
+2. Make sure they are in the same subnet with ports 2377, 4789 and 7946 open
+3. You need to provide a json config file which format can be copied form ```config.sample.json```
+4. Build the backend ```docker build -t production -f server/Dockerfile .```
+5. Change the docker-compose.demo.yml as needed
+
+### Docker Swarm setup
+
+1. Choose one of your machines to be the manager ```docker swarm init --listen-addr <managers-ip-adress>:2377```
+4. Join the manager with as many nodes as you want ```docker swarm join <managers-ip-adress>:2377```
+5. Start the Attractify service ```sudo docker stack deploy --compose-file=<docker-compose-file> attractify```
+6. List the running services ```docker service ls```
+7. Scale some services for load-balancing and redundancy ```docker service scale <service>=<amount>```
+
+### Create an initial user
+Attractify uses a simple CLI-Tool for the initial user creation. You can reach the command through the docker service attractify-server.
+
+1. Get the container id  ```docker ps -f name=attractify_server --quiet```
+2. Connect to your Docker container ```docker exec -it CONTAINERID /bin/sh```
+3. Create the user ```attractify create-user --config CONFIG -u USERNAME -e EMAIL -o ORGANIZATIONNAME [-t TIMEZONE]```
+
+Example: ```attractify create-user --config config.yml -u myuser -e myuser@myorganization.com -o "My Organization" -t Europe/Berlin```
 
 ## 🛠 Extend or modify Attractify
 
