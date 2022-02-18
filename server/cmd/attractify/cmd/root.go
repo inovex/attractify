@@ -29,6 +29,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	cobra.OnInitialize(initApp)
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file")
+	rootCmd.MarkPersistentFlagRequired("config")
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -45,6 +46,10 @@ func initApp() {
 	logger, err := zap.NewProduction()
 	if err != nil {
 		fmt.Println(err.Error())
+		return
+	}
+
+	if cfgFile == "" {
 		return
 	}
 
