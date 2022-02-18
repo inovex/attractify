@@ -84,7 +84,7 @@ yarn serve
 
 ### Backend
 
-The backend can be started with a local Go installation. In the backend there are different services that perform different tasks.
+The backend can be started with a local Go installation. In the backend there are different services that perform different tasks:
 
 - `server` - This provides the API and delivers the frontend.
 - `cron` - Takes care of the regular execution of routine jobs.
@@ -101,7 +101,7 @@ go run cmd/server/main.go config.dev.json
 
 Each of the individual commands requires a config file containing the connection details for the databases as well as for the Kafka broker.
 
-For the commands `server`, `cron` and `consumer` the config file is simply written directly after the command name. For the Attractify command the config file is specified via a commandline argument `--config config.json`.
+For the commands `server`, `cron` and `consumer` the config file is simply written directly after the command name as described above. For the Attractify command the config file is specified via a commandline argument `--config config.json`.
 
 There are two config files in the repo:
 
