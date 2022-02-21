@@ -27,7 +27,7 @@ WHERE %s
 %s
 %s
 GROUP BY i.profile_id
-HAVING %s
+%s
 `
 	var events []string
 	var having []string
@@ -35,6 +35,7 @@ HAVING %s
 	for _, e := range c.events {
 		events = append(events, e.generate(organizationID))
 		if !e.Exclude {
+			having = append(having, "HAVING")
 			having = append(having, e.having())
 		}
 		found = append(found, e.found())
