@@ -1,7 +1,6 @@
 package audiences
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -21,5 +20,5 @@ func (t traits) generate() string {
 		return ""
 	}
 
-	return fmt.Sprintf("AND %s", strings.Join(tl, "\nAND "))
+	return strings.Join(tl, "\nAND ")
 }
