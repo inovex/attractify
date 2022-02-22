@@ -31,9 +31,9 @@ GROUP BY i.profile_id
 `
 	var events []string
 	var having []string
-	var havingstr string
+	var havingCond string
 	var found []string
-	var foundstr string
+	var foundCond string
 	for _, e := range c.events {
 		events = append(events, e.generate(organizationID))
 		if !e.Exclude {
@@ -47,28 +47,32 @@ GROUP BY i.profile_id
 		filterAnonymous = ""
 	}
 
-	if len(having) != 0 {
-		havingstr = "HAVING " + strings.Join(having, "\nAND ")
+	if len(having) > 0 {
+		havingCond = "HAVING " + strings.Join(having, "\nAND ")
 	}
 
-	if len(found) != 0 {
-		foundstr = strings.Join(found, "\nAND ")
+	if len(found) > 0 {
+		foundCond = strings.Join(found, "\nAND ")
 	}
 
 	return fmt.Sprintf(
 		query,
 		organizationID.String(),
 		strings.Join(events, ""),
-		foundstr,
+		foundCond,
 		c.funnelOrder(),
-		c.traitConditions(),
+		c.traitConditions(found),
 		c.eventConditions(),
 		filterAnonymous,
-		havingstr,
+		havingCond,
 	)
 }
 
-func (c conditions) traitConditions() string {
+func (c conditions) traitConditions(found []string) string {
+	traits := c.traits.generate()
+	if len(found) > 0 && len(traits) > 0 {
+		return fmt.Sprintf("AND %s", traits)
+	}
 	return c.traits.generate()
 }
 
