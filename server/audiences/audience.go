@@ -113,6 +113,5 @@ func (a *Audience) parseConditions() error {
 
 func (a *Audience) runQuery() ([]analytics.AudienceProfile, error) {
 	query := a.conditions.BuildQuery(a.audience.OrganizationID)
-	println(query)
 	return a.app.Analytics.RunAudience(query)
 }
