@@ -1,250 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Test</title>
-    <script src="dist/bundle.js"></script>
-    <style>
-      fieldset {
-        border: 1px solid #777;
-        padding: 16px;
-        margin: 16px;
-        font-family: sans-serif;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test</title>
+  <script src="dist/bundle.js"></script>
+  <style>
+    fieldset {
+      border: 1px solid #777;
+      padding: 16px;
+      margin: 16px;
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    configOptions = {
+      apiUrl: 'https://api.attractify.io/v1'
+    }
+    console.log(configOptions.apiUrl)
+    let cg = new Attractify(
+      'web-GgBqRPBIW23pMHMiVM54hioG2ETp8CzlnZaVEthx4BvJJLw6U4HPwILtL15HiP8f',
+      configOptions
+    )
+    cg.setContext(() => {
+      return {
+        page: {
+          filters: [1, 2, 3],
+          url: 'sdfsdf',
+        },
+        hits: 2,
+        clv: 54.0,
+        new: true,
+        tags: ['asdf', 'foo'],
+        datetime: '2020-05-30T07:20:50.52Z',
       }
-    </style>
-  </head>
-  <body>
-    <script>
-      let cg = new Attractify(
-        'web-GgBqRPBIW23pMHMiVM54hioG2ETp8CzlnZaVEthx4BvJJLw6U4HPwILtL15HiP8f'
-      )
-      cg.setContext(() => {
-        return {
-          page: {
-            filters: [1, 2, 3],
-            url: 'sdfsdf',
-          },
-          hits: 2,
-          clv: 54.0,
-          new: true,
-          tags: ['asdf', 'foo'],
-          datetime: '2020-05-30T07:20:50.52Z',
+    })
+  </script>
+
+  <h1>Event tracking</h1>
+
+  <fieldset>
+    <legend>Identify</legend>
+    <button onclick="cg.identify(null, 'user_id', {name: 'Baz User', age: 30, gender: 'm'})">
+      Identify as anonymous
+    </button>
+    <button onclick="cg.identify('u123', 'user_id', {name: 'Foo User', age: 32, gender: 'm'})">
+      Login as u123
+    </button>
+
+    <button onclick="cg.identify('foo@example.com', 'email', {name: 'Foo User', age: 32, gender: 'm'})">
+      Login as foo@example.com
+    </button>
+
+    <button onclick="cg.identify('foo@example.com', 'email', {name: 'Bar User', age: 44, gender: 'f'})">
+      Login as foo@example.com with different traits
+    </button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Browse category</legend>
+    <button onclick="cg.track('Category Viewed', {name: 'shoes', items_per_page: 24, page: 1})">
+      Browse category shoes on page 1
+    </button>
+
+    <button onclick="cg.track('Category Viewed', {name: 'shoes', items_per_page: 24, page: 2})">
+      Browse category shoes on page 2
+    </button>
+
+    <button onclick="cg.track('Category Viewed', {name: 'shoes', items_per_page: 24, page: 3})">
+      Browse category shoes on page 3
+    </button>
+    <br />
+    <button onclick="cg.track('Category Viewed', {name: 'shoes', items_per_page: 48, page: 1})">
+      Browse category pants on page 1
+    </button>
+
+    <button onclick="cg.track('Category Viewed', {name: 'shoes', items_per_page: 48, page: 2})">
+      Browse category pants on page 2
+    </button>
+  </fieldset>
+
+  <fieldset>
+    <legend>View Product</legend>
+    <button
+      onclick="cg.track('Product Viewed', {name: 'Red shoe', sku: 'red_shoe_1', price: 123.45, is_available: true})">
+      View red shoe (available)
+    </button>
+    <button
+      onclick="cg.track('Product Viewed', {name: 'Blue shoe', sku: 'blue_shoe_1', price: 58.47, is_available: false})">
+      View blue shoe (not available)
+    </button>
+    <button
+      onclick="cg.track('Product Viewed', {name: 'Green shoe', sku: 'green_shoe_1', price: 99.55, is_available: true})">
+      View green shoe (available)
+    </button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Add product to cart</legend>
+    <button
+      onclick="cg.track('Add to Cart', {category: 'shoes', sku: 'red_shoe_1', price: 123.45, amount: 1, total: 123.45})">
+      Add 1 red shoe
+    </button>
+    <button
+      onclick="cg.track('Add to Cart', {category: 'shoes', sku: 'green_shoe_1', price: 99.55, amount: 2, total: 199.10})">
+      Add 2 green shoes
+    </button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Remove product from cart</legend>
+    <button
+      onclick="cg.track('Remove from Cart', {category: 'shoes', sku: 'red_shoe_1', price: -123.45, amount: -1, total: -123.45})">
+      Remove 1 red shoe
+    </button>
+    <button
+      onclick="cg.track('Remove from Cart', {category: 'shoes', sku: 'green_shoe_1', price: -99.55, amount: -1, total: -99.55})">
+      Add 1 green shoe
+    </button>
+  </fieldset>
+
+  <fieldset>
+    <legend>View cart</legend>
+    <button onclick="cg.track('Cart Viewed', {items: 2, amount: 223, is_logged_in: false})">
+      View cart with 2 items as not logged in
+    </button>
+    <button onclick="cg.track('Cart Viewed', {items: 2, amount: 223, is_logged_in: true})">
+      View cart with 2 items as logged in
+    </button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Start checkout</legend>
+    <button onclick="cg.track('Checkout Started', {is_logged_in: false})">
+      Start checkout as not logged in
+    </button>
+    <button onclick="cg.track('Checkout Started', {is_logged_in: true})">
+      Start checkout as logged in
+    </button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Checkout address</legend>
+    <button onclick="cg.track('Address Form Viewed')">
+      View address form
+    </button>
+    <button onclick="cg.track('Address Field Focussed', {field: 'name'})">
+      Focus name field
+    </button>
+    <button onclick="cg.track('Address Field Focussed', {field: 'street'})">
+      Focus street field
+    </button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Checkout Payment</legend>
+    <button onclick="cg.track('Payment Form Viewed')">
+      View payment form
+    </button>
+    <button onclick="cg.track('Payment Provider Selected', {provider: 'paypal'})">
+      Select PayPal
+    </button>
+    <button onclick="cg.track('Payment Provider Selected', {provider: 'direct_debit'})">
+      Select Direct Debit
+    </button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Checkout overview</legend>
+    <button onclick="cg.track('Checkout Overview Viewed')">
+      View checkout overview
+    </button>
+    <button onclick="cg.track('Checkout Completed', {items: 2, amount: 223, is_new_customer: true})">
+      Complete checkout as new customer
+    </button>
+    <button onclick="cg.track('Checkout Completed', {items: 2, amount: 223, is_new_customer: false})">
+      Complete checkout as existing customer
+    </button>
+
+    <button onclick="cg.track('Checkout Aborted', {items: 2, amount: 223})">
+      Abort checkout
+    </button>
+  </fieldset>
+
+  <h1>Actions</h1>
+  <script>
+    cg.actions().then((actions) => {
+      for (action of actions) {
+        action.callbacks.show()
+        document.getElementsByClassName('red_shoe_customer')[0].style =
+          'display: block;'
+        document.getElementsByClassName(
+          'red_shoe_customer_button_text'
+        )[0].innerHTML = action.content.title
+        document.getElementsByClassName(
+          'red_shoe_customer_button'
+        )[0].onclick = () => {
+          action.callbacks.accept().then(() => {
+            alert(action.content.coupon)
+          })
         }
-      })
-    </script>
+        document.getElementsByClassName(
+          'red_shoe_customer_button'
+        )[0].innerHTML = action.content.button
+      }
+    })
+  </script>
+  <div class="red_shoe_customer" style="display: none;">
+    <div class="red_shoe_customer_button_text"></div>
+    <p>
+      <button class="red_shoe_customer_button"></button>
+    </p>
+  </div>
+</body>
 
-    <h1>Event tracking</h1>
-
-    <fieldset>
-      <legend>Identify</legend>
-      <button
-        onclick="cg.identify(null, 'user_id', {name: 'Baz User', age: 30, gender: 'm'})"
-      >
-        Identify as anonymous
-      </button>
-      <button
-        onclick="cg.identify('u123', 'user_id', {name: 'Foo User', age: 32, gender: 'm'})"
-      >
-        Login as u123
-      </button>
-
-      <button
-        onclick="cg.identify('foo@example.com', 'email', {name: 'Foo User', age: 32, gender: 'm'})"
-      >
-        Login as foo@example.com
-      </button>
-
-      <button
-        onclick="cg.identify('foo@example.com', 'email', {name: 'Bar User', age: 44, gender: 'f'})"
-      >
-        Login as foo@example.com with different traits
-      </button>
-    </fieldset>
-
-    <fieldset>
-      <legend>Browse category</legend>
-      <button
-        onclick="cg.track('Category Viewed', {name: 'shoes', items_per_page: 24, page: 1})"
-      >
-        Browse category shoes on page 1
-      </button>
-
-      <button
-        onclick="cg.track('Category Viewed', {name: 'shoes', items_per_page: 24, page: 2})"
-      >
-        Browse category shoes on page 2
-      </button>
-
-      <button
-        onclick="cg.track('Category Viewed', {name: 'shoes', items_per_page: 24, page: 3})"
-      >
-        Browse category shoes on page 3
-      </button>
-      <br />
-      <button
-        onclick="cg.track('Category Viewed', {name: 'shoes', items_per_page: 48, page: 1})"
-      >
-        Browse category pants on page 1
-      </button>
-
-      <button
-        onclick="cg.track('Category Viewed', {name: 'shoes', items_per_page: 48, page: 2})"
-      >
-        Browse category pants on page 2
-      </button>
-    </fieldset>
-
-    <fieldset>
-      <legend>View Product</legend>
-      <button
-        onclick="cg.track('Product Viewed', {name: 'Red shoe', sku: 'red_shoe_1', price: 123.45, is_available: true})"
-      >
-        View red shoe (available)
-      </button>
-      <button
-        onclick="cg.track('Product Viewed', {name: 'Blue shoe', sku: 'blue_shoe_1', price: 58.47, is_available: false})"
-      >
-        View blue shoe (not available)
-      </button>
-      <button
-        onclick="cg.track('Product Viewed', {name: 'Green shoe', sku: 'green_shoe_1', price: 99.55, is_available: true})"
-      >
-        View green shoe (available)
-      </button>
-    </fieldset>
-
-    <fieldset>
-      <legend>Add product to cart</legend>
-      <button
-        onclick="cg.track('Add to Cart', {category: 'shoes', sku: 'red_shoe_1', price: 123.45, amount: 1, total: 123.45})"
-      >
-        Add 1 red shoe
-      </button>
-      <button
-        onclick="cg.track('Add to Cart', {category: 'shoes', sku: 'green_shoe_1', price: 99.55, amount: 2, total: 199.10})"
-      >
-        Add 2 green shoes
-      </button>
-    </fieldset>
-
-    <fieldset>
-      <legend>Remove product from cart</legend>
-      <button
-        onclick="cg.track('Remove from Cart', {category: 'shoes', sku: 'red_shoe_1', price: -123.45, amount: -1, total: -123.45})"
-      >
-        Remove 1 red shoe
-      </button>
-      <button
-        onclick="cg.track('Remove from Cart', {category: 'shoes', sku: 'green_shoe_1', price: -99.55, amount: -1, total: -99.55})"
-      >
-        Add 1 green shoe
-      </button>
-    </fieldset>
-
-    <fieldset>
-      <legend>View cart</legend>
-      <button
-        onclick="cg.track('Cart Viewed', {items: 2, amount: 223, is_logged_in: false})"
-      >
-        View cart with 2 items as not logged in
-      </button>
-      <button
-        onclick="cg.track('Cart Viewed', {items: 2, amount: 223, is_logged_in: true})"
-      >
-        View cart with 2 items as logged in
-      </button>
-    </fieldset>
-
-    <fieldset>
-      <legend>Start checkout</legend>
-      <button onclick="cg.track('Checkout Started', {is_logged_in: false})">
-        Start checkout as not logged in
-      </button>
-      <button onclick="cg.track('Checkout Started', {is_logged_in: true})">
-        Start checkout as logged in
-      </button>
-    </fieldset>
-
-    <fieldset>
-      <legend>Checkout address</legend>
-      <button onclick="cg.track('Address Form Viewed')">
-        View address form
-      </button>
-      <button onclick="cg.track('Address Field Focussed', {field: 'name'})">
-        Focus name field
-      </button>
-      <button onclick="cg.track('Address Field Focussed', {field: 'street'})">
-        Focus street field
-      </button>
-    </fieldset>
-
-    <fieldset>
-      <legend>Checkout Payment</legend>
-      <button onclick="cg.track('Payment Form Viewed')">
-        View payment form
-      </button>
-      <button
-        onclick="cg.track('Payment Provider Selected', {provider: 'paypal'})"
-      >
-        Select PayPal
-      </button>
-      <button
-        onclick="cg.track('Payment Provider Selected', {provider: 'direct_debit'})"
-      >
-        Select Direct Debit
-      </button>
-    </fieldset>
-
-    <fieldset>
-      <legend>Checkout overview</legend>
-      <button onclick="cg.track('Checkout Overview Viewed')">
-        View checkout overview
-      </button>
-      <button
-        onclick="cg.track('Checkout Completed', {items: 2, amount: 223, is_new_customer: true})"
-      >
-        Complete checkout as new customer
-      </button>
-      <button
-        onclick="cg.track('Checkout Completed', {items: 2, amount: 223, is_new_customer: false})"
-      >
-        Complete checkout as existing customer
-      </button>
-
-      <button onclick="cg.track('Checkout Aborted', {items: 2, amount: 223})">
-        Abort checkout
-      </button>
-    </fieldset>
-
-    <h1>Actions</h1>
-    <script>
-      cg.actions().then((actions) => {
-        for (action of actions) {
-          action.callbacks.show()
-          document.getElementsByClassName('red_shoe_customer')[0].style =
-            'display: block;'
-          document.getElementsByClassName(
-            'red_shoe_customer_button_text'
-          )[0].innerHTML = action.content.title
-          document.getElementsByClassName(
-            'red_shoe_customer_button'
-          )[0].onclick = () => {
-            action.callbacks.accept().then(() => {
-              alert(action.content.coupon)
-            })
-          }
-          document.getElementsByClassName(
-            'red_shoe_customer_button'
-          )[0].innerHTML = action.content.button
-        }
-      })
-    </script>
-    <div class="red_shoe_customer" style="display: none;">
-      <div class="red_shoe_customer_button_text"></div>
-      <p>
-        <button class="red_shoe_customer_button"></button>
-      </p>
-    </div>
-  </body>
 </html>
