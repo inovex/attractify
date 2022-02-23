@@ -20,5 +20,4 @@ ADD frontend/dist /app/dist/
 COPY --from=builder /app/cmd/server/server .
 COPY --from=builder /app/cmd/cron/cron .
 COPY --from=builder /app/cmd/consumer/consumer .
-COPY /server/config.sample.json /app/config.json
 CMD ["sh", "-c", "/app/server config.json & /app/cron config.json & /app/consumer config.json"]

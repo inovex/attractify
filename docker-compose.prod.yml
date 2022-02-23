@@ -16,6 +16,8 @@ services:
     hostname: zookeeper
     networks:
       - attractify
+    deploy:
+      replicas: 1 #Do not change
 
   kafka:
     hostname: kafka
@@ -33,6 +35,8 @@ services:
       KAFKA_ADVERTISED_PORT: 9092
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       KAFKA_CREATE_TOPICS: "events:1:0"
+    deploy:
+      replicas: 1 #Do not change
 
   postgres:
     image: ghcr.io/inovex/attractify/attractify-postgres
@@ -49,6 +53,8 @@ services:
       - type: volume
         source: postgres
         target: /db/data
+    deploy:
+      replicas: 1 #Do not change
 
   clickhouse:
     image: ghcr.io/inovex/attractify/attractify-clickhouse
@@ -64,6 +70,8 @@ services:
         target: /var/lib/clickhouse/
     depends_on:
       - zookeeper
+    deploy:
+      replicas: 1 #Do not change
 
   server:
     image: ghcr.io/inovex/attractify/attractify-server
@@ -78,26 +86,6 @@ services:
       - clickhouse
     restart: always
     volumes:
-      - ./server/testdata/fixtures/postgres.sql:/docker-entrypoint-initdb.d/2_fixtures.sql
-
-  mariadb:
-    image: ghcr.io/inovex/attractify/attractify-usecase-db
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: somewordpress
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: wordpress
-
-  sportify:
-    depends_on:
-      - mariadb
-    image: ghcr.io/inovex/attractify/attractify-usecase-frontend
-    ports:
-      - "8000:80"
-    restart: always
-    environment:
-      WORDPRESS_DB_HOST: mariadb:3306
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
-      WORDPRESS_DB_NAME: wordpress
+      - ./server/config.prod.json:/app/config.json
+    deploy:
+      replicas: 1
