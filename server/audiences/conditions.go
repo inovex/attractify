@@ -22,47 +22,48 @@ FROM (
 ) i
 %s
 WHERE %s
-%s
-%s
-%s
-%s
+
 GROUP BY i.profile_id
-HAVING %s
+%s
 `
+	var whereCond []string
 	var events []string
 	var having []string
-	var found []string
+	var havingCond string
 	for _, e := range c.events {
 		events = append(events, e.generate(organizationID))
 		if !e.Exclude {
 			having = append(having, e.having())
 		}
-		found = append(found, e.found())
+		whereCond = append(whereCond, e.found())
 	}
 
-	filterAnonymous := "AND toUInt8(i.is_anonymous) = 0"
-	if c.includeAnonymous {
-		filterAnonymous = ""
+	if !c.includeAnonymous {
+		whereCond = append(whereCond, "AND toUInt8(i.is_anonymous) = 0")
+	}
+
+	whereCond = append(whereCond, c.funnelOrder()...)
+	whereCond = append(whereCond, c.traitConditions()...)
+	whereCond = append(whereCond, c.eventConditions()...)
+
+	if len(having) > 0 {
+		havingCond = "HAVING " + strings.Join(having, "\nAND ")
 	}
 
 	return fmt.Sprintf(
 		query,
 		organizationID.String(),
 		strings.Join(events, ""),
-		strings.Join(found, "\nAND "),
-		c.funnelOrder(),
-		c.traitConditions(),
-		c.eventConditions(),
-		filterAnonymous,
-		strings.Join(having, "\nAND "),
+		strings.Join(whereCond, "\nAND "),
+		havingCond,
 	)
 }
 
-func (c conditions) traitConditions() string {
+func (c conditions) traitConditions() []string {
 	return c.traits.generate()
 }
 
-func (c conditions) funnelOrder() string {
+func (c conditions) funnelOrder() []string {
 	var times []string
 	var lastEventID string
 	for _, e := range c.events {
@@ -80,13 +81,10 @@ func (c conditions) funnelOrder() string {
 		}
 		lastEventID = e.InternalID.String()
 	}
-	if len(times) > 0 {
-		return " AND " + strings.Join(times, " \nAND ")
-	}
-	return ""
+	return times
 }
 
-func (c conditions) eventConditions() string {
+func (c conditions) eventConditions() []string {
 	var conditions []string
 	for _, e := range c.events {
 		conds := e.Properties.generate(false, e.InternalID.String())
@@ -94,8 +92,5 @@ func (c conditions) eventConditions() string {
 			conditions = append(conditions, conds)
 		}
 	}
-	if len(conditions) > 0 {
-		return fmt.Sprintf("AND %s", strings.Join(conditions, " \nAND "))
-	}
-	return ""
+	return conditions
 }

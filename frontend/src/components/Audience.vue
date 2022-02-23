@@ -144,7 +144,7 @@
                     <tr v-for="(item, key) in previewResult.profiles" :key="key">
                       <td>{{ item.id }}</td>
                       <td>
-                        <v-btn icon :to="{ path: `/profile/${item.id}` }" target="_blank">
+                        <v-btn icon :to="{ path: `/profile/${item.id}` }">
                           <v-icon>mdi-magnify</v-icon>
                         </v-btn>
                       </td>
@@ -189,7 +189,7 @@ export default {
       dialog: false,
       previewResult: {},
       rules: {
-        required: value => !!value || 'Required.'
+        required: (value) => !!value || 'Required.'
       }
     }
   },
@@ -224,7 +224,7 @@ export default {
         properties: []
       }
 
-      let idx = this.audience.events.map(e => e.internalId).indexOf(parentId)
+      let idx = this.audience.events.map((e) => e.internalId).indexOf(parentId)
       if (idx > -1) {
         this.audience.events.splice(idx + 1, 0, condition)
       } else {
