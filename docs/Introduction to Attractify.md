@@ -42,8 +42,12 @@ In the example, the user visits our website. We track which page he visited and 
 Javascript code for the website tracking:
 
 ```
+const apiConfig = {
+      apiUrl: 'https://api.attractify.io/v1'
+    }
 const attractify = new Attractify(
-  "YOUR-AUTH-TOKEN_HERE"
+  "YOUR-AUTH-TOKEN_HERE",
+  apiConfig
 );
 
 attractify.identify();
@@ -73,8 +77,12 @@ A custom trait can be, for example, the department in which an employee works.
 
 JavaScript code for attaching external data sources:
 ```
+const apiConfig = {
+      apiUrl: 'https://api.attractify.io/v1'
+    }
 const attractify = new Attractify(
-  "YOUR-AUTH-TOKEN_HERE"
+  "YOUR-AUTH-TOKEN_HERE",
+  apiConfig
 );
 
 function queryCustomData(){
