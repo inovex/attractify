@@ -8,6 +8,12 @@ class Attractify {
     this.authToken = authToken
     this.context = null
     this.queue = new Fifo({ namespace: 'trackings' })
+    if (configOptions == null) {
+      throw "api-config not found";
+    }
+    if (configOptions.apiUrl == null) {
+      throw "api-url not found";
+    }
     this.baseUrl = configOptions.apiUrl
 
     this.loadState()
