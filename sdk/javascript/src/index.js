@@ -1,18 +1,20 @@
-let baseUrl = ''
-if (process.env.NODE_ENV === 'production') {
-  baseUrl = 'https://api.attractify.io/v1'
-} else {
-  baseUrl = 'http://127.0.0.1:8080/v1'
-}
-
 import Fifo from 'localstorage-fifo'
 
+
 class Attractify {
-  constructor(authToken) {
+  constructor(authToken, configOptions) {
+
     this.state = { isIdentified: false }
     this.authToken = authToken
     this.context = null
     this.queue = new Fifo({ namespace: 'trackings' })
+    if (configOptions === null) {
+      throw 'api-config not found'
+    }
+    if (configOptions.apiUrl === null) {
+      throw 'api-url not found'
+    }
+    this.baseUrl = configOptions.apiUrl
 
     this.loadState()
 
@@ -75,7 +77,7 @@ class Attractify {
       request.headers.append('Content-Type', 'application/json')
     }
 
-    return fetch(`${baseUrl}${path}`, request)
+    return fetch(`${this.baseUrl}${path}`, request)
   }
 
   identify(userId, type = 'user_id', traits = null) {
