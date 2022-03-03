@@ -48,14 +48,8 @@
                     ref="tag"
                     v-model="tag"
                     append-icon="mdi-plus"
-                    @click:append="
-                      action.tags.push(tag.toLowerCase())
-                      tag = ''
-                    "
-                    @keyup.enter.prevent="
-                      action.tags.push(tag.toLowerCase())
-                      tag = ''
-                    "
+                    @click:append="action.tags.push(tag.toLowerCase()), (tag = '')"
+                    @keyup.enter.prevent="action.tags.push(tag.toLowerCase()), (tag = '')"
                   />
                 </v-col>
                 <v-col>
@@ -164,7 +158,7 @@ export default {
       path: '',
       valid: false,
       rules: {
-        required: value => !!value || 'Required.'
+        required: (value) => !!value || 'Required.'
       }
     }
   },
