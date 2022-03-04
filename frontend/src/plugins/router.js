@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
 import Dashboard from '../components/Dashboard.vue'
 import Action from '../components/Action.vue'
@@ -39,7 +38,6 @@ import ComputedTrait from '../components/ComputedTrait.vue'
 
 import Privacy from '../components/Privacy.vue'
 
-Vue.use(VueRouter)
 
 function requireAuth(to, from, next) {
   const user = store.getters['user/get']
@@ -53,61 +51,66 @@ function requireAuth(to, from, next) {
     })
   }
 }
+const routes = [
+  { path: '/', component: Dashboard, beforeEnter: requireAuth },
+  { path: '/actions', component: Actions, beforeEnter: requireAuth },
+  { path: '/reactions', component: Reactions, beforeEnter: requireAuth },
+  { path: '/action/:id?', component: Action, beforeEnter: requireAuth },
+  { path: '/analyze/:id?', component: Analyze, beforeEnter: requireAuth },
+  {
+    path: '/organization',
+    component: Organization,
+    beforeEnter: requireAuth
+  },
+  { path: '/api', component: API, beforeEnter: requireAuth },
+  { path: '/users', component: Users, beforeEnter: requireAuth },
+  { path: '/event-log', component: EventLog, beforeEnter: requireAuth },
 
-export default new VueRouter({
-  mode: 'history',
+  { path: '/contexts', component: Contexts, beforeEnter: requireAuth },
+  { path: '/context/:id?', component: Context, beforeEnter: requireAuth },
+  {
+    path: '/events',
+    component: Events,
+    beforeEnter: requireAuth
+  },
+  {
+    path: '/event/:id?',
+    component: Event,
+    beforeEnter: requireAuth
+  },
+
+  {
+    path: '/channels',
+    component: Channels,
+    beforeEnter: requireAuth
+  },
+
+  { path: '/user', component: User },
+  { path: '/user/login', component: Login },
+  { path: '/user/reset-password', component: ResetPassword },
+  { path: '/user/reset-password/:token?', component: ResetPassword },
+  { path: '/user/activate/:token', component: Activate },
+
+  { path: '/profiles', component: Profiles },
+  { path: '/profile/:id?', component: Profile },
+  { path: '/:pathMatch(.*)*', component: NotFound },
+
+  { path: '/audiences', component: Audiences },
+  { path: '/audience/:id?', component: Audience },
+
+  { path: '/custom-traits', component: CustomTraits },
+  { path: '/computed-traits', component: ComputedTraits },
+  { path: '/computed-trait/:id?', component: ComputedTrait },
+
+  { path: '/privacy', component: Privacy }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
   base: __dirname,
-  routes: [
-    { path: '/', component: Dashboard, beforeEnter: requireAuth },
-    { path: '/actions', component: Actions, beforeEnter: requireAuth },
-    { path: '/reactions', component: Reactions, beforeEnter: requireAuth },
-    { path: '/action/:id?', component: Action, beforeEnter: requireAuth },
-    { path: '/analyze/:id?', component: Analyze, beforeEnter: requireAuth },
-    {
-      path: '/organization',
-      component: Organization,
-      beforeEnter: requireAuth
-    },
-    { path: '/api', component: API, beforeEnter: requireAuth },
-    { path: '/users', component: Users, beforeEnter: requireAuth },
-    { path: '/event-log', component: EventLog, beforeEnter: requireAuth },
-
-    { path: '/contexts', component: Contexts, beforeEnter: requireAuth },
-    { path: '/context/:id?', component: Context, beforeEnter: requireAuth },
-    {
-      path: '/events',
-      component: Events,
-      beforeEnter: requireAuth
-    },
-    {
-      path: '/event/:id?',
-      component: Event,
-      beforeEnter: requireAuth
-    },
-
-    {
-      path: '/channels',
-      component: Channels,
-      beforeEnter: requireAuth
-    },
-
-    { path: '/user', component: User },
-    { path: '/user/login', component: Login },
-    { path: '/user/reset-password', component: ResetPassword },
-    { path: '/user/reset-password/:token?', component: ResetPassword },
-    { path: '/user/activate/:token', component: Activate },
-
-    { path: '/profiles', component: Profiles },
-    { path: '/profile/:id?', component: Profile },
-    { path: '*', component: NotFound },
-
-    { path: '/audiences', component: Audiences },
-    { path: '/audience/:id?', component: Audience },
-
-    { path: '/custom-traits', component: CustomTraits },
-    { path: '/computed-traits', component: ComputedTraits },
-    { path: '/computed-trait/:id?', component: ComputedTrait },
-
-    { path: '/privacy', component: Privacy }
-  ]
+  routes:
+    routes
 })
+
+
+export default router

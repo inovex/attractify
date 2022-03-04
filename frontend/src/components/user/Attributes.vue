@@ -38,7 +38,7 @@ export default {
     return {
       valid: false,
       rules: {
-        required: value => !!value || 'Required.'
+        required: (value) => !!value || 'Required.'
       }
     }
   },
@@ -53,7 +53,7 @@ export default {
         }
 
         this.$notify.success('Your details have been changed.')
-        this.$bus.$emit('user:update')
+        this.$bus.emit('user:update')
       } catch (e) {
         this.$notify.error('An error has occured, please check your details.')
       }

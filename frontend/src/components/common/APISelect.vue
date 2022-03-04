@@ -45,10 +45,10 @@ export default {
   }),
   methods: {
     input(e) {
-      this.$emit('input', e)
+      this.emit('input', e)
     },
     change(e) {
-      this.$emit('change', e)
+      this.emit('change', e)
     },
     async load() {
       if (this.isLoading) return

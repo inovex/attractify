@@ -194,8 +194,8 @@ export default {
     }
   },
   created() {
-    this.$bus.$on('user:update', this.refresh)
-    this.$bus.$on('notify', this.notify)
+    this.$bus.on('user:update', this.refresh)
+    this.$bus.on('notify', this.notify)
     this.refresh()
   }
 }

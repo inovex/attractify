@@ -13,7 +13,7 @@
         return-object
         :hide-details="true"
         @change="
-          e => {
+          (e) => {
             setProperty(e)
           }
         "
@@ -29,7 +29,7 @@
         v-model="property.operator"
         :rules="[rules.required]"
         @change="
-          t => {
+          (t) => {
             setOperator(t)
           }
         "
@@ -63,7 +63,7 @@
         :loadCallback="listCustomTraitProperties(property.dataType)"
         :value="property.traitKey || ''"
         @change="
-          t => {
+          (t) => {
             setCompareProperty(t)
           }
         "
@@ -82,7 +82,7 @@
         :hide-details="true"
         :rules="[rules.required]"
         @change="
-          t => {
+          (t) => {
             setCompareProperty(t)
           }
         "
@@ -133,8 +133,8 @@ export default {
       compareEventProperties: [],
       valid: false,
       rules: {
-        required: value => !!value || 'Required.',
-        numberRequired: value => value > -1
+        required: (value) => !!value || 'Required.',
+        numberRequired: (value) => value > -1
       }
     }
   },
@@ -180,7 +180,7 @@ export default {
       }
 
       let properties = await client.listProperties(this.property.eventId)
-      this.compareEventProperties = properties.filter(p => p.type === this.property.dataType)
+      this.compareEventProperties = properties.filter((p) => p.type === this.property.dataType)
     },
     getOperators(type, target) {
       if (target === 'static') {
@@ -229,13 +229,13 @@ export default {
     listCustomTraitProperties(type) {
       return async () => {
         let traits = await customTraitsClient.listProperties()
-        return traits.filter(t => t.type === type)
+        return traits.filter((t) => t.type === type)
       }
     },
     listComputedTraits(type) {
       return async () => {
         let traits = await computedTraitsClient.listTraits()
-        return traits.filter(t => {
+        return traits.filter((t) => {
           if (t.propertyType === 'float' && type === 'integer') {
             return true
           }
@@ -249,7 +249,7 @@ export default {
     }
   },
   created() {
-    this.$bus.$on('audience:event:selectCompareEvent', this.receiveCompareEvent)
+    this.$bus.on('audience:event:selectCompareEvent', this.receiveCompareEvent)
     this.loadCompareEventProperties()
   }
 }

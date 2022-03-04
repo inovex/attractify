@@ -16,7 +16,7 @@
               <v-alert type="success" v-if="state === 'resetted'"
                 >Your password has been resetted. You can log in now.</v-alert
               >
-
+              <!--
               <v-text-field
                 label="Your Email Address"
                 name="email"
@@ -34,7 +34,7 @@
                 type="password"
                 :rules="[rules.required]"
                 v-model="password"
-              />
+              />-->
             </v-card-text>
             <v-card-actions>
               <v-spacer />
@@ -85,7 +85,7 @@ export default {
           this.$router.push('/')
         }
 
-        this.$bus.$emit('user:update')
+        this.$bus.emit('user:update')
       } catch (e) {
         this.$notify.error('Wrong username or password.')
       }

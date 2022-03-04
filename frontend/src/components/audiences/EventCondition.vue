@@ -182,8 +182,8 @@ export default {
       useTimeWindow: false,
       valid: false,
       rules: {
-        required: value => !!value || 'Required.',
-        numberRequired: value => value > -1
+        required: (value) => !!value || 'Required.',
+        numberRequired: (value) => value > -1
       }
     }
   },
@@ -197,7 +197,7 @@ export default {
       this.event.properties.push({ target: target })
     },
     selectCompareEvent(event) {
-      this.$bus.$emit('audience:event:selectCompareEvent', { id: event.id, internalId: event.internalId })
+      this.$bus.emit('audience:event:selectCompareEvent', { id: event.id, internalId: event.internalId })
     },
     deleteProperty(index) {
       this.event.properties.splice(index, 1)

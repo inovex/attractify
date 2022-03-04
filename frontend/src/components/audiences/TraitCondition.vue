@@ -11,7 +11,7 @@
           :value="trait.key || ''"
           :hide-details="true"
           @change="
-            e => {
+            (e) => {
               setProperty(e)
             }
           "
@@ -27,7 +27,7 @@
           :hide-details="true"
           :value="trait.key || ''"
           @change="
-            e => {
+            (e) => {
               setProperty(e)
             }
           "
@@ -45,7 +45,7 @@
           v-model="trait.operator"
           :rules="[rules.required]"
           @change="
-            t => {
+            (t) => {
               setOperator(t)
             }
           "
@@ -122,7 +122,7 @@ export default {
       ],
       valid: false,
       rules: {
-        required: value => !!value || 'Required.'
+        required: (value) => !!value || 'Required.'
       }
     }
   },
@@ -196,7 +196,7 @@ export default {
         return
       }
       let properties = await client.listProperties(this.trait.eventId)
-      this.compareEventProperties = properties.filter(p => {
+      this.compareEventProperties = properties.filter((p) => {
         if (p.type === this.trait.dataType) {
           return true
         }
@@ -225,7 +225,7 @@ export default {
     }
   },
   created() {
-    this.$bus.$on('audience:event:selectCompareEvent', this.receiveCompareEvent)
+    this.$bus.on('audience:event:selectCompareEvent', this.receiveCompareEvent)
     this.loadCompareEventProperties()
   }
 }

@@ -1,4 +1,4 @@
-import Vue from 'vue'
+/*import Vue from 'vue'
 
 const vueBus = new Vue()
 
@@ -10,3 +10,15 @@ const BusPlugin = {
 }
 
 export default BusPlugin
+*/
+import mitt from 'mitt'
+
+const emitter = mitt()
+
+const BusPlugin = {
+  install(app) {
+    app.config.globalProperties.$bus = emitter
+  }
+}
+
+export { BusPlugin }
