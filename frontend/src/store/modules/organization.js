@@ -12,47 +12,27 @@ export default {
   },
   actions: {
     async show() {
-      try {
-        const res = await restClient.get('/organization')
-        if (res.data) {
-          return res.data
-        }
-      } catch (e) {
-        throw e
+      const res = await restClient.get('/organization')
+      if (res.data) {
+        return res.data
       }
     },
     async signUp(_, data) {
-      try {
-        const res = await restClient.post('/organization', data)
-        return res.data
-      } catch (e) {
-        throw e
-      }
-    },
-    async update(_, data) {
-      try {
-        await restClient.put('/organization', data)
-      } catch (e) {
-        throw e
-      }
-    },
-    async token() {
-      try {
-        const res = await restClient.post('/organization/token')
-        return res.data
-      } catch (e) {
-        throw e
-      }
-    },
-    async key(_, password) {
-      try {
-        const res = await restClient.post('/organization/key', {
-          password: password
-        })
-        return res.data
-      } catch (e) {
-        throw e
-      }
+      const res = await restClient.post('/organization', data)
+      return res.data
     }
+  },
+  async update(_, data) {
+    await restClient.put('/organization', data)
+  },
+  async token() {
+    const res = await restClient.post('/organization/token')
+    return res.data
+  },
+  async key(_, password) {
+    const res = await restClient.post('/organization/key', {
+      password: password
+    })
+    return res.data
   }
 }

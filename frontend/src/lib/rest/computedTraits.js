@@ -2,69 +2,55 @@ import restClient from '../../lib/restClient'
 
 export default {
   async list(offset, limit) {
-    try {
-      const params = { offset, limit }
-      const res = await restClient.get('/computed-traits', params)
 
-      return res.data
-    } catch (e) {
-      throw e
-    }
+    const params = { offset, limit }
+    const res = await restClient.get('/computed-traits', params)
+
+    return res.data
+
   },
   async show(id) {
-    try {
-      const res = await restClient.get(`/computed-traits/${id}`)
 
-      return res.data
-    } catch (e) {
-      throw e
-    }
+    const res = await restClient.get(`/computed-traits/${id}`)
+
+    return res.data
+
   },
   async delete(id) {
-    try {
-      await restClient.delete(`/computed-traits/${id}`)
-    } catch (e) {
-      throw e
-    }
+
+    await restClient.delete(`/computed-traits/${id}`)
+
   },
   async create(params) {
-    try {
-      const res = await restClient.post('/computed-traits', params)
-      return res.data
-    } catch (e) {
-      throw e
-    }
+
+    const res = await restClient.post('/computed-traits', params)
+    return res.data
+
   },
   async update(params) {
-    try {
-      await restClient.put(`/computed-traits/${params.id}`, params)
-    } catch (e) {
-      throw e
-    }
+
+    await restClient.put(`/computed-traits/${params.id}`, params)
+
   },
   async refresh(id) {
-    try {
-      const res = await restClient.post(`/computed-traits/${id}/refresh`)
-      return res.data
-    } catch (e) {
-      throw e
-    }
+
+    const res = await restClient.post(`/computed-traits/${id}/refresh`)
+    return res.data
+
   },
   async listTraits() {
-    try {
-      let res = await restClient.get('/computed-traits')
-      if (res.data && res.data.length > 0) {
-        return res.data.map(item => {
-          return {
-            text: item.key,
-            value: item.key,
-            type: item.type,
-            propertyType: item.properties.type
-          }
-        })
-      }
-    } catch (e) {
-      throw e
+
+    let res = await restClient.get('/computed-traits')
+    if (res.data && res.data.length > 0) {
+      return res.data.map(item => {
+        return {
+          text: item.key,
+          value: item.key,
+          type: item.type,
+          propertyType: item.properties.type
+        }
+      })
     }
+
   }
 }

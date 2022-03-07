@@ -39,81 +39,54 @@ export default {
   },
   actions: {
     async list({ commit }) {
-      try {
-        let res = await restClient.get('/actions')
-        commit('clear')
+      let res = await restClient.get('/actions')
+      commit('clear')
 
-        if (res.data.length > 0) {
-          for (const action of res.data) {
-            commit('add', action)
-          }
+      if (res.data.length > 0) {
+        for (const action of res.data) {
+          commit('add', action)
         }
-      } catch (e) {
-        throw e
       }
     },
     async show(_, id) {
-      try {
-        const res = await restClient.get(`/actions/${id}`)
-        return res.data
-      } catch (e) {
-        throw e
-      }
+      const res = await restClient.get(`/actions/${id}`)
+      return res.data
     },
     async create({ commit }, action) {
-      try {
-        const res = await restClient.post('/actions', action)
-        commit('add', res.data)
-        return res.data
-      } catch (e) {
-        throw e
-      }
-    },
-    async update({ commit }, action) {
-      try {
-        await restClient.put(`/actions/${action.id}`, action)
-        commit('update', action)
-      } catch (e) {
-        throw e
-      }
-    },
-    async updateState({ commit }, req) {
-      try {
-        await restClient.put(`/actions/${req.action.id}/state`, {
-          state: req.state
-        })
-        req.action.conditions.state = req.state
-        commit('update', req.action)
-      } catch (e) {
-        throw e
-      }
-    },
-    async delete({ commit }, id) {
-      try {
-        await restClient.delete(`/actions/${id}`)
-        commit('delete', id)
-      } catch (e) {
-        throw e
-      }
-    },
-    async testWebhook(_, data) {
-      const req = {
-        event: data.event,
-        channel: data.channel,
-        userId: data.userId,
-        properties: data.properties
-      }
-
-      try {
-        const res = await restClient.post(
-          `/actions/${data.actionId}/test-webhook`,
-          req
-        )
-
-        return res.data
-      } catch (e) {
-        throw e
-      }
+      const res = await restClient.post('/actions', action)
+      commit('add', res.data)
+      return res.data
     }
+  },
+  async update({ commit }, action) {
+    await restClient.put(`/actions/${action.id}`, action)
+    commit('update', action)
+  },
+  async updateState({ commit }, req) {
+    await restClient.put(`/actions/${req.action.id}/state`, {
+      state: req.state
+    })
+    req.action.conditions.state = req.state
+    commit('update', req.action)
+  },
+  async delete({ commit }, id) {
+    await restClient.delete(`/actions/${id}`)
+    commit('delete', id)
+  },
+  async testWebhook(_, data) {
+    const req = {
+      event: data.event,
+      channel: data.channel,
+      userId: data.userId,
+      properties: data.properties
+    }
+
+    const res = await restClient.post(
+      `/actions/${data.actionId}/test-webhook`,
+      req
+    )
+
+    return res.data
   }
 }
+

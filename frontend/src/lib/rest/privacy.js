@@ -2,40 +2,30 @@ import restClient from '../restClient'
 
 export default {
   async export(params) {
-    try {
-      await restClient.post('/privacy/export', params)
-    } catch (e) {
-      throw e
-    }
+
+    await restClient.post('/privacy/export', params)
+
   },
   async deletion(params) {
-    try {
-      await restClient.post('/privacy/deletion', params)
-    } catch (e) {
-      throw e
-    }
+
+    await restClient.post('/privacy/deletion', params)
+
   },
   async lockedIdentities() {
-    try {
-      const res = await restClient.get('/privacy/locked-identities')
 
-      return res.data
-    } catch (e) {
-      throw e
-    }
+    const res = await restClient.get('/privacy/locked-identities')
+
+    return res.data
+
   },
   async createLockedIdentities(params) {
-    try {
-      await restClient.post('/privacy/locked-identities', params)
-    } catch (e) {
-      throw e
-    }
+
+    await restClient.post('/privacy/locked-identities', params)
+
   },
   async deleteLockedIdentities(id) {
-    try {
-      await restClient.delete(`/privacy/locked-identities/${id}`)
-    } catch (e) {
-      throw e
-    }
+
+    await restClient.delete(`/privacy/locked-identities/${id}`)
+
   }
 }

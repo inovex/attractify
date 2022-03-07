@@ -35,54 +35,35 @@ export default {
   },
   actions: {
     async list({ commit }) {
-      try {
-        let res = await restClient.get('/users')
-        commit('clear')
+      let res = await restClient.get('/users')
+      commit('clear')
 
-        if (res.data && res.data.length > 0) {
-          for (const user of res.data) {
-            commit('add', user)
-          }
+      if (res.data && res.data.length > 0) {
+        for (const user of res.data) {
+          commit('add', user)
         }
-      } catch (e) {
-        throw e
       }
     },
     async show(_, id) {
-      try {
-        const res = await restClient.get(`/users/${id}`)
-        return res.data
-      } catch (e) {
-        throw e
-      }
+      const res = await restClient.get(`/users/${id}`)
+      return res.data
     },
     async create({ commit }, user) {
-      try {
-        const res = await restClient.post('/users', user)
-        commit('add', res.data)
-        return res.data
-      } catch (e) {
-        throw e
-      }
-    },
-    resend(_, id) {
-      return restClient.post(`/users/${id}/resend`, id)
-    },
-    async update({ commit }, user) {
-      try {
-        await restClient.put(`/users/${user.id}`, user)
-        commit('update', user)
-      } catch (e) {
-        throw e
-      }
-    },
-    async delete({ commit }, id) {
-      try {
-        await restClient.delete(`/users/${id}`)
-        commit('delete', id)
-      } catch (e) {
-        throw e
-      }
+      const res = await restClient.post('/users', user)
+      commit('add', res.data)
+      return res.data
     }
+  },
+  resend(_, id) {
+    return restClient.post(`/users/${id}/resend`, id)
+  },
+  async update({ commit }, user) {
+    await restClient.put(`/users/${user.id}`, user)
+    commit('update', user)
+  },
+  async delete({ commit }, id) {
+    await restClient.delete(`/users/${id}`)
+    commit('delete', id)
   }
+
 }

@@ -2,59 +2,47 @@ import restClient from '../../lib/restClient'
 
 export default {
   async list() {
-    try {
-      const res = await restClient.get('/channels')
 
-      return res.data
-    } catch (e) {
-      throw e
-    }
+    const res = await restClient.get('/channels')
+
+    return res.data
+
   },
   async select() {
-    try {
-      const res = await restClient.get('/channels')
 
-      return res.data.map(c => {
-        return { text: c.name, value: c.key }
-      })
-    } catch (e) {
-      throw e
-    }
+    const res = await restClient.get('/channels')
+
+    return res.data.map(c => {
+      return { text: c.name, value: c.key }
+    })
+
   },
   async show(id) {
-    try {
-      const res = await restClient.get(`/channels/${id}`)
 
-      return res.data
-    } catch (e) {
-      throw e
-    }
+    const res = await restClient.get(`/channels/${id}`)
+
+    return res.data
+
   },
   async delete(id) {
-    try {
-      const res = await restClient.delete(`/channels/${id}`)
 
-      return res.data
-    } catch (e) {
-      throw e
-    }
+    const res = await restClient.delete(`/channels/${id}`)
+
+    return res.data
+
   },
   async create(params) {
-    try {
-      const res = await restClient.post('/channels', params)
 
-      return res.data
-    } catch (e) {
-      throw e
-    }
+    const res = await restClient.post('/channels', params)
+
+    return res.data
+
   },
   async update(params) {
-    try {
-      const res = await restClient.put(`/channels/${params.id}`, params)
 
-      return res.data
-    } catch (e) {
-      throw e
-    }
+    const res = await restClient.put(`/channels/${params.id}`, params)
+
+    return res.data
+
   }
 }
