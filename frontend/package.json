@@ -46,14 +46,52 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/vue3-essential",
+      "plugin:vue/essential",
       "eslint:recommended"
     ],
     "rules": {
+      "no-console": "off",
       "vue/valid-v-slot": [
         "error",
         {
           "allowModifiers": true
+        }
+      ],
+      "vue/multi-word-component-names": [
+        "error",
+        {
+          "ignores": [
+            "Password",
+            "Login",
+            "Attributes",
+            "Activate",
+            "Traits",
+            "Identities",
+            "Events",
+            "Structure",
+            "Condition",
+            "Targeting",
+            "Properties",
+            "Hooks",
+            "Capping",
+            "Users",
+            "User",
+            "Reactions",
+            "Profiles",
+            "Profile",
+            "Privacy",
+            "Organization",
+            "Event",
+            "Dashboard",
+            "Contexts",
+            "Context",
+            "Channels",
+            "Audiences",
+            "Audience",
+            "Analyze",
+            "Actions",
+            "Action"
+          ]
         }
       ]
     },
