@@ -39,8 +39,6 @@ import ComputedTrait from '../components/ComputedTrait.vue'
 
 import Privacy from '../components/Privacy.vue'
 
-//import { methods } from '../components/App'
-
 Vue.use(VueRouter)
 
 function requireAuth(to, from, next) {
