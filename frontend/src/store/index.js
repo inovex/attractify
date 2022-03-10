@@ -10,7 +10,7 @@ import users from './modules/users'
 Vue.use(Vuex)
 
 const vuexLocal = new VuexPersistence({
-  storage: window.sessionStorage
+  storage: window.localStorage
 })
 
 const store = new Vuex.Store({
