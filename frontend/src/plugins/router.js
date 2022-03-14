@@ -41,11 +41,13 @@ import Privacy from '../components/Privacy.vue'
 
 Vue.use(VueRouter)
 
+const stayLoggedInTime = 86400000;
+
 function requireAuth(to, from, next) {
   const user = store.getters['user/get']
 
   if (user) {
-    if (user.timestamp > ((Date.now() - 1800000))) {
+    if (user.timestamp > ((Date.now() - stayLoggedInTime))) {
       user.timestamp = Date.now()
       next()
       return
