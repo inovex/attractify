@@ -1,6 +1,3 @@
-
-
-
 # ℹ️ Attractify Documentation
 
 The following docs will help you to better understand, testdrive and later set up Attractify in production.

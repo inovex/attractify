@@ -1,45 +1,39 @@
-
-
 # Introduction to Attractify
-With this tutorial we want to show you how to integrate Attractify into any application and which modules are needed.
+In this tutorial we want to show you how to integrate Attractify into your application.
 
-For more detailed information about a module, e.g. which parameters are needed and what effect they have, take a look at our detailed [documentation](https://github.com/inovex/attractify/wiki).
-
+For more detailed information about a single Attractify component, e.g. which parameters are needed to track an event and what effect they have, please take a look at our detailed [reference](https://github.com/inovex/attractify/blob/master/docs/reference.md).
 
 ## Creating a channel
-In the first step we create a channel. This is used to sort users by the type of channel they use. For example, if you offer a website and an app, create a separate channel for each.
+In the first step we will be creating a channel. This is used to assign users to their access origin and to better target them later. For example, if you have a website and an app, create a separate channel for each of them.
 
-You can find the channels in the left menu of the Attractify backend. In the example, a channel is created for a website.
+You can find the channels in the left menu of the Attractify backend. In our example, the channel `Web` is created for a website. The `name` is to identiy the channel later in Attractify. The `key` is used to reference the channel from the SDK and in API calls. We suggest to pick a lowercase key without spaces and special chars, e.g. `web`.
+
 ![](/docs/assets/channel.gif)
-
 
 ## Create a context
 In order to capture, which boundary conditions the user brings along, one can classify it by a context. For example, the country from which the user connects or the type of browser can be determined.
 
 In the example, we create a context that records the user's connection speed.
-![](/docs/assets/context.gif)
 
+![](/docs/assets/context.gif)
 
 ## Generate API key
 In order for the Attractify script you wrote can authenticate itself against the backend, you need an API key. This is created in the backend under the API Access tab.
 
 The key generated here must be stored in the script you wrote yourself.
+
 ![](/docs/assets/api-key.gif)
-
-
 ## Creating events
-To create an event, we select the appropriate tab in the left pane of the Attractify backend. 
+To create an event, we select the appropriate tab in the left pane of the Attractify backend.
 Then we press the "+" button and enter the desired data.
 
 The example shows how an event could look like, which captures the title of the visited page.
 
 ![](/docs/assets/events.gif)
-
-
 ## Tracking events
 In the example, the user visits our website. We track which page he visited and then look at the event log.
 
-Javascript code for the website tracking:
+JavaScript code for the website tracking:
 
 ```
 const apiConfig = {
@@ -91,7 +85,7 @@ function queryCustomData(){
   };
 };
 const traits = queryCustomData();
-  
+
 attractify.identify(undefined, 'user_id', traits);
 ```
 
@@ -142,7 +136,7 @@ Display the statistics for played out discount codes:
 ![](/docs/assets/analyze-action.gif)
 
 
-## Process DSGVO requests 
+## Process DSGVO requests
 Data protection is more important than ever. At Attractify, we want to help you comprehensively provide user data to the appropriate user with minimal effort when he makes a request, or wants his data deleted. Another feature allows you to "lock" profiles. Once a profile has this status, no further data from Attractify will be assigned to that user.
 
 
