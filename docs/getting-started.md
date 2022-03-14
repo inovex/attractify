@@ -11,8 +11,8 @@ In the first step we will be creating a channel. This is used to assign users to
 
 You can find the channels in the left menu of the Attractify backend. In our example, the channel `Web` is created for a website. 
 
-`Name`: identify the channel later in Attractify.
-`Key`: reference the channel from the SDK and in API calls. We suggest a lowercase key without spaces and special chars, e.g. `web`.
+- `Name`: identify the channel later in Attractify.
+- `Key`: reference the channel from the SDK and in API calls. We suggest a lowercase key without spaces and special chars, e.g. `web`.
 
 ![](/docs/assets/channel.gif)
 
@@ -21,10 +21,10 @@ In order to capture, which boundary conditions the user brings along, you can de
 
 You can find the contexts in the left menu of the Attractify backend. In our example, the context is defined for the channel `Web`.
 
-`Key`: reference the channel from the SDK and in API calls. We suggest a lowercase key without spaces and special chars, e.g. `conn`.
-`Type`: defines the Datatype used for the property, e.g. `string`. 
-`Regex Pattern`: used to ignore requests not matching the pattern.
-`Required`: If set, requests without that property will be ignored. 
+- `Key`: reference the channel from the SDK and in API calls. We suggest a lowercase key without spaces and special chars, e.g. `conn`.
+- `Type`: defines the Datatype used for the property, e.g. `string`. 
+- `Regex Pattern`: used to ignore requests not matching the pattern.
+- `Required`: If set, requests without that property will be ignored. 
 
 ![](/docs/assets/context.gif)
 
@@ -39,13 +39,14 @@ Now we create our first event. Events are used to track the users behaviour.
 
 You can find the Events in the left menu of the Attractify backend. In our example the event tracks the visited page.
 
-`Name`: reference the channel from the SDK and in API calls, e.g. `pageName`.
-`Description`: describe the use of the event.
+ - `Name`: reference the channel from the SDK and in API calls, e.g.`pageName`. 
+ - `Description`: describe the use of the event.
+
 Properties:
-`key`:  reference the channel from the SDK and in API calls, e.g. `pageName`.
-`Type`: defines the Datatype used for the property, e.g. `string`. 
-`Regex Pattern`: used to ignore requests not matching the pattern.
-`Required`: If set, requests without that property will be ignored. 
+ - `key`:  reference the channel from the SDK and in API calls, e.g.
+ - `pageName`. `Type`: defines the Datatype used for the property, e.g. `string`. 
+ - `Regex Pattern`: used to ignore requests not matching the pattern. 
+ - `Required`: If set, requests without that property will be ignored.
 
 ![](/docs/assets/events.gif)
 ## Tracking events
