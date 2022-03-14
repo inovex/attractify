@@ -1,3 +1,6 @@
+
+
+
 # Introduction to Attractify
 In this tutorial we want to show you how to integrate Attractify into your application.
 
@@ -6,28 +9,43 @@ For more detailed information about a single Attractify component, e.g. which pa
 ## Creating a channel
 In the first step we will be creating a channel. This is used to assign users to their access origin and to better target them later. For example, if you have a website and an app, create a separate channel for each of them.
 
-You can find the channels in the left menu of the Attractify backend. In our example, the channel `Web` is created for a website. The `name` is to identiy the channel later in Attractify. The `key` is used to reference the channel from the SDK and in API calls. We suggest to pick a lowercase key without spaces and special chars, e.g. `web`.
+You can find the channels in the left menu of the Attractify backend. In our example, the channel `Web` is created for a website. 
+
+`Name`: identify the channel later in Attractify.
+`Key`: reference the channel from the SDK and in API calls. We suggest a lowercase key without spaces and special chars, e.g. `web`.
 
 ![](/docs/assets/channel.gif)
 
 ## Create a context
-In order to capture, which boundary conditions the user brings along, one can classify it by a context. For example, the country from which the user connects or the type of browser can be determined.
+In order to capture, which boundary conditions the user brings along, you can define allowed context properties. For example, the country from which the user connects or the type of browser can be determined.
 
-In the example, we create a context that records the user's connection speed.
+You can find the contexts in the left menu of the Attractify backend. In our example, the context is defined for the channel `Web`.
+
+`Key`: reference the channel from the SDK and in API calls. We suggest a lowercase key without spaces and special chars, e.g. `conn`.
+`Type`: defines the Datatype used for the property, e.g. `string`. 
+`Regex Pattern`: used to ignore requests not matching the pattern.
+`Required`: If set, requests without that property will be ignored. 
 
 ![](/docs/assets/context.gif)
 
 ## Generate API key
-In order for the Attractify script you wrote can authenticate itself against the backend, you need an API key. This is created in the backend under the API Access tab.
+In order for the Attractify script to authenticate itself, you need an API key. Your Attractify script won't work without an API key.
 
-The key generated here must be stored in the script you wrote yourself.
+You can find the API keys in the left menu of the Attractify backend. You can create multiple API keys, for a given channel. In our example an API key for the channel `Web` is created.
 
 ![](/docs/assets/api-key.gif)
 ## Creating events
-To create an event, we select the appropriate tab in the left pane of the Attractify backend.
-Then we press the "+" button and enter the desired data.
+Now we create our first event. Events are used to track the users behaviour. 
 
-The example shows how an event could look like, which captures the title of the visited page.
+You can find the Events in the left menu of the Attractify backend. In our example the event tracks the visited page.
+
+`Name`: reference the channel from the SDK and in API calls, e.g. `pageName`.
+`Description`: describe the use of the event.
+Properties:
+`key`:  reference the channel from the SDK and in API calls, e.g. `pageName`.
+`Type`: defines the Datatype used for the property, e.g. `string`. 
+`Regex Pattern`: used to ignore requests not matching the pattern.
+`Required`: If set, requests without that property will be ignored. 
 
 ![](/docs/assets/events.gif)
 ## Tracking events
