@@ -2,55 +2,55 @@
 
 
 # Introduction to Attractify
-In this tutorial we want to show you how to integrate Attractify into your application.
+In this tutorial, we want to show you how to integrate Attractify into your application.
 
 For more detailed information about a single Attractify component, e.g. which parameters are needed to track an event and what effect they have, please take a look at our detailed [reference](https://github.com/inovex/attractify/blob/master/docs/reference.md).
 
 ## Creating a channel
-In the first step we will be creating a channel. This is used to assign users to their access origin and to better target them later. For example, if you have a website and an app, create a separate channel for each of them.
+In the first step, we will be creating a **channel**. This is used to assign users to their access origin and to better target them later. For example, if you have a website and an app, create a separate **channel** for each of them.
 
-You can find the channels in the left menu of the Attractify backend. In our example, the channel `Web` is created for a website. 
+You can find the **channels** in the left menu of the Attractify backend. In our example, the channel `Web` is created for a website. 
 
-- `Name`: identify the channel later in Attractify.
-- `Key`: reference the channel from the SDK and in API calls. We suggest a lowercase key without spaces and special chars, e.g. `web`.
+- `Name`: identify the **channel** later in Attractify.
+- `Key`: reference the **channel** from the SDK and in API calls. We suggest a lowercase key without spaces and special chars, e.g. `web`.
 
 ![](/docs/assets/channel.gif)
 
-## Create a context
+## Creating a context
 In order to capture, which boundary conditions the user brings along, you can define allowed context properties. For example, the country from which the user connects or the type of browser can be determined.
 
 You can find the contexts in the left menu of the Attractify backend. In our example, the context is defined for the channel `Web`.
 
-- `Key`: reference the channel from the SDK and in API calls. We suggest a lowercase key without spaces and special chars, e.g. `conn`.
+- `Key`: reference the **context property** from the SDK and in API calls. We suggest a lowercase key without spaces and special chars, e.g. `conn`.
 - `Type`: defines the Datatype used for the property, e.g. `string`. 
 - `Regex Pattern`: used to ignore requests not matching the pattern.
 - `Required`: If set, requests without that property will be ignored. 
 
 ![](/docs/assets/context.gif)
 
-## Generate API key
-In order for the Attractify script to authenticate itself, you need an API key. Your Attractify script won't work without an API key.
+## Generating an API key
+In order for the Attractify script to authenticate itself, you need an API key. Your Attractify script won't work without an **API key**.
 
-You can find the API keys in the left menu of the Attractify backend. You can create multiple API keys, for a given channel. In our example an API key for the channel `Web` is created.
+You can find the **API keys** in the left menu of the Attractify backend. You can create multiple API keys, for a given channel. In our example, an **API key** for the channel `Web` is created.
 
 ![](/docs/assets/api-key.gif)
-## Creating events
-Now we create our first event. Events are used to track the users behaviour. 
+## Creating an event
+Now we create our first **event**. Events are used to track the user's behavior. 
 
-You can find the Events in the left menu of the Attractify backend. In our example the event tracks the visited page.
+You can find the **events** in the left menu of the Attractify backend. In our example, the **event** tracks the visited page.
 
- - `Name`: reference the channel from the SDK and in API calls, e.g.`pageName`. 
- - `Description`: describe the use of the event.
+ - `Name`: reference the **event** from the SDK and in API calls, e.g. `pageName`. 
+ - `Description`: describe the use of the **event**.
 
-Properties:
- - `key`:  reference the channel from the SDK and in API calls, e.g.
- - `pageName`. `Type`: defines the Datatype used for the property, e.g. `string`. 
+#### Properties:
+ - `key`:  reference the **event property** from the SDK and in API calls, e.g. `pageName`.
+ - `Type`: datatype used for the property, e.g. `string`. 
  - `Regex Pattern`: used to ignore requests not matching the pattern. 
  - `Required`: If set, requests without that property will be ignored.
 
 ![](/docs/assets/events.gif)
-## Tracking events
-In the example, the user visits our website. We track which page he visited and then look at the event log.
+## Tracking an event
+In the example, the user visits our website. We **track** which page he visited and then look at the event log.
 
 JavaScript code for the website tracking:
 
@@ -71,22 +71,38 @@ attractify.track("Page Viewed", {
 ![](/docs/assets/tracking-event.gif)
 
 
-## Creating Computed Traits
-As the user visits your website, Attractify can learn and provide a better and better user experience as time goes on. Computed traits play a crucial role in this. These are calculated dynamically and in real time by incoming events.
+## Creating a Computed Trait
+As the user visits your website, Attractify can learn and provide a better and better user experience as time goes on. **Computed traits** play a crucial role in this. These are calculated dynamically and in real-time by incoming events.
 
-For example, it can be captured which dress size the user chooses most often.
+You can find the **computed traits** in the left menu of the Attractify backend. In our example, the computed trait captures the last page change of the user and saves the timestamp.
+ - `Name`:  identify the **computed trait** later in Attractify, e.g. `Last Activity`. 
+ - `key`:  reference the **computed trait** from the SDK and in API calls, e.g. `pageName`.
+ - `Type`: defines how the value for the trait is computed, e.g. `Last Event`. 
+ - `Event`: the event which is used for the **computed trait**.
+ - `Property Name`: event property which is computed, or use the timestamp.
+ 
+ #### Event conditions:
+ You can add event conditions to restrain the computation. For example, you could only save the timestamp if the pageName property in our example exists.
+ - `Property`: property you want to check.
+ - `Operator`: method to compare the values, e.g. `Exists`.
+ - `Value`: value used for comparison.
+ 
 
-As a first small example, we will create a computed trait that captures the last activity of the user. For this we use an already created event "Page Viewed". In principle, any event could be used, since the timestamp from the tracking time of the event is used.
 ![](/docs/assets/computed-trait.gif)
 
 Now let's take a look at the result:
 ![](/docs/assets/computed-trait-example.gif)
 
 
-## Creating Custom Traits
+## Creating a Custom Trait
 You know your user better than Attractify - especially in the beginning. To store data from your systems directly in Attractify there are Custom Traits. They are filled by the SDK function "identify".
 
-A custom trait can be, for example, the department in which an employee works.
+You can find the **custom traits** in the left menu of the Attractify backend. In our example, the custom trait captures the department an employee works.
+
+ - `key`:  reference the **custom property** from the SDK and in API calls, e.g. `department`.
+ - `Type`: datatype used for the property, e.g. `string`. 
+ - `Regex Pattern`: used to ignore requests not matching the pattern. 
+ - `Required`: If set, requests without that property will be ignored.
 
 JavaScript code for attaching external data sources:
 ```
@@ -162,5 +178,5 @@ Data protection is more important than ever. At Attractify, we want to help you 
 Let's first look at how to delete any user data. Optionally, the data can be emailed to the user.
 ![](/docs/assets/gdpr-delete.gif)
 
-The example shows how to lock a specific profile. In the future Attractify will not store any further data about the user.
+The example shows how to lock a specific profile. In the future, Attractify will not store any further data about the user.
 ![](/docs/assets/gdpr-lock.gif)
