@@ -41,17 +41,24 @@ import Privacy from '../components/Privacy.vue'
 
 Vue.use(VueRouter)
 
+const stayLoggedInTime = 86400000;
+
 function requireAuth(to, from, next) {
   const user = store.getters['user/get']
 
   if (user) {
-    next()
-  } else {
-    next({
-      path: '/user/login',
-      query: { redirect: to.fullPath }
-    })
+    if (user.timestamp > ((Date.now() - stayLoggedInTime))) {
+      user.timestamp = Date.now()
+      next()
+      return
+    }
+    Vue.prototype.$bus.$emit('user:logout')
   }
+  next({
+    path: '/user/login',
+    query: { redirect: to.fullPath }
+  })
+
 }
 
 export default new VueRouter({

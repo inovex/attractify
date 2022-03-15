@@ -27,6 +27,7 @@ export default {
       try {
         let res = await restClient.post('/user/session', credentials)
         if (res.data) {
+          res.data.timestamp = Date.now()
           commit('set', res.data)
         }
       } catch (e) {
