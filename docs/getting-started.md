@@ -64,8 +64,8 @@ const attractify = new Attractify(
 );
 
 attractify.identify();
-attractify.track("Page Viewed", {
-  page: window.location.href.replace(window.location.origin, "")
+attractify.track("pageName", {
+  pageName: window.location.href.replace(window.location.origin, "")
 });
 ```
 ![](/docs/assets/tracking-event.gif)
