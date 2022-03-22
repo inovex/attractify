@@ -1,20 +1,6 @@
 # ℹ️ Attractify Documentation
 
 The following docs will help you to better understand, testdrive and later set up Attractify in production.
-
-## 🔎 About Attractify
-
-The amount of information a user is confronted with during their search for a specific thing is sometimes overwhelming. That's why we think it is essential to personalize the web and in app experience for your users during their journey.
-
-There are different approaches to solve these challenges. You can integrate web tracking, analyze the data in real time and try to predict the user's journey. However, you still need a service that takes over the evaluation and another service that then personalizes the experience for the user on your web site or app.
-
-Yes, this is possible, but we see two problems here:
-
-- The systems need to be extremely well connected.
-- In times of GDPR and CCPA, such sensitive data should not reside with a third-party provider.
-
-And these are the reasons why we developed Attractify. We needed a system that would allow us to personalize websites and apps without having to put the data in someone else's hands.
-
 ## Contents
 
 - Getting started with the demo
@@ -96,14 +82,12 @@ The frontend can either be launched in a Docker container if you don't have Node
 cd frontend
 ./dev.sh
 ```
-
 #### ...or locally
 
 ```
 cd frontend
 yarn serve
 ```
-
 ### Backend
 
 The backend can be started with a local Go installation. In the backend there are different services that perform different tasks:

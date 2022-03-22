@@ -1,7 +1,16 @@
 # Introduction to Attractify
 In this tutorial, we want to show you how to integrate Attractify into your application.
 
-For more detailed information about a single Attractify component, e.g. which parameters are needed to track an event and what effect they have, please take a look at our detailed [reference](https://github.com/inovex/attractify/blob/master/docs/reference.md).
+## Wait, what does Attractify do?
+First we help you to understand how your users behave across multiple channels. Then you can run your own cross-channel actions on them, like:
+
+- Display notifications across channels and track if a notification has been viewed by the user. Then hide that notification on all other channels if the user has viewed it.
+- Know if users have items in their cart when they return to your shop and display them a coupon code to push checkouts.
+- Detect which is the desired cloth size of your user and pre-select them on subsequent product detail pages.
+- Run discount code campaigns that are limited to a maximum number of codes.
+- Segment users based on their price sensitivity and show them relevant offers.
+
+We think developers know best how they should implement specific marketing campaigns. That is why Attracify does not offer predefined templates for these use cases. Instead we provide an API with SDKs that you can use to query if the current user is eligible for an action. Then you can run this action on the user and measure his interaction with it. This gives you the maximum flexibility and works on the web as well as in native apps.
 
 ## Creating a channel
 In the first step, we will be creating a **channel**. This is used to assign users to their access origin and to better target them later. For example, if you have a website and an app, create a separate **channel** for each of them.
