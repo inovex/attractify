@@ -79,6 +79,7 @@ services:
     restart: always
     volumes:
       - ./server/testdata/fixtures/postgres.sql:/docker-entrypoint-initdb.d/2_fixtures.sql
+      - ./server/config.sample.json:/app/config.json
 
   mariadb:
     image: ghcr.io/inovex/attractify/attractify-usecase-db
