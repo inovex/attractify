@@ -91,6 +91,11 @@ export default {
           link: '/events'
         },
         {
+          icon: 'mdi-clipboard-list-outline', //material design icons
+          text: 'Invalid Events',
+          link: '/invalid-events'
+        },
+        {
           icon: 'mdi-badge-account-outline',
           text: 'Contexts',
           link: '/contexts'

@@ -26,6 +26,7 @@ import Contexts from '../components/Contexts.vue'
 import Context from '../components/Context.vue'
 import Event from '../components/Event.vue'
 import Events from '../components/Events.vue'
+import InvalidEvents from '../components/InvalidEvents.vue'
 import EventLog from '../components/EventLog.vue'
 
 import Channels from '../components/Channels.vue'
@@ -91,7 +92,11 @@ export default new VueRouter({
       component: Event,
       beforeEnter: requireAuth
     },
-
+    {
+      path: '/invalid-events',
+      component: InvalidEvents,
+      beforeEnter: requireAuth
+    },
     {
       path: '/channels',
       component: Channels,
