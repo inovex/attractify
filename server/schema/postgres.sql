@@ -81,6 +81,16 @@ CREATE TABLE IF NOT EXISTS events (
 	updated_at timestamp NOT NULL DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS invalid_events (
+	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+	organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	name text NOT NULL,
+	properties jsonb NOT NULL DEFAULT '[]'::jsonb,
+	context jsonb NOT NULL DEFAULT '[]'::jsonb,
+	error text NOT NULL,
+	created_at timestamp NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS audiences (
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE ON UPDATE CASCADE,
