@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 
 	"attractify.io/platform/analytics"
@@ -56,10 +57,13 @@ func main() {
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
+	wg := sync.WaitGroup{}
+
 	go func() {
 		<-sigs
 		log.Println("Shutting consumer down")
 		cancel()
+		wg.Done()
 		app.DB.Close()
 		app.Analytics.Close()
 	}()
@@ -73,4 +77,7 @@ func main() {
 	app.Stream.Consume(ctx, app.Config.Stream.Topic, "0", func(m *stream.Msg) error {
 		return consumer.ProcessMsg(m)
 	})
+
+	wg.Add(1)
+	wg.Wait()
 }
