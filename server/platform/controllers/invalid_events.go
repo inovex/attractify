@@ -19,7 +19,7 @@ type InvalidEventsController struct {
 func InitInvalidEvents(router *gin.RouterGroup, app *app.App) {
 	c := EventsController{Router: router, App: app}
 	c.Router.GET("/invalid-events", c.List)
-	c.Router.DELETE("/events/:id", c.Delete)
+	c.Router.DELETE("/invalid-events/:id", c.Delete)
 }
 
 func (ec InvalidEventsController) List(c *gin.Context) {
@@ -52,7 +52,7 @@ func (ec InvalidEventsController) Delete(c *gin.Context) {
 
 	id := uuid.FromStringOrNil(c.Param("id"))
 	if err := ec.App.DB.DeleteInvalidEvent(c.Request.Context(), user.OrganizationID, id); err != nil {
-		ec.App.Logger.Warn("events.delete.deleteEvent", zap.Error(err))
+		ec.App.Logger.Warn("events.delete.deleteInvalidEvent", zap.Error(err))
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}

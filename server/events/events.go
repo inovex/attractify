@@ -58,7 +58,17 @@ func (e *Event) Track() error {
 	if e.params.Context != nil {
 		if err := e.validateContext(); err != nil {
 			fmt.Println("Context validation failed:", err)
-			//e.app.DB.CreateInvalidEvent( /*context, orgID, Eventname*/ )
+
+			invalidParams := db.CreateInvalidEventParams{
+				OrganizationID: e.params.OrganizationID,
+				Name:           e.params.Event,
+				Properties:     *e.params.Properties,
+				Context:        *e.params.Context,
+				Error:          "context validation failed", //TODO: add error message
+				CreatedAt:      e.params.Time,
+			}
+
+			e.app.DB.CreateInvalidEvent(e.ctx, invalidParams)
 			return err
 		}
 	}
@@ -67,7 +77,17 @@ func (e *Event) Track() error {
 	if e.params.Properties != nil {
 		if err := e.validateProperties(); err != nil {
 			fmt.Println("Properties validation failed:", err)
-			//e.app.DB.CreateInvalidEvent( /*context, orgID, Eventname*/ )
+
+			invalidParams := db.CreateInvalidEventParams{
+				OrganizationID: e.params.OrganizationID,
+				Name:           e.params.Event,
+				Properties:     *e.params.Properties,
+				Context:        *e.params.Context,
+				Error:          "property validation failed", //TODO: add error message
+				CreatedAt:      e.params.Time,
+			}
+
+			e.app.DB.CreateInvalidEvent(e.ctx, invalidParams)
 			return err
 		}
 	}
