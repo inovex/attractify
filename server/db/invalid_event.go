@@ -41,7 +41,7 @@ type CreateInvalidEventParams struct {
 
 func (d *DB) CreateInvalidEvent(ctx context.Context, arg CreateInvalidEventParams) (InvalidEvent, error) {
 	const q = `
-INSERT INTO events (
+INSERT INTO invalid_events (
 	organization_id,
     name,
 	properties,
@@ -68,7 +68,7 @@ RETURNING *
 
 func (d *DB) DeleteInvalidEvent(ctx context.Context, orgID, id uuid.UUID) error {
 	const q = `
-DELETE FROM events
+DELETE FROM invalid_events
 WHERE organization_id = $1
 AND id = $2
 `
@@ -80,7 +80,7 @@ AND id = $2
 func (d *DB) GetInvalidEvents(ctx context.Context, orgID uuid.UUID) ([]InvalidEvent, error) {
 	const q = `
 SELECT *
-FROM events
+FROM invalid_events
 WHERE organization_id = $1
 ORDER BY created_at DESC
 `
