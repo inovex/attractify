@@ -49,6 +49,7 @@ services:
       - type: volume
         source: postgres
         target: /db/data
+      - ./server/testdata/fixtures/postgres.sql:/docker-entrypoint-initdb.d/2_fixtures.sql
 
   clickhouse:
     image: ghcr.io/inovex/attractify/attractify-clickhouse
@@ -78,7 +79,6 @@ services:
       - clickhouse
     restart: always
     volumes:
-      - ./server/testdata/fixtures/postgres.sql:/docker-entrypoint-initdb.d/2_fixtures.sql
       - ./server/config.sample.json:/app/config.json
 
   mariadb:
