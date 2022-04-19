@@ -28,8 +28,8 @@ services:
       - attractify
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181/local
-      KAFKA_ADVERTISED_HOST_NAME: kafka
-      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://127.0.0.1:9092"
       KAFKA_ADVERTISED_PORT: 9092
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       KAFKA_CREATE_TOPICS: "events:1:0"
@@ -49,6 +49,7 @@ services:
       - type: volume
         source: postgres
         target: /db/data
+      - ./server/testdata/fixtures/postgres.sql:/docker-entrypoint-initdb.d/2_fixtures.sql
 
   clickhouse:
     image: ghcr.io/inovex/attractify/attractify-clickhouse

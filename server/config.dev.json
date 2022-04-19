@@ -4,9 +4,7 @@
   "db": "postgresql://attractify:attractify@127.0.0.1:5432/attractify?sslmode=disable",
   "analytics": "tcp://127.0.0.1:9000?database=attractify&compress=true",
   "stream": {
-    "brokers": [
-      "127.0.0.1:9092"
-    ],
+    "brokers": ["127.0.0.1:9092"],
     "topic": "events"
   },
   "server": {
