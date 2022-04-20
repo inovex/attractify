@@ -6,19 +6,32 @@
           <v-toolbar dark>
             <v-toolbar-title>Invalid Events</v-toolbar-title>
             <v-spacer></v-spacer>
-            <help name="events" />
+            <help name="invalid-events" />
           </v-toolbar>
 
           <v-data-table disable-pagination hide-default-footer :headers="headers" :items="eventSpecs">
             <template v-slot:item.action="{ item }">
-              <v-btn icon @click="edit(item)"> <v-icon title="Edit event">mdi-pencil</v-icon> </v-btn>&nbsp;
               <v-btn icon @click="remove(item)"> <v-icon title="Delete event">mdi-delete</v-icon> </v-btn>&nbsp;
             </template>
-            <template v-slot:item.name="{ item }">
+
+            <template v-slot:item.type="{ item }">
+              <!--<v-icon v-if="item.type === 'properties'">mdi-event-note</v-icon>
+              <v-icon v-if="item.type === 'context'">mdi-event-note</v-icon>-->
+              <span v-if="item.type === 'properties'">Property</span>
+              <span v-if="item.type === 'context'">Context</span>
+            </template>
+            <template v-slot:item.properties="{ item }">
               <span>{{ item.name }}</span>
             </template>
-            <template v-slot:item.description="{ item }">
+            <template v-slot:item.context="{ item }">
+              <span>{{ item.name }}</span>
+            </template>
+            <template v-slot:item.error="{ item }">
               <span>{{ item.description }}</span>
+            </template>
+
+            <template v-slot:item.name="{ item }">
+              <span>{{ item.name }}</span>
             </template>
             <template v-slot:item.createdAt="{ item }">
               <span>{{ formatDate(item.createdAt) }}</span>
@@ -33,7 +46,7 @@
 
 <script>
 import Help from './Help'
-import client from '../lib/rest/events'
+import client from '../lib/rest/invalidEvents'
 import moment from 'moment'
 
 export default {
@@ -42,12 +55,15 @@ export default {
     return {
       eventSpecs: [],
       headers: [
+        { text: 'Type', value: 'type' },
         {
           text: 'Name',
           align: 'left',
           value: 'name'
         },
-        { text: 'Description', value: 'description' },
+        { text: 'Error', value: 'error', sortable: false },
+        { text: 'Properties', value: 'properties', sortable: false },
+        { text: 'Context', value: 'context', sortable: false },
         { text: 'Created', value: 'createdAt' },
         { text: 'Actions', value: 'action', align: 'right', sortable: false }
       ],
@@ -58,12 +74,6 @@ export default {
     }
   },
   methods: {
-    create() {
-      this.$router.push({ path: '/invalid-events' })
-    },
-    edit(eventSpec) {
-      this.$router.push({ path: `/invalid-events/${eventSpec.id}` })
-    },
     remove(eventSpec) {
       if (confirm('Do you really want to delete this event?')) {
         client.delete(eventSpec.id)
