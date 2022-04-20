@@ -88,6 +88,7 @@ CREATE TABLE IF NOT EXISTS invalid_events (
 	properties jsonb NOT NULL DEFAULT '[]'::jsonb,
 	context jsonb NOT NULL DEFAULT '[]'::jsonb,
 	error text NOT NULL,
+	type text NOT NULL,
 	created_at timestamp NOT NULL DEFAULT now()
 );
 
