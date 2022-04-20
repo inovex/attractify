@@ -50,6 +50,18 @@ Please note, that if you delete an event, we still keep all tracked instances of
 
 `
   },
+  invalidevents: {
+    title: 'What are invalid event?',
+    body: `
+In the invalid event section you can find all events where the context or properties
+does not match the defined event.
+
+# Actions
+
+* Delete event
+
+`
+  },
   event: {
     title: 'Defining an event',
     body: `
