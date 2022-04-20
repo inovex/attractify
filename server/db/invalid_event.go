@@ -27,6 +27,7 @@ type InvalidEvent struct {
 	Properties     json.RawMessage `db:"properties"`
 	Context        json.RawMessage `db:"context"`
 	Error          string          `db:"error"`
+	Type           string          `db:"type"`
 	CreatedAt      time.Time       `db:"created_at"`
 }
 
@@ -36,6 +37,7 @@ type CreateInvalidEventParams struct {
 	Properties     json.RawMessage
 	Context        json.RawMessage
 	Error          string
+	Type           string
 	CreatedAt      time.Time
 }
 
@@ -47,9 +49,10 @@ INSERT INTO invalid_events (
 	properties,
 	context,
 	error,
+	type,
 	created_at
 ) VALUES (
-    $1, $2, $3, $4, $5, $6
+    $1, $2, $3, $4, $5, $6, $7
 )
 RETURNING *
 `
@@ -60,6 +63,7 @@ RETURNING *
 		arg.Properties,
 		arg.Context,
 		arg.Error,
+		arg.Type,
 		arg.CreatedAt,
 	)
 	var t InvalidEvent

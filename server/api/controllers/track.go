@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
 	"attractify.io/platform/api/requests"
@@ -40,8 +39,6 @@ func (tc TrackController) Track(c *gin.Context) {
 		Properties:     req.Properties,
 		Context:        req.Context,
 	}
-
-	fmt.Println("Sending track message to stream")
 
 	if err := tc.App.Stream.Track(c.Request.Context(), msg); err != nil {
 		tc.App.Logger.Warn("api.track.track.sendToStream", zap.Error(err))

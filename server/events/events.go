@@ -3,7 +3,6 @@ package events
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"attractify.io/platform/analytics"
@@ -49,7 +48,6 @@ func (e Event) Profile() *db.Profile {
 }
 
 func (e *Event) Track() error {
-	fmt.Println("Track Event")
 	if err := e.getEvent(); err != nil {
 		return err
 	}
@@ -57,14 +55,14 @@ func (e *Event) Track() error {
 	// Validate and prepare context properties.
 	if e.params.Context != nil {
 		if err := e.validateContext(); err != nil {
-			fmt.Println("Context validation failed:", err)
 
 			invalidParams := db.CreateInvalidEventParams{
 				OrganizationID: e.params.OrganizationID,
 				Name:           e.params.Event,
 				Properties:     *e.params.Properties,
 				Context:        *e.params.Context,
-				Error:          "context validation failed", //TODO: add error message
+				Error:          err.Error(),
+				Type:           "context",
 				CreatedAt:      e.params.Time,
 			}
 
@@ -76,14 +74,14 @@ func (e *Event) Track() error {
 	// Validate and prepare event properties.
 	if e.params.Properties != nil {
 		if err := e.validateProperties(); err != nil {
-			fmt.Println("Properties validation failed:", err)
 
 			invalidParams := db.CreateInvalidEventParams{
 				OrganizationID: e.params.OrganizationID,
 				Name:           e.params.Event,
 				Properties:     *e.params.Properties,
 				Context:        *e.params.Context,
-				Error:          "property validation failed", //TODO: add error message
+				Error:          err.Error(),
+				Type:           "properties",
 				CreatedAt:      e.params.Time,
 			}
 

@@ -40,6 +40,7 @@ func (ec InvalidEventsController) List(c *gin.Context) {
 			Properties:     t.Properties,
 			Context:        t.Context,
 			Error:          t.Error,
+			Type:           t.Type,
 			CreatedAt:      t.CreatedAt,
 		})
 	}
