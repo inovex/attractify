@@ -17,7 +17,7 @@ type InvalidEventsController struct {
 }
 
 func InitInvalidEvents(router *gin.RouterGroup, app *app.App) {
-	c := EventsController{Router: router, App: app}
+	c := InvalidEventsController{Router: router, App: app}
 	c.Router.GET("/invalid-events", c.List)
 	c.Router.DELETE("/invalid-events/:id", c.Delete)
 }

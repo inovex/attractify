@@ -21,13 +21,13 @@
               <span v-if="item.type === 'context'">Context</span>
             </template>
             <template v-slot:item.properties="{ item }">
-              <span>{{ item.name }}</span>
+              <span>{{ item.properties }}</span>
             </template>
             <template v-slot:item.context="{ item }">
-              <span>{{ item.name }}</span>
+              <span>{{ item.context }}</span>
             </template>
             <template v-slot:item.error="{ item }">
-              <span>{{ item.description }}</span>
+              <span>{{ item.error }}</span>
             </template>
 
             <template v-slot:item.name="{ item }">
