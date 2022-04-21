@@ -49,7 +49,6 @@ INSERT INTO invalid_events (
     name,
 	properties,
 	context,
-	error,
 	type,
 	created_at
 ) VALUES (
