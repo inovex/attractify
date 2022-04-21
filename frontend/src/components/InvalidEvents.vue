@@ -60,6 +60,7 @@
           <v-card outlined class="pa-2">
             <pre style="overflow: auto">
                   <p style="color: green">{{ detailView.displaySchema.valid }}</p>
+                  <p style="color: red">{{ detailView.displaySchema.invalid }}</p>
                   <p style="color: grey">{{ detailView.displaySchema.notSet }}</p>
                </pre>
           </v-card>
@@ -86,6 +87,7 @@ export default {
         displayName: '',
         displaySchema: {
           valid: {},
+          invalid: {},
           notSet: {}
         }
       },
@@ -143,6 +145,15 @@ export default {
             ).structure
             var result = this.getValidateJSON(json, this.getJSONFromArray(schema), {})
 
+            console.log(result)
+
+            for (let elem in json) {
+              if (!result['notSet'][elem] && !result['valid'][elem]) {
+                if (!result['invalid']) result['invalid'] = {}
+                result['invalid'][elem] = json[elem]
+              }
+            }
+
             this.detailView = {
               displayName: 'Context',
               displaySchema: result
@@ -180,17 +191,19 @@ export default {
     },
     getValidateJSON(json, schema, result) {
       for (let elem in schema) {
-        if (json[elem] == null) {
+        if (!json[elem]) {
           if (!result['notSet']) result['notSet'] = {}
           result['notSet'][elem] = schema[elem]
           continue
         }
+
         if (typeof schema[elem] === 'string') {
           //TODO: check if type is correct
           if (!result['valid']) result['valid'] = {}
-          result['valid'][elem] = schema[elem]
+          result['valid'][elem] = json[elem]
           continue
         }
+
         var recursive = this.getValidateJSON(json[elem], schema[elem], {})
         for (let rec in recursive) {
           result[rec][elem] = recursive[rec]
