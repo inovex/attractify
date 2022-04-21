@@ -58,10 +58,10 @@ func (e *Event) Track() error {
 
 			invalidParams := db.CreateInvalidEventParams{
 				OrganizationID: e.params.OrganizationID,
+				Channel:        e.params.Channel,
 				Name:           e.params.Event,
 				Properties:     *e.params.Properties,
 				Context:        *e.params.Context,
-				Error:          err.Error(),
 				Type:           "context",
 				CreatedAt:      e.params.Time,
 			}
@@ -77,10 +77,10 @@ func (e *Event) Track() error {
 
 			invalidParams := db.CreateInvalidEventParams{
 				OrganizationID: e.params.OrganizationID,
+				Channel:        e.params.Channel,
 				Name:           e.params.Event,
 				Properties:     *e.params.Properties,
 				Context:        *e.params.Context,
-				Error:          err.Error(),
 				Type:           "properties",
 				CreatedAt:      e.params.Time,
 			}

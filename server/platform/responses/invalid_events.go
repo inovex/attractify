@@ -10,10 +10,10 @@ import (
 type InvalidEvent struct {
 	ID             uuid.UUID       `json:"id"`
 	OrganizationID uuid.UUID       `json:"organizationId"`
+	Channel        string          `json:"channel"`
 	Name           string          `json:"name"`
 	Properties     json.RawMessage `json:"properties"`
 	Context        json.RawMessage `json:"context"`
-	Error          string          `json:"error"`
 	Type           string          `json:"type"`
 	CreatedAt      time.Time       `json:"createdAt"`
 }

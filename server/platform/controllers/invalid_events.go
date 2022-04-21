@@ -36,10 +36,10 @@ func (ec InvalidEventsController) List(c *gin.Context) {
 		res = append(res, responses.InvalidEvent{
 			ID:             t.ID,
 			OrganizationID: t.OrganizationID,
+			Channel:        t.Channel,
 			Name:           t.Name,
 			Properties:     t.Properties,
 			Context:        t.Context,
-			Error:          t.Error,
 			Type:           t.Type,
 			CreatedAt:      t.CreatedAt,
 		})
