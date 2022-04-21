@@ -91,7 +91,7 @@ export default {
           link: '/events'
         },
         {
-          icon: 'mdi-clipboard-list-outline', //material design icons
+          icon: 'mdi-clipboard-alert-outline',
           text: 'Invalid Events',
           link: '/invalid-events'
         },
