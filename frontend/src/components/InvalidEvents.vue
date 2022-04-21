@@ -125,8 +125,10 @@ export default {
         try {
           const properties = eventClient.show(event.id)
           properties.then((properties) => {
-            const schema = properties.structure
-            var result = this.getValidateJSON(json, this.getJSONFromArray(schema), {})
+            const schemaJSON = this.getJSONFromArray(properties.structure)
+            var result = this.getValidateJSON(json, schemaJSON, {})
+
+            result.invalid = this.addInvalidJSON(json, result.notSet, result.valid)
 
             this.detailView = {
               displayName: 'Properties',
@@ -143,16 +145,10 @@ export default {
             const schema = contexts.find(
               (c) => c.organizationID === event.organizationID && c.channel === event.channel
             ).structure
-            var result = this.getValidateJSON(json, this.getJSONFromArray(schema), {})
+            const schemaJSON = this.getJSONFromArray(schema)
+            var result = this.getValidateJSON(json, schemaJSON, {})
 
-            console.log(result)
-
-            for (let elem in json) {
-              if (!result['notSet'][elem] && !result['valid'][elem]) {
-                if (!result['invalid']) result['invalid'] = {}
-                result['invalid'][elem] = json[elem]
-              }
-            }
+            result.invalid = this.addInvalidJSON(json, result.notSet, result.valid)
 
             this.detailView = {
               displayName: 'Context',
@@ -207,6 +203,24 @@ export default {
         var recursive = this.getValidateJSON(json[elem], schema[elem], {})
         for (let rec in recursive) {
           result[rec][elem] = recursive[rec]
+        }
+      }
+      return result
+    },
+    addInvalidJSON(json, notSet, valid) {
+      var result = {}
+      for (let elem in json) {
+        if (typeof json[elem] === 'object') {
+          var recursive = this.addInvalidJSON(json[elem], notSet[elem], valid[elem])
+
+          for (let rec in recursive) {
+            if (!result[rec]) result[rec] = {}
+            result[rec][elem] = recursive[rec]
+          }
+          continue
+        }
+        if (!notSet || (notSet && !notSet[elem] && !valid) || (valid && !valid[elem])) {
+          result[elem] = json[elem]
         }
       }
       return result
