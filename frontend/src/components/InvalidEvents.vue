@@ -174,7 +174,6 @@ export default {
     },
     getValidateJSON(json, schema, result) {
       for (let elem in schema) {
-        console.log(elem)
         if (!json[elem]) {
           if (!result['notSet']) result['notSet'] = {}
           result['notSet'][elem] = schema[elem]
@@ -210,12 +209,12 @@ export default {
 
           for (let rec in recursive) {
             if (!result[elem]) result[elem] = {}
-            result[elem][rec] = typeof recursive[rec]
+            result[elem][rec] = recursive[rec]
           }
           continue
         }
         if ((!notSet || !notSet[elem]) && (!valid || !valid[elem])) {
-          result[elem] = typeof json[elem]
+          result[elem] = json[elem]
         }
       }
       return result
