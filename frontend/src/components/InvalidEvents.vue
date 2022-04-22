@@ -204,12 +204,12 @@ export default {
 
           for (let rec in recursive) {
             if (!result[elem]) result[elem] = {}
-            result[elem][rec] = recursive[rec]
+            result[elem][rec] = typeof recursive[rec]
           }
           continue
         }
         if (!notSet || (notSet && !notSet[elem] && !valid) || (valid && !valid[elem])) {
-          result[elem] = json[elem]
+          result[elem] = typeof json[elem]
         }
       }
       return result
