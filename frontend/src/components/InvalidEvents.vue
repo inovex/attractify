@@ -110,9 +110,10 @@ export default {
 
       if (event.type === 'properties') {
         try {
-          const properties = eventClient.show(event.id)
+          const properties = eventClient.list()
           properties.then((properties) => {
-            const schemaJSON = this.getJSONFromArray(properties.structure)
+            const schema = properties.find((e) => e.organizationID === event.organizationID && e.name === event.name)
+            const schemaJSON = this.getJSONFromArray(schema.structure)
             var result = this.getValidateJSON(json, schemaJSON, {})
 
             result.invalid = this.addInvalidJSON(json, result.notSet, result.valid)
@@ -134,7 +135,6 @@ export default {
             ).structure
             const schemaJSON = this.getJSONFromArray(schema)
             var result = this.getValidateJSON(json, schemaJSON, {})
-
             result.invalid = this.addInvalidJSON(json, result.notSet, result.valid)
 
             this.detailView = {
@@ -174,6 +174,7 @@ export default {
     },
     getValidateJSON(json, schema, result) {
       for (let elem in schema) {
+        console.log(elem)
         if (!json[elem]) {
           if (!result['notSet']) result['notSet'] = {}
           result['notSet'][elem] = schema[elem]
@@ -181,7 +182,8 @@ export default {
         }
 
         if (typeof schema[elem] === 'string') {
-          if (typeof json[elem] !== schema[elem]) {
+          const jsonType = typeof json[elem]
+          if (jsonType.replace('number', 'integer') !== schema[elem]) {
             continue
           }
           if (!result['valid']) result['valid'] = {}
@@ -200,7 +202,11 @@ export default {
       var result = {}
       for (let elem in json) {
         if (typeof json[elem] === 'object') {
-          var recursive = this.addInvalidJSON(json[elem], notSet[elem], valid[elem])
+          var recursive = this.addInvalidJSON(
+            json[elem],
+            notSet ? notSet[elem] : 'empty',
+            valid ? valid[elem] : 'empty'
+          )
 
           for (let rec in recursive) {
             if (!result[elem]) result[elem] = {}
@@ -208,7 +214,7 @@ export default {
           }
           continue
         }
-        if (!notSet || (notSet && !notSet[elem] && !valid) || (valid && !valid[elem])) {
+        if (!notSet || (!notSet[elem] && !valid) || !valid[elem]) {
           result[elem] = typeof json[elem]
         }
       }
