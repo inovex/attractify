@@ -214,7 +214,7 @@ export default {
           }
           continue
         }
-        if (!notSet || (!notSet[elem] && !valid) || !valid[elem]) {
+        if ((!notSet || !notSet[elem]) && (!valid || !valid[elem])) {
           result[elem] = typeof json[elem]
         }
       }
