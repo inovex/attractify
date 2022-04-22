@@ -21,22 +21,9 @@
             </template>
 
             <template v-slot:item.type="{ item }">
-              <!--<v-icon v-if="item.type === 'properties'">mdi-event-note</v-icon>
-              <v-icon v-if="item.type === 'context'">mdi-event-note</v-icon>-->
               <span v-if="item.type === 'properties'">Property</span>
               <span v-if="item.type === 'context'">Context</span>
             </template>
-            <!--
-            <template v-slot:item.properties="{ item }">
-              <span>{{ item.properties }}</span>
-            </template>
-            <template v-slot:item.context="{ item }">
-              <span>{{ item.context }}</span>
-            </template>
-            <template v-slot:item.error="{ item }">
-              <span>{{ item.error }}</span>
-            </template>
-            -->
 
             <template v-slot:item.name="{ item }">
               <span>{{ item.name }}</span>
@@ -194,7 +181,9 @@ export default {
         }
 
         if (typeof schema[elem] === 'string') {
-          //TODO: check if type is correct
+          if (typeof json[elem] !== schema[elem]) {
+            continue
+          }
           if (!result['valid']) result['valid'] = {}
           result['valid'][elem] = json[elem]
           continue
@@ -214,8 +203,8 @@ export default {
           var recursive = this.addInvalidJSON(json[elem], notSet[elem], valid[elem])
 
           for (let rec in recursive) {
-            if (!result[rec]) result[rec] = {}
-            result[rec][elem] = recursive[rec]
+            if (!result[elem]) result[elem] = {}
+            result[elem][rec] = recursive[rec]
           }
           continue
         }
