@@ -45,11 +45,14 @@
         <v-card-text>
           <h4>{{ detailView.displayName }}</h4>
           <v-card outlined class="pa-2">
-            <pre style="overflow: auto">
-                  <p style="color: green">{{ detailView.displaySchema.valid }}</p>
-                  <p style="color: red">{{ detailView.displaySchema.invalid }}</p>
-                  <p style="color: grey">{{ detailView.displaySchema.notSet }}</p>
-               </pre>
+            <pre style="overflow: auto; display: grid">
+              <h4>Valid</h4>
+              <p style="color: green">{{ detailView.displaySchema.valid }}</p>
+              <h4>Wrong value</h4>
+              <p style="color: red">{{ detailView.displaySchema.invalid }}</p>
+              <h4>Missing</h4>
+              <p style="color: grey">{{ detailView.displaySchema.notSet }}</p>
+            </pre>
           </v-card>
         </v-card-text>
       </v-card>
