@@ -31,7 +31,7 @@
             <template v-slot:item.createdAt="{ item }">
               <span>{{ formatDate(item.createdAt) }}</span>
             </template>
-            <template v-slot:no-data>No Event Definitions Available</template>
+            <template v-slot:no-data>No Invalid Events Available</template>
           </v-data-table>
         </v-card>
       </v-col>
@@ -46,12 +46,12 @@
           <h4>{{ detailView.displayName }}</h4>
           <v-card outlined class="pa-2">
             <pre style="overflow: auto; display: grid">
-              <h4>Valid</h4>
-              <p style="color: green">{{ detailView.displaySchema.valid }}</p>
-              <h4>Wrong value</h4>
-              <p style="color: red">{{ detailView.displaySchema.invalid }}</p>
-              <h4>Missing</h4>
-              <p style="color: grey">{{ detailView.displaySchema.notSet }}</p>
+              <h4 v-if="detailView.displaySchema.valid">Valid</h4>
+              <p v-if="detailView.displaySchema.valid" style="color: green">{{ detailView.displaySchema.valid }}</p>
+              <h4 v-if="detailView.displaySchema.invalid">Wrong value</h4>
+              <p v-if="detailView.displaySchema.invalid" style="color: red">{{ detailView.displaySchema.invalid }}</p>
+              <h4 v-if="detailView.displaySchema.notSet">Missing</h4>
+              <p v-if="detailView.displaySchema.notSet" style="color: grey">{{ detailView.displaySchema.notSet }}</p>
             </pre>
           </v-card>
         </v-card-text>
@@ -119,7 +119,7 @@ export default {
             const schemaJSON = this.getJSONFromArray(schema.structure)
             var result = this.getValidateJSON(json, schemaJSON, {})
 
-            result.invalid = this.addInvalidJSON(json, result.notSet, result.valid)
+            result.invalid = this.addInvalidJSON(json, result.notSet, result.valid, schemaJSON)
 
             this.detailView = {
               displayName: 'Properties',
@@ -138,7 +138,7 @@ export default {
             ).structure
             const schemaJSON = this.getJSONFromArray(schema)
             var result = this.getValidateJSON(json, schemaJSON, {})
-            result.invalid = this.addInvalidJSON(json, result.notSet, result.valid)
+            result.invalid = this.addInvalidJSON(json, result.notSet, result.valid, schemaJSON)
 
             this.detailView = {
               displayName: 'Context',
@@ -195,28 +195,36 @@ export default {
 
         var recursive = this.getValidateJSON(json[elem], schema[elem], {})
         for (let rec in recursive) {
+          if (!result[rec]) result[rec] = {}
           result[rec][elem] = recursive[rec]
         }
       }
       return result
     },
-    addInvalidJSON(json, notSet, valid) {
-      var result = {}
+    addInvalidJSON(json, notSet, valid, schema) {
+      var result
       for (let elem in json) {
         if (typeof json[elem] === 'object') {
           var recursive = this.addInvalidJSON(
             json[elem],
             notSet ? notSet[elem] : 'empty',
-            valid ? valid[elem] : 'empty'
+            valid ? valid[elem] : 'empty',
+            schema ? schema[elem] : 'empty'
           )
 
           for (let rec in recursive) {
+            if (!result) result = {}
             if (!result[elem]) result[elem] = {}
             result[elem][rec] = recursive[rec]
           }
           continue
         }
         if ((!notSet || !notSet[elem]) && (!valid || !valid[elem])) {
+          if (!result) result = {}
+          if (schema !== 'empty' && schema[elem]) {
+            result[elem] = (typeof json[elem]).replace('number', 'integer') + ' (correct type: ' + schema[elem] + ')'
+            continue
+          }
           result[elem] = json[elem]
         }
       }
