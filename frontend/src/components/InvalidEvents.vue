@@ -222,7 +222,7 @@ export default {
         if ((!notSet || !notSet[elem]) && (!valid || !valid[elem])) {
           if (!result) result = {}
           if (schema !== 'empty' && schema[elem]) {
-            result[elem] = (typeof json[elem]).replace('number', 'integer') + ' (correct type: ' + schema[elem] + ')'
+            result[elem] = `received ${(typeof json[elem]).replace('number', 'integer')}, expected ${schema[elem]}`
             continue
           }
           result[elem] = json[elem]
