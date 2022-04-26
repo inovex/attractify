@@ -21,7 +21,7 @@
             </template>
 
             <template v-slot:item.type="{ item }">
-              <span v-if="item.type === 'properties'">Property</span>
+              <span v-if="item.type === 'properties'">Properties</span>
               <span v-if="item.type === 'context'">Context</span>
             </template>
 
@@ -40,7 +40,7 @@
     <v-dialog v-model="dialog" max-width="700px" closeable>
       <v-card>
         <v-card-title>
-          <span class="headline">Event details</span>
+          <span class="headline">Invalid Event details</span>
         </v-card-title>
         <v-card-text>
           <h4>{{ detailView.displayName }}</h4>
@@ -113,8 +113,7 @@ export default {
 
       if (event.type === 'properties') {
         try {
-          const properties = eventClient.list()
-          properties.then((properties) => {
+          eventClient.list().then((properties) => {
             const schema = properties.find((e) => e.organizationID === event.organizationID && e.name === event.name)
             const schemaJSON = this.getJSONFromArray(schema.structure)
             var result = this.getValidateJSON(json, schemaJSON, {})
@@ -131,8 +130,7 @@ export default {
         }
       } else {
         try {
-          const contexts = contextClient.list()
-          contexts.then((contexts) => {
+          contextClient.list().then((contexts) => {
             const schema = contexts.find(
               (c) => c.organizationID === event.organizationID && c.channel === event.channel
             ).structure
@@ -166,13 +164,13 @@ export default {
     },
     getJSONFromArray(array) {
       var json = {}
-      array.forEach((element) => {
+      for (let element in array) {
         if (element.properties.type === 'object') {
           json[element.name] = this.getJSONFromArray(element.children)
         } else {
           json[element.name] = element.properties.type
         }
-      })
+      }
       return json
     },
     getValidateJSON(json, schema, result) {

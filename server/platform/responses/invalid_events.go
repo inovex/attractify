@@ -17,13 +17,3 @@ type InvalidEvent struct {
 	Type           string          `json:"type"`
 	CreatedAt      time.Time       `json:"createdAt"`
 }
-
-type InvalidEventOverview struct {
-	ID   uuid.UUID `json:"id"`
-	Name string    `json:"name"`
-}
-
-type InvalidEventProperty struct {
-	Key  string `json:"key"`
-	Type string `json:"type"`
-}

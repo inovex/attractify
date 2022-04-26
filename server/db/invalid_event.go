@@ -10,16 +10,6 @@ import (
 
 type InvalidEventType string
 
-type InvalidEventOverview struct {
-	ID   uuid.UUID `json:"id"`
-	Name string    `json:"name"`
-}
-
-type InvalidEventProperty struct {
-	Key  string `json:"key"`
-	Type string `json:"type"`
-}
-
 type InvalidEvent struct {
 	ID             uuid.UUID       `db:"id"`
 	OrganizationID uuid.UUID       `db:"organization_id"`

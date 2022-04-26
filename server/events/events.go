@@ -55,7 +55,6 @@ func (e *Event) Track() error {
 	// Validate and prepare context properties.
 	if e.params.Context != nil {
 		if err := e.validateContext(); err != nil {
-
 			invalidParams := db.CreateInvalidEventParams{
 				OrganizationID: e.params.OrganizationID,
 				Channel:        e.params.Channel,
@@ -74,7 +73,6 @@ func (e *Event) Track() error {
 	// Validate and prepare event properties.
 	if e.params.Properties != nil {
 		if err := e.validateProperties(); err != nil {
-
 			invalidParams := db.CreateInvalidEventParams{
 				OrganizationID: e.params.OrganizationID,
 				Channel:        e.params.Channel,

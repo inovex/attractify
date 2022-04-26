@@ -27,7 +27,7 @@ func (ec InvalidEventsController) List(c *gin.Context) {
 
 	ed, err := ec.App.DB.GetInvalidEvents(c.Request.Context(), user.OrganizationID)
 	if err != nil {
-		ec.App.Logger.Error("events.list.getInvalidEvents", zap.Error(err))
+		ec.App.Logger.Error("Invalidevents.list.getInvalidEvents", zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
@@ -53,7 +53,7 @@ func (ec InvalidEventsController) Delete(c *gin.Context) {
 
 	id := uuid.FromStringOrNil(c.Param("id"))
 	if err := ec.App.DB.DeleteInvalidEvent(c.Request.Context(), user.OrganizationID, id); err != nil {
-		ec.App.Logger.Warn("events.delete.deleteInvalidEvent", zap.Error(err))
+		ec.App.Logger.Warn("invalidEvents.delete.deleteInvalidEvent", zap.Error(err))
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}

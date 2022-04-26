@@ -73,5 +73,4 @@ func main() {
 	app.Stream.Consume(ctx, app.Config.Stream.Topic, "0", func(m *stream.Msg) error {
 		return consumer.ProcessMsg(m)
 	})
-
 }
