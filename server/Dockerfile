@@ -17,6 +17,7 @@ RUN apk add tzdata
 COPY --from=builder /app/cmd/attractify/attractify /bin/
 WORKDIR /app
 ADD frontend/dist /app/dist/
+ADD server/config.sample.json /app/config.json
 COPY --from=builder /app/cmd/server/server .
 COPY --from=builder /app/cmd/cron/cron .
 COPY --from=builder /app/cmd/consumer/consumer .

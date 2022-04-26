@@ -28,12 +28,3 @@ push:
 
 	docker push ghcr.io/inovex/attractify/attractify-postgres
 	docker push ghcr.io/inovex/attractify/attractify-server
-
-login-test:
-	docker login ghcr.io/inovex/attractify/
-
-up:
-	docker-compose up
-
-down:
-	docker-compose down

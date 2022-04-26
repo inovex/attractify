@@ -13,26 +13,26 @@ or use our fully managed Attractify hosting in our german data center.
 
 The work on Attractify is sponsored by [inovex.de](https://inovex.de)
 
-# 🧐 Wait, what does Attractify do?
+## 🔎 About Attractify
+The amount of information a user is confronted with during their search for a specific thing is sometimes overwhelming. That's why we think it is essential to personalize the web and in app experience for your users during their journey.
 
-First we help you to understand how your users behave across multiple channels. Then you can run your own cross-channel actions on them, like:
+There are different approaches to solve these challenges. You can integrate web tracking, analyze the data in real time and try to predict the user's journey. However, you still need a service that takes over the evaluation and another service that then personalizes the experience for the user on your web site or app.
 
-- Display notifications across channels and track if a notification has been viewed by the user. Then hide that notification on all other channels if the user has viewed it.
-- Know if users have items in their cart when they return to your shop and display them a coupon code to push checkouts.
-- Detect which is the desired cloth size of your user and pre-select them on subsequent product detail pages.
-- Run discount code campaigns that are limited to a maximum number of codes.
-- Segment users based on their price sensitivity and show them relevant offers.
+Yes, this is possible, but we see two problems here:
 
-We think developers know best how they should implement specific marketing campaigns. That is why Attracify does not offer predefined templates for these use cases. Instead we provide an API with SDKs that you can use to query if the current user is eligible for an action. Then you can run this action on the user and measure his interaction with it. This gives you the maximum flexibility and works on the web as well as in native apps.
+- The systems need to be extremely well connected.
+- In times of GDPR and CCPA, such sensitive data should not reside with a third-party provider.
+
+And these are the reasons why we developed Attractify. We needed a system that would allow us to personalize websites and apps without having to put the data in someone else's hands.
+
 
 # 🚀 How to get started
-
 The Attractify platform consists of two components. The API for developers and the UI for marketing manager.
 
 We provide a Docker Compose file that includes all the bits and pieces to get you started.
 
 ```
-curl -O https://raw.githubusercontent.com/inovex/attractify/master/docker-compose.demo.yml; docker-compose up
+curl -o compose.yaml "https://raw.githubusercontent.com/inovex/attractify/master/docker-compose.demo.yml" ; docker-compose up
 ```
 
 Or you can sign up for a free trial at [attractify.io](https://attractify.io).
@@ -45,7 +45,6 @@ User: `demo@example.com`\
 Password: `demo4321`
 
 # 🧪 The Attractify Experimentation Loop
-
 Our Attractify platform consists of four components that create the
 Attractify Experimentation Loop. We call it that way as we think, that each marketing
 campaign is an experiment and you need an easy way to adjust your campaign settings to
@@ -57,22 +56,21 @@ get the best results.
 4. **Insights**: Marketers love to see how their actions have performed. That is why insights helps to optimize their marketing efforts over time. Experiment, learn, repeat.
 
 ![inovex logo](/assets/experimentation-loop.jpg)
-# 🕵️‍♀️ Data Privacy
 
+# ❓ Documentation
+If you want to testdrive Attractify or deploy it in production, please see our [demo and installation guide](/docs/installation.md). To understand the various attractify features you can have a look at our [getting started guide](/docs/getting-started.md).
+# 🕵️‍♀️ Data Privacy
 You should own your user's data. That's why you can fully self host Attractify for free. And as we think GDPR could benefit us all, we have an integrated GDPR module to answer your users requests for data export, deletion and locking.
 
 # 📃 License
-
 Attractify and its SDKs are licensed under the MIT license which can be found in the [LICENSE](/LICENSE) file. We reserve the right to offer paid extensions later, that require the purchase of a commercial license. But the base platform will be free. Forever.
 
 # 📌 Contributing
-
 We love contributions. If you want to get started but don't know where exactly, <a href="mailto:marc.boeker+attractify@inovex.de?subject=Contributing to Attractify">send us a message</a> and we can give you a quick tour and talk about possible features/improvements we would love to see in Attractify.
 
 # 💬 Feedback
 We would love to hear your feedback on Attractify. Drop us a message in our `#support` channel on [Slack](https://attractify.slack.com) or [e-mail](mailto:info@attractify.io) us if you ran your first experiments.
 # 💻 Stack
-
 The backend is written in Go and the frontend in Vuejs. To store and process all the data, we use the following combination of awesome technology:
 
 - [CockroachDB](https://www.cockroachlabs.com/) (for metadata, user profiles and identities)
