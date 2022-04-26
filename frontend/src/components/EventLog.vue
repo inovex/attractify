@@ -136,12 +136,12 @@
           {{ event.profileId }}
           <h4>Properties</h4>
           <v-card outlined class="pa-2">
-            <pre>{{ event.properties }}</pre>
+            <pre style="overflow: auto">{{ event.properties }}</pre>
           </v-card>
           <br />
           <h4>Context</h4>
           <v-card outlined class="pa-2">
-            <pre style="overflow: auto;">{{ event.context }}</pre>
+            <pre style="overflow: auto">{{ event.context }}</pre>
           </v-card>
         </v-card-text>
       </v-card>
@@ -191,7 +191,7 @@ export default {
   },
   methods: {
     setEvent(e) {
-      this.selectedEvents = e.map(ev => ev.value)
+      this.selectedEvents = e.map((ev) => ev.value)
       this.resetAndLoad()
     },
     async loadEvents() {
