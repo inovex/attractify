@@ -12,6 +12,7 @@ type InvalidEventType string
 
 type InvalidEvent struct {
 	ID             uuid.UUID       `db:"id"`
+	EventID        uuid.UUID       `db:"event_id"`
 	OrganizationID uuid.UUID       `db:"organization_id"`
 	Channel        string          `db:"channel"`
 	Name           string          `db:"name"`
@@ -22,6 +23,7 @@ type InvalidEvent struct {
 }
 
 type CreateInvalidEventParams struct {
+	EventID        uuid.UUID
 	OrganizationID uuid.UUID
 	Channel        string
 	Name           string
@@ -34,20 +36,22 @@ type CreateInvalidEventParams struct {
 func (d *DB) CreateInvalidEvent(ctx context.Context, arg CreateInvalidEventParams) (InvalidEvent, error) {
 	const q = `
 INSERT INTO invalid_events (
+	event_id,
 	organization_id,
 	channel,
-    name,
+	name,
 	properties,
 	context,
 	type,
 	created_at
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7
+    $1, $2, $3, $4, $5, $6, $7, $8
 )
 RETURNING *
 `
 
 	row := d.db.QueryRowxContext(ctx, q,
+		arg.EventID,
 		arg.OrganizationID,
 		arg.Channel,
 		arg.Name,

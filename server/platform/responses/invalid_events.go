@@ -9,6 +9,7 @@ import (
 
 type InvalidEvent struct {
 	ID             uuid.UUID       `json:"id"`
+	EventID        uuid.UUID       `json:"eventId"`
 	OrganizationID uuid.UUID       `json:"organizationId"`
 	Channel        string          `json:"channel"`
 	Name           string          `json:"name"`
