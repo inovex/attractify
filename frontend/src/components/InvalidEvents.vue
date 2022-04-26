@@ -164,7 +164,7 @@ export default {
     },
     getJSONFromArray(array) {
       var json = {}
-      for (let element in array) {
+      for (let element of array) {
         if (element.properties.type === 'object') {
           json[element.name] = this.getJSONFromArray(element.children)
         } else {
