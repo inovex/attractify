@@ -86,7 +86,6 @@ CREATE TABLE IF NOT EXISTS invalid_events (
 	event_id uuid NOT NULL,
 	organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	channel text NOT NULL,
-	name text NOT NULL,
 	properties jsonb NOT NULL DEFAULT '[]'::jsonb,
 	context jsonb NOT NULL DEFAULT '[]'::jsonb,
 	type text NOT NULL,

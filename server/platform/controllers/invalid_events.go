@@ -5,7 +5,6 @@ import (
 
 	"attractify.io/platform/app"
 	"attractify.io/platform/db"
-	"attractify.io/platform/platform/requests"
 	"attractify.io/platform/platform/responses"
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
@@ -21,7 +20,6 @@ func InitInvalidEvents(router *gin.RouterGroup, app *app.App) {
 	c := InvalidEventsController{Router: router, App: app}
 	c.Router.GET("/invalid-events", c.List)
 	c.Router.DELETE("/invalid-events/:id", c.Delete)
-	c.Router.PUT("/invalid-events/update", c.Update)
 }
 
 func (ec InvalidEventsController) List(c *gin.Context) {
@@ -29,7 +27,7 @@ func (ec InvalidEventsController) List(c *gin.Context) {
 
 	ed, err := ec.App.DB.GetInvalidEvents(c.Request.Context(), user.OrganizationID)
 	if err != nil {
-		ec.App.Logger.Error("Invalidevents.list.getInvalidEvents", zap.Error(err))
+		ec.App.Logger.Error("invalidEvents.list.getInvalidEvents", zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
@@ -57,26 +55,6 @@ func (ec InvalidEventsController) Delete(c *gin.Context) {
 	id := uuid.FromStringOrNil(c.Param("id"))
 	if err := ec.App.DB.DeleteInvalidEvent(c.Request.Context(), user.OrganizationID, id); err != nil {
 		ec.App.Logger.Warn("invalidEvents.delete.deleteInvalidEvent", zap.Error(err))
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
-	}
-
-	c.AbortWithStatus(http.StatusNoContent)
-}
-
-func (ec InvalidEventsController) Update(c *gin.Context) {
-	var req requests.InvalidEventUpdate
-	if err := c.ShouldBindJSON(&req); err != nil {
-		ec.App.Logger.Warn("invalidEvents.update.parseRequest", zap.Error(err))
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
-	}
-	user := c.MustGet("user").(*db.User)
-
-	id := uuid.FromStringOrNil(req.EventId)
-	newName := req.NewName
-	if err := ec.App.DB.UpdateInvalidEvent(c.Request.Context(), newName, user.OrganizationID, id); err != nil {
-		ec.App.Logger.Warn("invalidEvents.update.updateInvalidEvent", zap.Error(err))
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}

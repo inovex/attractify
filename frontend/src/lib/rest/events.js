@@ -48,9 +48,6 @@ export default {
   async update(params) {
     try {
       await restClient.put(`/events/${params.id}`, params)
-
-      invalidEventClient.update({ eventId: params.id, name: params.name })
-
     } catch (e) {
       throw e
     }

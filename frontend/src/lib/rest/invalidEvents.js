@@ -17,12 +17,5 @@ export default {
     } catch (e) {
       throw e
     }
-  },
-  async update(params) {
-    try {
-      await restClient.put(`/invalid-events/update`, params)
-    } catch (e) {
-      throw e
-    }
-  },
+  }
 }

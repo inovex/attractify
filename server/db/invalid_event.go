@@ -26,7 +26,6 @@ type CreateInvalidEventParams struct {
 	EventID        uuid.UUID
 	OrganizationID uuid.UUID
 	Channel        string
-	Name           string
 	Properties     json.RawMessage
 	Context        json.RawMessage
 	Type           string
@@ -39,13 +38,12 @@ INSERT INTO invalid_events (
 	event_id,
 	organization_id,
 	channel,
-	name,
 	properties,
 	context,
 	type,
 	created_at
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8
+    $1, $2, $3, $4, $5, $6, $7
 )
 RETURNING *
 `
@@ -54,7 +52,6 @@ RETURNING *
 		arg.EventID,
 		arg.OrganizationID,
 		arg.Channel,
-		arg.Name,
 		arg.Properties,
 		arg.Context,
 		arg.Type,
@@ -62,17 +59,6 @@ RETURNING *
 	)
 	var t InvalidEvent
 	return t, row.StructScan(&t)
-}
-
-func (d *DB) UpdateInvalidEvent(ctx context.Context, newName string, orgID, eventId uuid.UUID) error {
-	const q = `
-UPDATE invalid_events
-SET name = $1
-WHERE organization_id = $2
-AND event_id = $3
-`
-	_, err := d.db.ExecContext(ctx, q, newName, orgID, eventId)
-	return err
 }
 
 func (d *DB) DeleteInvalidEvent(ctx context.Context, orgID, id uuid.UUID) error {
@@ -88,10 +74,11 @@ AND id = $2
 
 func (d *DB) GetInvalidEvents(ctx context.Context, orgID uuid.UUID) ([]InvalidEvent, error) {
 	const q = `
-SELECT *
-FROM invalid_events
-WHERE organization_id = $1
-ORDER BY created_at DESC
+SELECT i_ev.*, ev.name
+FROM invalid_events i_ev
+JOIN events ev ON ev.id = i_ev.event_id
+WHERE i_ev.organization_id = $1
+ORDER BY i_ev.created_at DESC
 `
 
 	var items []InvalidEvent
