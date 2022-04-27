@@ -1,4 +1,5 @@
 import restClient from '../restClient'
+import invalidEventClient from '../rest/invalidEvents'
 
 export default {
   async list(offset, limit) {
@@ -23,6 +24,14 @@ export default {
   async delete(id) {
     try {
       await restClient.delete(`/events/${id}`)
+      const res = await restClient.get('/invalid-events', {})
+
+      for (let i = res.data.length - 1; i >= 0; i--) {
+        if (res.data[i].eventId === id) {
+          invalidEventClient.delete(res.data[i].id)
+        }
+      }
+
     } catch (e) {
       throw e
     }
@@ -39,6 +48,9 @@ export default {
   async update(params) {
     try {
       await restClient.put(`/events/${params.id}`, params)
+
+      invalidEventClient.update({ eventId: params.id, name: params.name })
+
     } catch (e) {
       throw e
     }

@@ -64,6 +64,17 @@ RETURNING *
 	return t, row.StructScan(&t)
 }
 
+func (d *DB) UpdateInvalidEvent(ctx context.Context, newName string, orgID, eventId uuid.UUID) error {
+	const q = `
+UPDATE invalid_events
+SET name = $1
+WHERE organization_id = $2
+AND event_id = $3
+`
+	_, err := d.db.ExecContext(ctx, q, newName, orgID, eventId)
+	return err
+}
+
 func (d *DB) DeleteInvalidEvent(ctx context.Context, orgID, id uuid.UUID) error {
 	const q = `
 DELETE FROM invalid_events
