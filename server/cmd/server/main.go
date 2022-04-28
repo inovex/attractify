@@ -50,6 +50,7 @@ func apiHandler(app *app.App) http.Handler {
 		platform.InitPrivacy(p, app)
 		platform.InitAnalyze(p, app)
 		platform.InitEvents(p, app)
+		platform.InitInvalidEvents(p, app)
 		platform.InitData(p, app)
 		platform.InitEventLog(p, app)
 		platform.InitContexts(p, app)

@@ -4,6 +4,7 @@ volumes:
   postgres:
   clickhouse:
 
+
 networks:
   attractify:
     name: attractify

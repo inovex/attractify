@@ -55,6 +55,17 @@ func (e *Event) Track() error {
 	// Validate and prepare context properties.
 	if e.params.Context != nil {
 		if err := e.validateContext(); err != nil {
+			invalidParams := db.CreateInvalidEventParams{
+				EventID:        e.event.ID,
+				OrganizationID: e.params.OrganizationID,
+				Channel:        e.params.Channel,
+				Properties:     *e.params.Properties,
+				Context:        *e.params.Context,
+				Type:           "context",
+				CreatedAt:      e.params.Time,
+			}
+
+			e.app.DB.CreateInvalidEvent(e.ctx, invalidParams)
 			return err
 		}
 	}
@@ -62,6 +73,17 @@ func (e *Event) Track() error {
 	// Validate and prepare event properties.
 	if e.params.Properties != nil {
 		if err := e.validateProperties(); err != nil {
+			invalidParams := db.CreateInvalidEventParams{
+				EventID:        e.event.ID,
+				OrganizationID: e.params.OrganizationID,
+				Channel:        e.params.Channel,
+				Properties:     *e.params.Properties,
+				Context:        *e.params.Context,
+				Type:           "properties",
+				CreatedAt:      e.params.Time,
+			}
+
+			e.app.DB.CreateInvalidEvent(e.ctx, invalidParams)
 			return err
 		}
 	}
