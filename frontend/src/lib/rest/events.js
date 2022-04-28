@@ -1,5 +1,4 @@
 import restClient from '../restClient'
-import invalidEventClient from '../rest/invalidEvents'
 
 export default {
   async list(offset, limit) {
