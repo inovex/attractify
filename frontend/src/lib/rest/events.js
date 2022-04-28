@@ -24,14 +24,6 @@ export default {
   async delete(id) {
     try {
       await restClient.delete(`/events/${id}`)
-      const res = await restClient.get('/invalid-events', {})
-
-      for (let i = res.data.length - 1; i >= 0; i--) {
-        if (res.data[i].eventId === id) {
-          invalidEventClient.delete(res.data[i].id)
-        }
-      }
-
     } catch (e) {
       throw e
     }
