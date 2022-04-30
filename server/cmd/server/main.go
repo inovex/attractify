@@ -13,7 +13,6 @@ import (
 	"attractify.io/platform/mailer"
 	"attractify.io/platform/middlewares"
 	platform "attractify.io/platform/platform/controllers"
-	"attractify.io/platform/stream"
 	"go.uber.org/zap"
 
 	"github.com/gin-contrib/cors"
@@ -134,8 +133,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	app.Stream = stream.New(app.Config.Stream.Brokers, app.Config.Stream.Topic)
 
 	if !app.Config.Server.DebugMode {
 		gin.SetMode(gin.ReleaseMode)

@@ -2,11 +2,14 @@ package api
 
 import (
 	"net/http"
+	"time"
 
 	"attractify.io/platform/api/requests"
 	"attractify.io/platform/app"
+	"attractify.io/platform/computedtraits"
 	"attractify.io/platform/db"
-	"attractify.io/platform/stream"
+	"attractify.io/platform/events"
+	"attractify.io/platform/privacy"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -31,7 +34,14 @@ func (tc TrackController) Track(c *gin.Context) {
 
 	auth := c.MustGet("auth").(*db.OrganizationAuth)
 
-	msg := stream.TrackMsg{
+	l := privacy.NewLocked(tc.App, auth.OrganizationID, req.UserID)
+	if l.IsLocked() {
+		c.AbortWithStatus(http.StatusNoContent)
+		return
+	}
+
+	params := events.Params{
+		Time:           time.Now().UTC(),
 		OrganizationID: auth.OrganizationID,
 		UserID:         req.UserID,
 		Channel:        auth.Channel,
@@ -39,11 +49,25 @@ func (tc TrackController) Track(c *gin.Context) {
 		Properties:     req.Properties,
 		Context:        req.Context,
 	}
-
-	if err := tc.App.Stream.Track(c.Request.Context(), msg); err != nil {
-		tc.App.Logger.Warn("api.track.track.sendToStream", zap.Error(err))
+	e := events.New(c.Request.Context(), tc.App, params)
+	if err := e.Track(); err != nil {
+		tc.App.Logger.Warn("api.track.track.processEvent", zap.Error(err))
 		c.AbortWithStatus(http.StatusBadRequest)
-		return
+	}
+
+	computedTraits, err := tc.App.DB.GetComputedTraitsForEvent(
+		c.Request.Context(), auth.OrganizationID, e.EventID())
+	if err != nil {
+		tc.App.Logger.Warn("api.track.track.getComputedTraitsForEvent", zap.Error(err))
+		c.AbortWithStatus(http.StatusBadRequest)
+	}
+
+	for _, ct := range computedTraits {
+		ctr := computedtraits.New(c.Request.Context(), tc.App, &ct)
+		if err := ctr.Refresh(e.Profile()); err != nil {
+			tc.App.Logger.Warn("api.track.track.processComputedTraits", zap.Error(err))
+			c.AbortWithStatus(http.StatusBadRequest)
+		}
 	}
 
 	c.AbortWithStatus(http.StatusNoContent)
