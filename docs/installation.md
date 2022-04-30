@@ -64,13 +64,12 @@ Backend:
 - Go
 - PostgreSQL/CockroachDB
 - ClickhouseDB
-- Kafka
 
 Frontend:
 - Vue.js
 - Vuex
 
-To make changes to the front- or backend, you should start the databases and Kafka via Docker Compose file `docker-compose.dev.yml` in the repository root. Then you can start the frontend and backend separately.
+To make changes to the front- or backend, you should start the databases via Docker Compose file `docker-compose.dev.yml` in the repository root. Then you can start the frontend and backend separately.
 
 ### Frontend
 
@@ -94,20 +93,19 @@ The backend can be started with a local Go installation. In the backend there ar
 
 - `server` - This provides the API and delivers the frontend.
 - `cron` - Takes care of the regular execution of routine jobs.
-- `consumer` - Receives new tracking events and processes them.
 - `attractify` - Is a CLI tool to perform certain admin tasks.
 
 The individual commands are stored in the `server/cmd` directory.
 
-To start the server, the dependencies in the form of the databases and the kafka server must first be started. then the server can be started with the following command.
+To start the server, the dependencies in the form of the databases must be started first. then the server can be started with the following command.
 
 ```
 go run cmd/server/main.go config.dev.json
 ```
 
-Each of the individual commands requires a config file containing the connection details for the databases as well as for the Kafka broker.
+Each of the individual commands requires a config file containing the connection details for the databases.
 
-For the commands `server`, `cron` and `consumer` the config file is simply written directly after the command name as described above. For the Attractify command the config file is specified via a commandline argument `--config config.json`.
+For the commands `server` and `cron` the config file is simply written directly after the command name as described above. For the Attractify command the config file is specified via a commandline argument `--config config.json`.
 
 There are two config files in the repo:
 

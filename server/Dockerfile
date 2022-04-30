@@ -7,9 +7,7 @@ ADD ./server/ .
 WORKDIR /app/cmd/
 RUN cd server && go build -o server .
 RUN cd cron && go build -o cron .
-RUN cd consumer && go build -o consumer .
 RUN cd attractify && go build -o attractify .
-
 
 FROM alpine
 LABEL org.opencontainers.image.source https://github.com/inovex/attractify
@@ -20,5 +18,4 @@ ADD frontend/dist /app/dist/
 ADD server/config.sample.json /app/config.json
 COPY --from=builder /app/cmd/server/server .
 COPY --from=builder /app/cmd/cron/cron .
-COPY --from=builder /app/cmd/consumer/consumer .
-CMD ["sh", "-c", "/app/server config.json & /app/cron config.json & /app/consumer config.json"]
+CMD ["sh", "-c", "/app/server config.json & /app/cron config.json"]

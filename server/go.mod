@@ -13,7 +13,6 @@ require (
 	github.com/lib/pq v1.10.3
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/robfig/cron/v3 v3.0.1
-	github.com/segmentio/kafka-go v0.4.23
 	github.com/spf13/cobra v1.3.0
 	github.com/tidwall/gjson v1.11.0
 	github.com/tidwall/pretty v1.2.0 // indirect
@@ -33,10 +32,8 @@ require (
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.9.0 // indirect
-	github.com/golang/snappy v0.0.4 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect

@@ -44,6 +44,7 @@ func (ic IdentifyController) Identify(c *gin.Context) {
 	if req.IsAnonymous {
 		ut = "anonymous_id"
 	}
+
 	params := profiles.Params{
 		Time:           time.Now().UTC(),
 		OrganizationID: auth.OrganizationID,
@@ -56,9 +57,8 @@ func (ic IdentifyController) Identify(c *gin.Context) {
 	}
 	p := profiles.New(c.Request.Context(), ic.App, params)
 	if err := p.UpdateOrCreate(); err != nil {
-		ic.App.Logger.Warn("api.identify.identify.profileHandler", zap.Error(err))
+		ic.App.Logger.Warn("api.identify.identify.newProfile", zap.Error(err))
 		c.AbortWithStatus(http.StatusBadRequest)
-		return
 	}
 
 	c.AbortWithStatus(http.StatusNoContent)
