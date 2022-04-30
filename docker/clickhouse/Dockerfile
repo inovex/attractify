@@ -1,5 +1,4 @@
-FROM yandex/clickhouse-server:latest
-LABEL org.opencontainers.image.source https://github.com/inovex/attractify
+FROM clickhouse/clickhouse-server:latest
 RUN apt-get update \
   && apt-get install -y unixodbc odbcinst odbc-postgresql \
   && apt-get clean autoclean \
