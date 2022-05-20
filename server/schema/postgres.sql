@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS profile_identities (
 	updated_at timestamp NOT NULL DEFAULT now(),
 	UNIQUE (organization_id, channel, user_id)
 );
+CREATE INDEX IF NOT EXISTS organization_id_user_id ON profile_identities (organization_id, user_id);
 
 CREATE TABLE IF NOT EXISTS locked_profile_identities (
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
