@@ -12,7 +12,6 @@
             :headers="headers"
             :items="events"
             :options.sync="options"
-            :server-items-length="totalItems"
             :footer-props="{
               'items-per-page-options': [5, 10, 25, 50]
             }"
@@ -114,7 +113,7 @@
               </v-btn>
             </template>
             <template v-slot:item.name="{ item }">
-              <span>{{ resolveEventName(item.eventId) }}</span>
+              <span>{{ item.name }}</span>
             </template>
             <template v-slot:item.createdAt="{ item }">
               <span>{{ formatDate(item.createdAt) }}</span>
@@ -232,6 +231,9 @@ export default {
         try {
           const res = await eventLogClient.list(params)
           this.events = res.events
+          for (let e of this.events) {
+            e.name = this.resolveEventName(e.eventId)
+          }
           this.totalItems = res.count
         } catch (_) {
           _
