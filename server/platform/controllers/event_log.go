@@ -45,7 +45,11 @@ func (ec EventLogController) List(c *gin.Context) {
 		if err == nil {
 			identityIDs = append(identityIDs, identity.ID)
 		} else {
-			c.AbortWithStatus(http.StatusNoContent)
+			res := responses.EventLogList{
+				Events: []responses.EventLog{},
+				Count:  0,
+			}
+			c.JSON(http.StatusOK, &res)
 			return
 		}
 	}
@@ -106,7 +110,7 @@ func (ec EventLogController) List(c *gin.Context) {
 		})
 	}
 
-	count, err := ec.App.Analytics.GetEventCount(args.OrganizationID)
+	count, err := ec.App.Analytics.GetEventCount(args)
 
 	if err != nil {
 		ec.App.Logger.Error("events.list.getEventCount", zap.Error(err))
@@ -116,8 +120,7 @@ func (ec EventLogController) List(c *gin.Context) {
 
 	res := responses.EventLogList{
 		Events: eventRes,
-		// FIX ME: Find better way to calculate number of results.
-		Count: count,
+		Count:  count,
 	}
 
 	c.JSON(http.StatusOK, &res)

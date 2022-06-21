@@ -107,9 +107,21 @@ func (rc ReactionsController) List(c *gin.Context) {
 		})
 	}
 
-	count := req.ItemsPerPage * (req.Page + 1)
-	if len(actionRes) < req.ItemsPerPage {
-		count = req.ItemsPerPage * req.Page
+	countArgs := analytics.GetReactionCountFilteredParams{
+		OrganizationID: user.OrganizationID,
+		ActionID:       uuid.FromStringOrNil(req.ActionID),
+		EventIDs:       eventList,
+		UserID:         req.UserID,
+		Start:          start,
+		End:            end,
+	}
+
+	count, err := rc.App.Analytics.GetReactionCountFiltered(countArgs)
+
+	if err != nil {
+		rc.App.Logger.Error("actions.list.getActionCount", zap.Error(err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 
 	res := responses.ReactionList{

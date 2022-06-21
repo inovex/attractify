@@ -250,10 +250,16 @@ const getEventCount = `
 SELECT count(*)
 FROM events
 WHERE organization_id = ?
+AND created_at BETWEEN ? AND ?
 `
 
-func (a Analytics) GetEventCount(organizationID uuid.UUID) (int, error) {
-	row := a.DB.QueryRowx(getEventCount, organizationID)
+func (a Analytics) GetEventCount(args GetEventsParams) (int, error) {
+	var row *sqlx.Row
+	if len(args.IdentityIDs) == 0 {
+		row = a.DB.QueryRowx(getEventCount, args.OrganizationID, args.Start, args.End)
+	} else {
+		row = a.DB.QueryRowx(getEventCount+` And identity_id=?`, args.OrganizationID, args.Start, args.End, args.IdentityIDs[0])
+	}
 	var count int
 	return count, row.Scan(&count)
 }

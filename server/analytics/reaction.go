@@ -246,6 +246,53 @@ func (a Analytics) GetReactionCount(arg GetReactionCountParams) (int, error) {
 	return count, row.Scan(&count)
 }
 
+const getReactionCountFiltered = `
+SELECT count(*)
+FROM reactions
+WHERE organization_id = ?
+AND action_id = ?
+%s
+%s
+AND created_at BETWEEN ? AND ?
+`
+
+type GetReactionCountFilteredParams struct {
+	OrganizationID uuid.UUID
+	ActionID       uuid.UUID
+	EventIDs       []string
+	UserID         string
+	Start          time.Time
+	End            time.Time
+}
+
+func (a Analytics) GetReactionCountFiltered(arg GetReactionCountFilteredParams) (int, error) {
+	var count int
+
+	var identity = ""
+	var event = ""
+	if arg.UserID != "" {
+		identity = fmt.Sprintf(
+			"AND identity_id = '%s'",
+			arg.UserID,
+		)
+	}
+	if len(arg.EventIDs) > 0 {
+		event = fmt.Sprintf(
+			"AND event IN ('%s')",
+			strings.Join(arg.EventIDs, "','"),
+		)
+	}
+	query := fmt.Sprintf(getReactionCountFiltered, identity, event)
+	row := a.DB.QueryRowx(query,
+		arg.OrganizationID,
+		arg.ActionID,
+		arg.Start,
+		arg.End,
+	)
+
+	return count, row.Scan(&count)
+}
+
 const deleteReaction = `
 ALTER TABLE reactions
 DELETE
