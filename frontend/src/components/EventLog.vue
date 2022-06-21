@@ -12,6 +12,7 @@
             :headers="headers"
             :items="events"
             :options.sync="options"
+            :server-items-length="totalItems"
             :footer-props="{
               'items-per-page-options': [5, 10, 25, 50]
             }"
@@ -230,6 +231,7 @@ export default {
       if (params.itemsPerPage > 0) {
         try {
           const res = await eventLogClient.list(params)
+          console.log(res)
           this.events = res.events
           for (let e of this.events) {
             e.name = this.resolveEventName(e.eventId)

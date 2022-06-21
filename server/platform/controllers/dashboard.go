@@ -42,7 +42,7 @@ func (dc DashboardController) show(c *gin.Context) {
 		profiles = append(profiles, responses.DashboardBucket{Bucket: p.Bucket, Count: p.Count})
 	}
 
-	events, err := dc.App.Analytics.GetEventCount(user.OrganizationID)
+	events, err := dc.App.Analytics.GetLastDaysEventCount(user.OrganizationID)
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return

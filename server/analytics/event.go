@@ -233,11 +233,23 @@ func (a Analytics) GetEventsForIdentities(arg GetEventsForIdentitiesParams) ([]E
 	return items, a.DB.Select(&items, query, args...)
 }
 
-const getEventCount = `
+const getLastDaysEventCount = `
 SELECT count(*)
 FROM events
 WHERE organization_id = ?
 AND created_at >= subtractDays(now(), 1)
+`
+
+func (a Analytics) GetLastDaysEventCount(organizationID uuid.UUID) (int, error) {
+	row := a.DB.QueryRowx(getLastDaysEventCount, organizationID)
+	var count int
+	return count, row.Scan(&count)
+}
+
+const getEventCount = `
+SELECT count(*)
+FROM events
+WHERE organization_id = ?
 `
 
 func (a Analytics) GetEventCount(organizationID uuid.UUID) (int, error) {
