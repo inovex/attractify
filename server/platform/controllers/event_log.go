@@ -2,7 +2,6 @@ package platform
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -110,11 +109,10 @@ func (ec EventLogController) List(c *gin.Context) {
 	count, err := ec.App.Analytics.GetEventCount(args.OrganizationID)
 
 	if err != nil {
-		ec.App.Logger.Error("events.list.getEvents", zap.Error(err))
+		ec.App.Logger.Error("events.list.getEventCount", zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(count)
 
 	res := responses.EventLogList{
 		Events: eventRes,
