@@ -45,7 +45,6 @@ func (ec EventLogController) List(c *gin.Context) {
 		if err == nil {
 			identityIDs = append(identityIDs, identity.ID)
 		} else {
-
 			c.AbortWithStatus(http.StatusNoContent)
 			return
 		}
