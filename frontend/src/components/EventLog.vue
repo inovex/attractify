@@ -210,6 +210,7 @@ export default {
     },
     resetAndLoad() {
       this.options.page = 1
+      this.totalItems = 0
       return this.load()
     },
     async load() {
@@ -232,7 +233,6 @@ export default {
       if (params.itemsPerPage > 0) {
         try {
           const res = await eventLogClient.list(params)
-          console.log(res)
           this.events = res.events
           for (let e of this.events) {
             e.name = this.resolveEventName(e.eventId)
