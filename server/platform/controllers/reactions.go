@@ -107,21 +107,9 @@ func (rc ReactionsController) List(c *gin.Context) {
 		})
 	}
 
-	countArgs := analytics.GetReactionCountFilteredParams{
-		OrganizationID: user.OrganizationID,
-		ActionID:       uuid.FromStringOrNil(req.ActionID),
-		EventIDs:       eventList,
-		UserID:         req.UserID,
-		Start:          start,
-		End:            end,
-	}
-
-	count, err := rc.App.Analytics.GetReactionCountFiltered(countArgs)
-
-	if err != nil {
-		rc.App.Logger.Error("actions.list.getActionCount", zap.Error(err))
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
+	var count int
+	if len(actions) > 0 {
+		count = actions[0].FullCount
 	}
 
 	res := responses.ReactionList{

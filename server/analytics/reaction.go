@@ -45,10 +45,11 @@ type Reaction struct {
 	Properties     string    `db:"properties" json:"properties"`
 	Result         string    `db:"result" json:"result"`
 	CreatedAt      time.Time `db:"created_at" json:"createdAt"`
+	FullCount      int       `db:"full_count"`
 }
 
 const getReactions = `
-SELECT *
+SELECT *, count(*) over() AS full_count
 FROM reactions
 WHERE organization_id = ?
 %s
@@ -241,53 +242,6 @@ func (a Analytics) GetReactionCount(arg GetReactionCountParams) (int, error) {
 		arg.OrganizationID,
 		arg.ActionID,
 		arg.Event,
-	)
-
-	return count, row.Scan(&count)
-}
-
-const getReactionCountFiltered = `
-SELECT count(*)
-FROM reactions
-WHERE organization_id = ?
-AND action_id = ?
-%s
-%s
-AND created_at BETWEEN ? AND ?
-`
-
-type GetReactionCountFilteredParams struct {
-	OrganizationID uuid.UUID
-	ActionID       uuid.UUID
-	EventIDs       []string
-	UserID         string
-	Start          time.Time
-	End            time.Time
-}
-
-func (a Analytics) GetReactionCountFiltered(arg GetReactionCountFilteredParams) (int, error) {
-	var count int
-
-	var identity = ""
-	var event = ""
-	if arg.UserID != "" {
-		identity = fmt.Sprintf(
-			"AND identity_id = '%s'",
-			arg.UserID,
-		)
-	}
-	if len(arg.EventIDs) > 0 {
-		event = fmt.Sprintf(
-			"AND event IN ('%s')",
-			strings.Join(arg.EventIDs, "','"),
-		)
-	}
-	query := fmt.Sprintf(getReactionCountFiltered, identity, event)
-	row := a.DB.QueryRowx(query,
-		arg.OrganizationID,
-		arg.ActionID,
-		arg.Start,
-		arg.End,
 	)
 
 	return count, row.Scan(&count)
