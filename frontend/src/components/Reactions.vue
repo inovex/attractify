@@ -213,7 +213,7 @@ export default {
   },
   methods: {
     setAction(e) {
-      if (e !== undefined) {
+      if (e != null) {
         this.actionId = e.value
       } else {
         this.actionId = null
