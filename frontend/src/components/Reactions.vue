@@ -12,6 +12,7 @@
             :headers="headers"
             :items="reactions"
             :options.sync="options"
+            :disable-sort="true"
             :server-items-length="totalItems"
             :footer-props="{
               'items-per-page-options': [5, 10, 25, 50]

@@ -45,10 +45,11 @@ type Reaction struct {
 	Properties     string    `db:"properties" json:"properties"`
 	Result         string    `db:"result" json:"result"`
 	CreatedAt      time.Time `db:"created_at" json:"createdAt"`
+	FullCount      int       `db:"full_count"`
 }
 
 const getReactions = `
-SELECT *
+SELECT *, count(*) over() AS full_count
 FROM reactions
 WHERE organization_id = ?
 %s

@@ -107,9 +107,9 @@ func (rc ReactionsController) List(c *gin.Context) {
 		})
 	}
 
-	count := req.ItemsPerPage * (req.Page + 1)
-	if len(actionRes) < req.ItemsPerPage {
-		count = req.ItemsPerPage * req.Page
+	var count int
+	if len(actions) > 0 {
+		count = actions[0].FullCount
 	}
 
 	res := responses.ReactionList{

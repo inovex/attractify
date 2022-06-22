@@ -106,15 +106,14 @@ func (ec EventLogController) List(c *gin.Context) {
 		})
 	}
 
-	count := req.ItemsPerPage * (req.Page + 1)
-	if len(eventRes) < req.ItemsPerPage {
-		count = req.ItemsPerPage * req.Page
+	var count int
+	if len(events) > 0 {
+		count = events[0].FullCount
 	}
 
 	res := responses.EventLogList{
 		Events: eventRes,
-		// FIX ME: Find better way to calculate number of results.
-		Count: count,
+		Count:  count,
 	}
 
 	c.JSON(http.StatusOK, &res)
