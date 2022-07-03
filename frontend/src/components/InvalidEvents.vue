@@ -31,7 +31,7 @@
             <template v-slot:item.createdAt="{ item }">
               <span>{{ formatDate(item.createdAt) }}</span>
             </template>
-            <template v-slot:no-data>No Invalid Events Available</template>
+            <template v-slot:no-data>No Invalid Events Found</template>
           </v-data-table>
         </v-card>
       </v-col>
