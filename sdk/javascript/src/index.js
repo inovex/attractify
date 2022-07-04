@@ -2,18 +2,14 @@ import Fifo from 'localstorage-fifo'
 
 
 class Attractify {
-  constructor(authToken, configOptions) {
+  constructor(authToken, configOptions = { apiUrl: 'https://api.attractify.io/v1' }) {
 
     this.state = { isIdentified: false }
     this.authToken = authToken
     this.context = null
     this.queue = new Fifo({ namespace: 'trackings' })
 
-    //if (configOptions === null) {
-    this.baseUrl = 'https://api.attractify.io/v1'
-    //} else {
-    //  this.baseUrl = configOptions.apiUrl
-    // }
+    this.baseUrl = configOptions.apiUrl
 
     this.loadState()
 
