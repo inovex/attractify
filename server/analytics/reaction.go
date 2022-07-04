@@ -49,7 +49,7 @@ type Reaction struct {
 }
 
 const getReactions = `
-SELECT *, count(*) over() AS full_count
+SELECT *, (SELECT count(*) FROM reactions) AS full_count
 FROM reactions
 WHERE organization_id = ?
 %s

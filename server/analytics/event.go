@@ -96,7 +96,7 @@ func (a Analytics) CreateEvents(arg []CreateEventParams) error {
 }
 
 const getEvents = `
-SELECT *, count(*) over() as full_count
+SELECT *, (SELECT count(*) FROM events) as full_count
 FROM events
 WHERE organization_id = ?
 AND created_at BETWEEN ? AND ?
@@ -105,7 +105,7 @@ LIMIT ?, ?
 `
 
 const getEventsForIDs = `
-SELECT *, count(*) over() as full_count
+SELECT *, (SELECT count(*) FROM events) as full_count
 FROM events
 WHERE organization_id = ?
 AND event_id IN (?)
@@ -115,7 +115,7 @@ LIMIT ?, ?
 `
 
 const getEventsForIdentity = `
-SELECT *, count(*) over() as full_count
+SELECT *, (SELECT count(*) FROM events) as full_count
 FROM events
 WHERE organization_id = ?
 AND identity_id IN (?)
@@ -125,7 +125,7 @@ LIMIT ?, ?
 `
 
 const getEventsForIDsAndIdentity = `
-SELECT *, count(*) over() as full_count
+SELECT *, (SELECT count(*) FROM events) as full_count
 FROM events
 WHERE organization_id = ?
 AND event_id IN (?)
