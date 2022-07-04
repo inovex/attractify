@@ -8,11 +8,13 @@ class Attractify {
     this.authToken = authToken
     this.context = null
     this.queue = new Fifo({ namespace: 'trackings' })
-    if (configOptions === null) {
-      this.baseUrl = 'https://api.attractify.io/v1'
-    } else {
-      this.baseUrl = configOptions.apiUrl
-    }
+
+    //if (configOptions === null) {
+    this.baseUrl = 'https://api.attractify.io/v1'
+    //} else {
+    //  this.baseUrl = configOptions.apiUrl
+    // }
+
     this.loadState()
 
     if (!this.state.userId) {
