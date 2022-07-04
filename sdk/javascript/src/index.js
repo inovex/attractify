@@ -9,18 +9,10 @@ class Attractify {
     this.context = null
     this.queue = new Fifo({ namespace: 'trackings' })
     if (configOptions === null) {
-      if (process.env.Node_ENV === 'production') {
-        configOptions = {
-          apiUrl: 'https://api.attractify.io/v1'
-        }
-      } else {
-        configOptions = {
-          apiUrl: 'http://localhost:8080/v1'
-        }
-      }
+      this.baseUrl = 'https://api.attractify.io/v1'
+    } else {
+      this.baseUrl = configOptions.apiUrl
     }
-    this.baseUrl = configOptions.apiUrl
-
     this.loadState()
 
     if (!this.state.userId) {
