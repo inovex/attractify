@@ -107,8 +107,11 @@ func (ec EventLogController) List(c *gin.Context) {
 	}
 
 	var count int
-	if len(events) > 0 {
-		count = events[0].FullCount
+	count, err = ec.App.Analytics.GetEventCount(args)
+	if err != nil {
+		ec.App.Logger.Error("events.list.getEventCount", zap.Error(err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 
 	res := responses.EventLogList{

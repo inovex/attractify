@@ -18,7 +18,6 @@ type Event struct {
 	Context        string    `db:"context" json:"context"`
 	Properties     string    `db:"properties" json:"properties"`
 	CreatedAt      time.Time `db:"created_at" json:"created_at"`
-	FullCount      int       `db:"full_count"`
 }
 
 const createEvent = `
@@ -96,7 +95,7 @@ func (a Analytics) CreateEvents(arg []CreateEventParams) error {
 }
 
 const getEvents = `
-SELECT *, (SELECT count(*) FROM events) as full_count
+SELECT *
 FROM events
 WHERE organization_id = ?
 AND created_at BETWEEN ? AND ?
@@ -105,7 +104,7 @@ LIMIT ?, ?
 `
 
 const getEventsForIDs = `
-SELECT *, (SELECT count(*) FROM events) as full_count
+SELECT *
 FROM events
 WHERE organization_id = ?
 AND event_id IN (?)
@@ -115,7 +114,7 @@ LIMIT ?, ?
 `
 
 const getEventsForIdentity = `
-SELECT *, (SELECT count(*) FROM events) as full_count
+SELECT *
 FROM events
 WHERE organization_id = ?
 AND identity_id IN (?)
@@ -125,7 +124,7 @@ LIMIT ?, ?
 `
 
 const getEventsForIDsAndIdentity = `
-SELECT *, (SELECT count(*) FROM events) as full_count
+SELECT *
 FROM events
 WHERE organization_id = ?
 AND event_id IN (?)
@@ -232,6 +231,19 @@ func (a Analytics) GetEventsForIdentities(arg GetEventsForIdentitiesParams) ([]E
 
 	query = a.DB.Rebind(query)
 	return items, a.DB.Select(&items, query, args...)
+}
+
+const getEventCount = `
+SELECT count(*)
+FROM events
+WHERE organization_id = ?
+AND created_at BETWEEN ? AND ?
+`
+
+func (a Analytics) GetEventCount(arg GetEventsParams) (int, error) {
+	row := a.DB.QueryRowx(getEventCount, arg.OrganizationID, arg.Start, arg.End)
+	var count int
+	return count, row.Scan(&count)
 }
 
 const getLastDaysEventCount = `

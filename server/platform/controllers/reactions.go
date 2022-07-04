@@ -108,8 +108,11 @@ func (rc ReactionsController) List(c *gin.Context) {
 	}
 
 	var count int
-	if len(actions) > 0 {
-		count = actions[0].FullCount
+	count, err = rc.App.Analytics.GetReactionCountbyReactionsParams(args)
+	if err != nil {
+		rc.App.Logger.Error("reactions.list.getReactionCount", zap.Error(err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 
 	res := responses.ReactionList{

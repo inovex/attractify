@@ -45,11 +45,10 @@ type Reaction struct {
 	Properties     string    `db:"properties" json:"properties"`
 	Result         string    `db:"result" json:"result"`
 	CreatedAt      time.Time `db:"created_at" json:"createdAt"`
-	FullCount      int       `db:"full_count"`
 }
 
 const getReactions = `
-SELECT *, (SELECT count(*) FROM reactions) AS full_count
+SELECT *
 FROM reactions
 WHERE organization_id = ?
 %s
@@ -206,6 +205,34 @@ type GetReactionCountParams struct {
 	IsUser         bool
 	ProfileID      uuid.UUID
 	Within         int
+}
+
+/*type GetReactionsParams struct {
+	OrganizationID uuid.UUID
+	ActionID       uuid.UUID
+	Events         []string
+	UserID         string
+	Start          time.Time
+	End            time.Time
+	Limit          int
+	Offset         int
+}*/
+
+const getReactionCountbyReactionsParams = `
+SELECT count(*)
+FROM reactions
+WHERE organization_id = ?
+AND created_at BETWEEN ? AND ?
+`
+
+func (a Analytics) GetReactionCountbyReactionsParams(arg GetReactionsParams) (int, error) {
+	var count int
+	row := a.DB.QueryRowx(getReactionCountbyReactionsParams,
+		arg.OrganizationID,
+		arg.Start,
+		arg.End,
+	)
+	return count, row.Scan(&count)
 }
 
 func escapeParameter(v string) string {
