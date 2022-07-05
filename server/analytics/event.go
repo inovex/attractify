@@ -260,7 +260,7 @@ func (a Analytics) GetLastDaysEventCount(organizationID uuid.UUID) (int, error) 
 }
 
 const deleteEvent = `
-ALTER TABLE events ON CLUSTER attractify
+ALTER TABLE events_local ON CLUSTER attractify
 DELETE
 WHERE organization_id = ?
 AND id = ?
@@ -277,7 +277,7 @@ func (a Analytics) DeleteEvent(arg DeleteEventParams) error {
 }
 
 const deleteEventByIdentityID = `
-ALTER TABLE events ON CLUSTER attractify
+ALTER TABLE events_local ON CLUSTER attractify
 DELETE
 WHERE organization_id = ?
 AND identity_id = ?
@@ -294,7 +294,7 @@ func (a Analytics) DeleteEventByIdentityID(arg DeleteEventByIdentityIDParams) er
 }
 
 const deleteEventsByIdentityIDs = `
-ALTER TABLE events ON CLUSTER attractify
+ALTER TABLE events_local ON CLUSTER attractify
 DELETE
 WHERE organization_id = ?
 AND identity_id IN (?)

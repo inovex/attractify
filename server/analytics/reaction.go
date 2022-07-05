@@ -275,7 +275,7 @@ func (a Analytics) GetReactionCount(arg GetReactionCountParams) (int, error) {
 }
 
 const deleteReaction = `
-ALTER TABLE reactions ON CLUSTER attractify
+ALTER TABLE reactions_local ON CLUSTER attractify
 DELETE
 WHERE organization_id = ?
 AND id = ?
@@ -441,7 +441,7 @@ func (a Analytics) GetReactionChannelDeliveries(arg GetReactionChannelDeliveries
 }
 
 const deleteReactionByIdentityIDs = `
-ALTER TABLE reactions ON CLUSTER attractify
+ALTER TABLE reactions_local ON CLUSTER attractify
 DELETE
 WHERE organization_id = ?
 AND identity_id IN (?)
