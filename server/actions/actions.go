@@ -72,7 +72,9 @@ func (a *Action) ShouldDisplay(actionType string, tags []string, channel string,
 		if !a.HasTestUser(userID, channel) {
 			return false
 		}
-		return true
+		if a.SkipTargeting(userID, channel) {
+			return true
+		}
 	}
 
 	// Time range
@@ -159,11 +161,31 @@ func (a Action) HasTestUser(userID, channel string) bool {
 		return false
 	}
 
+	return true
+}
+
+func (a Action) SkipTargeting(userID, channel string) bool {
+	var testUser *db.ActionTestUser
+	for _, t := range a.testUsers {
+		if t.UserID == userID {
+			for _, c := range t.Channels {
+				if c == channel {
+					testUser = &t
+					break
+				}
+			}
+		}
+	}
+
+	if testUser == nil {
+		return false
+	}
+
 	if testUser.SkipTargeting {
 		return true
 	}
 
-	return true
+	return false
 }
 
 func (a Action) HasNoCapping() bool {
