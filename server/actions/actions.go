@@ -68,8 +68,11 @@ func (a *Action) ShouldDisplay(actionType string, tags []string, channel string,
 	}
 
 	// State == staging with testusers and matching channel
-	if a.action.State == db.StateStaging && !a.HasTestUser(userID, channel) {
-		return false
+	if a.action.State == db.StateStaging {
+		if !a.HasTestUser(userID, channel) {
+			return false
+		}
+		return true
 	}
 
 	// Time range
