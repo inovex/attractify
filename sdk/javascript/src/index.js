@@ -250,6 +250,7 @@ class Attractify {
         },
       },
       properties: action.properties,
+      tags: action.tags,
     }
   }
 }
