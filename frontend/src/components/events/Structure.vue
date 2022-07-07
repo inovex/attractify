@@ -122,6 +122,7 @@ export default {
       this.$refs.form.reset()
     },
     save() {
+      this.$emit('savecallback')
       this.saveCallback(this.property)
       this.cancel()
     },
@@ -166,6 +167,7 @@ export default {
         items = this.structure
       }
 
+      this.$emit('savecallback')
       let i = 0
       for (let n of items) {
         if (n.id === id) {
