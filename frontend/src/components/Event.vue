@@ -19,7 +19,6 @@
                     type="text"
                     v-model="event.name"
                     :rules="[rules.required]"
-                    @change="onUpdate"
                   />
                 </v-col>
               </v-row>
@@ -31,7 +30,6 @@
                     prepend-icon="mdi-text"
                     type="text"
                     v-model="event.description"
-                    @change="onUpdate"
                   />
                 </v-col>
               </v-row>
@@ -45,6 +43,10 @@
                 <Structure :structure="event.structure" v-on:savecallback="onUpdate"/>
               </v-card-text>
             </div>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn color="primary" text :disabled="!valid" @click="save()">Save</v-btn>
+            </v-card-actions>
           </v-card>
         </v-form>
       </v-col>
@@ -85,10 +87,6 @@ export default {
     },
     deleteCondition(index) {
       this.event.conditions.splice(index, 1)
-    },
-    onFieldClick() {
-      this.tempName = this.event.name
-      this.tempDescription = this.event.description
     },
     onUpdate(){
       if(this.valid){

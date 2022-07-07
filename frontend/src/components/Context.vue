@@ -17,7 +17,6 @@
                     :items="channels"
                     v-model="context.channel"
                     prepend-icon="mdi-cellphone"
-                    v-on:change="onUpdate"
                   ></v-select>
                 </v-col>
               </v-row>
@@ -31,6 +30,10 @@
                 <Structure :structure="context.structure" @savecallback="onUpdate"/>
               </v-card-text>
             </div>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn color="primary" text :disabled="!valid" @click="save()">Save</v-btn>
+            </v-card-actions>
           </v-card>
         </v-form>
       </v-col>

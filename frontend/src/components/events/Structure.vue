@@ -76,7 +76,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn text @click="cancel()">Cancel</v-btn>
-            <v-btn text color="primary" :disabled="!valid" @click="save()">Apply</v-btn>
+            <v-btn text color="primary" :disabled="!valid" @click="save()">Save</v-btn>
           </v-card-actions>
         </v-form>
       </v-card>
