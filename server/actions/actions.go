@@ -181,11 +181,7 @@ func (a Action) SkipTargeting(userID, channel string) bool {
 		return false
 	}
 
-	if testUser.SkipTargeting {
-		return true
-	}
-
-	return false
+	return testUser.SkipTargeting
 }
 
 func (a Action) HasNoCapping() bool {
