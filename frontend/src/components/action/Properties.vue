@@ -154,3 +154,9 @@ export default {
   }
 }
 </script>
+
+<style>
+h4 {
+  margin: 0 0 1em 0;
+}
+</style>
