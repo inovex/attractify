@@ -15,6 +15,7 @@
                 setProperty(condition, e)
               }
             "
+            v-on:change="onUpdate" 
           ></v-select>
         </v-col>
         <v-col class="col-lg-2">
@@ -25,6 +26,7 @@
             :value="condition.operator"
             v-model="condition.operator"
             :rules="[rules.required]"
+            v-on:change="onUpdate" 
           ></v-select>
         </v-col>
         <v-col>
@@ -36,6 +38,7 @@
             type="text"
             v-model="condition.value"
             :rules="[rules.required]"
+            v-on:change="onUpdate" 
           />
         </v-col>
       </v-row>
@@ -105,6 +108,9 @@ export default {
       condition.property = e.value
       condition.type = e.type
       this.$forceUpdate()
+    },
+    onUpdate(){
+      this.$emit('updatecallback')
     },
     getOperators(type) {
       switch (type) {

@@ -19,6 +19,7 @@
                     type="text"
                     v-model="computedTrait.name"
                     :rules="[rules.required]"
+                    v-on:change="onUpdate" 
                   />
                 </v-col>
               </v-row>
@@ -31,6 +32,7 @@
                     type="text"
                     v-model="computedTrait.key"
                     :rules="[rules.required]"
+                    v-on:change="onUpdate" 
                   />
                 </v-col>
               </v-row>
@@ -44,6 +46,7 @@
                     @change="computedTrait.properties = {}"
                     v-model="computedTrait.type"
                     :rules="[rules.required]"
+                    v-on:change="onUpdate" 
                   ></v-select>
                 </v-col>
               </v-row>
@@ -57,6 +60,7 @@
                     v-model="computedTrait.eventId"
                     :rules="[rules.required]"
                     return-object
+                    v-on:change="onUpdate" 
                   ></v-select>
                 </v-col>
               </v-row>
@@ -79,6 +83,7 @@
                       v-model="computedTrait.properties.property"
                       @change="setProperty"
                       return-object
+                      v-on:change="onUpdate" 
                     ></v-select>
                   </v-col>
                   <v-col class="col-lg-2">
@@ -88,6 +93,7 @@
                       label="Aggregation Type"
                       v-model="computedTrait.properties.aggregationType"
                       :rules="[rules.required]"
+                      v-on:change="onUpdate" 
                     ></v-select>
                   </v-col>
                 </v-row>
@@ -103,6 +109,7 @@
                       v-model="computedTrait.properties.property"
                       @change="setProperty"
                       return-object
+                      v-on:change="onUpdate" 
                     ></v-select>
                   </v-col>
                   <v-col class="col-lg-2">
@@ -112,6 +119,7 @@
                       type="number"
                       v-model.number="computedTrait.properties.minFrequency"
                       :rules="[rules.required]"
+                      v-on:change="onUpdate" 
                     />
                   </v-col>
                 </v-row>
@@ -124,6 +132,7 @@
                       label="Use timestamp instead of property value"
                       v-model="computedTrait.properties.useTimestamp"
                       @change="computedTrait.properties.type = 'dateTime'"
+                      v-on:change="onUpdate" 
                     ></v-switch>
                   </v-col>
                   <v-col class="col-lg-3" v-if="!computedTrait.properties.useTimestamp">
@@ -134,6 +143,7 @@
                       v-model="computedTrait.properties.property"
                       @change="setProperty"
                       return-object
+                      v-on:change="onUpdate" 
                     ></v-select>
                   </v-col>
                 </v-row>
@@ -149,6 +159,7 @@
                       v-model="computedTrait.properties.property"
                       @change="setProperty"
                       return-object
+                      v-on:change="onUpdate" 
                     ></v-select>
                   </v-col>
                 </v-row>
@@ -167,10 +178,10 @@
                   <v-col>
                     <v-row v-for="(condition, key) of computedTrait.conditions" :key="key">
                       <v-col>
-                        <Condition :properties="eventProperties" :condition="condition" />
+                        <Condition :properties="eventProperties" :condition="condition" updatecallback="onUpdate"/>
                       </v-col>
                       <v-col class="col-lg-1">
-                        <v-btn icon @click="deleteCondition(key)">
+                        <v-btn icon @click="deleteCondition(key)" v-on:click="onUpdate">
                           <v-icon>mdi-trash-can-outline</v-icon>
                         </v-btn>
                       </v-col>
@@ -269,6 +280,13 @@ export default {
     },
     deleteCondition(index) {
       this.computedTrait.conditions.splice(index, 1)
+    },
+    onUpdate(){
+      console.log("yay")
+      console.log("valid: " + this.valid)
+      if(this.valid){
+        this.save()
+      }
     },
     async save() {
       try {
