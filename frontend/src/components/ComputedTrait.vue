@@ -282,8 +282,7 @@ export default {
       this.computedTrait.conditions.splice(index, 1)
     },
     onUpdate(){
-      console.log("yay")
-      console.log("valid: " + this.valid)
+      this.valid = this.$refs.form.validate()
       if(this.valid){
         this.save()
       }
