@@ -17,6 +17,7 @@
                     :items="channels"
                     v-model="context.channel"
                     prepend-icon="mdi-cellphone"
+                    v-on:change="onUpdate"
                   ></v-select>
                 </v-col>
               </v-row>
@@ -27,13 +28,9 @@
                 Here you can define all allowed context properties.
               </v-card-subtitle>
               <v-card-text>
-                <Structure :structure="context.structure" />
+                <Structure :structure="context.structure" @savecallback="onUpdate"/>
               </v-card-text>
             </div>
-            <v-card-actions>
-              <v-spacer />
-              <v-btn color="primary" text :disabled="!valid" @click="save()">Save</v-btn>
-            </v-card-actions>
           </v-card>
         </v-form>
       </v-col>
@@ -76,6 +73,11 @@ export default {
     },
     deleteCondition(index) {
       this.context.conditions.splice(index, 1)
+    },
+    onUpdate(){
+      if(this.valid){
+        this.save()
+      }
     },
     async save() {
       try {
