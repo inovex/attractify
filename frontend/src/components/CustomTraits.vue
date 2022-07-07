@@ -13,13 +13,9 @@
               <v-card-title>Properties</v-card-title>
               <v-card-subtitle>Here you can define all allowed custom traits properties.</v-card-subtitle>
               <v-card-text>
-                <Structure :structure="customTraits.structure" />
+                <Structure :structure="customTraits.structure" @savecallback="onUpdate" />
               </v-card-text>
             </div>
-            <v-card-actions>
-              <v-spacer />
-              <v-btn color="primary" text :disabled="!valid" @click="save()">Save</v-btn>
-            </v-card-actions>
           </v-card>
         </v-form>
       </v-col>
@@ -60,6 +56,11 @@ export default {
     },
     deleteCondition(index) {
       this.customTraits.conditions.splice(index, 1)
+    },
+    onUpdate(){
+      if(this.valid){
+        this.save()
+      }
     },
     async save() {
       try {
