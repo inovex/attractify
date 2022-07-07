@@ -19,8 +19,7 @@
                     type="text"
                     v-model="event.name"
                     :rules="[rules.required]"
-                    v-on:blur="onFieldLeave"
-                    @click="onFieldClick"
+                    @change="onUpdate"
                   />
                 </v-col>
               </v-row>
@@ -32,8 +31,7 @@
                     prepend-icon="mdi-text"
                     type="text"
                     v-model="event.description"
-                    v-on:blur="onFieldLeave"
-                    @click="onFieldClick"
+                    @change="onUpdate"
                   />
                 </v-col>
               </v-row>
@@ -44,7 +42,7 @@
                 Here you can define all allowed event properties.
               </v-card-subtitle>
               <v-card-text>
-                <Structure :structure="event.structure" v-on:savecallback="structureChange"/>
+                <Structure :structure="event.structure" v-on:savecallback="onUpdate"/>
               </v-card-text>
             </div>
           </v-card>
@@ -92,12 +90,7 @@ export default {
       this.tempName = this.event.name
       this.tempDescription = this.event.description
     },
-    onFieldLeave() {
-      if(this.valid && (this.tempDescription !== this.event.description || this.tempName !== this.event.name)) {
-        this.save()
-      }
-    },
-    structureChange(){
+    onUpdate(){
       if(this.valid){
         this.save()
       }
