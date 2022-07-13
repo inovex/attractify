@@ -7,7 +7,7 @@
             <div class="title font-weight-light mb-2">Reactions last 24h</div>
           </v-card-text>
 
-          <v-sheet class="chart" color="#28dece">
+          <v-sheet class="chart" color="white">
             <LineChart :chart-data="reactions" :options="chartOptions"></LineChart>
           </v-sheet>
 
@@ -26,7 +26,7 @@
             <div class="title font-weight-light mb-2">New users last 24h</div>
           </v-card-text>
 
-          <v-sheet class="chart" color="#28dece">
+          <v-sheet class="chart" color="white">
             <LineChart :chart-data="profiles" :options="chartOptions"></LineChart>
           </v-sheet>
 
@@ -89,6 +89,9 @@ import LineChart from './analyze/LineChart.vue'
 import dashboard from '../lib/rest/dashboard'
 import moment from 'moment'
 
+var style = getComputedStyle(document.body);
+var chartColor = style.getPropertyValue('--v-primary-base');
+
 export default {
   components: { LineChart },
   data: () => ({
@@ -107,17 +110,17 @@ export default {
               display: false
             },
             ticks: {
-              fontColor: 'white'
+              fontColor: chartColor
             }
           }
         ],
         yAxes: [
           {
             gridLines: {
-              display: false
+              display: true
             },
             ticks: {
-              display: false,
+              display: true,
               beginAtZero: true
             }
           }
@@ -135,7 +138,7 @@ export default {
           }),
           datasets: [
             {
-              borderColor: 'rgba(255, 255, 255, 1)',
+              borderColor: chartColor,
               fill: false,
               data: res.reactions.map(r => {
                 return r.count
@@ -149,7 +152,7 @@ export default {
           }),
           datasets: [
             {
-              borderColor: 'rgba(255, 255, 255, 1)',
+              borderColor: chartColor,
               fill: false,
               data: res.profiles.map(r => {
                 return r.count
@@ -178,7 +181,7 @@ export default {
 }
 
 .count {
-  color: #28dece;
+  color: var(--v-primary-base);
 }
 .chart {
   max-height: 400px;

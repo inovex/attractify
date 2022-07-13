@@ -9,6 +9,7 @@ export default new Vuetify({
       light: {
         primary: '#28DECE'
       }
-    }
+    },
+    options: { customProperties: true },
   }
 })
