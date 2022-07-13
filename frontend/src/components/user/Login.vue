@@ -38,7 +38,7 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer />
-              <v-btn color="primary" @click.prevent="login()" :disabled="!valid" type="submit" text>Login</v-btn>
+              <v-btn color="primary" @click.prevent="login()" :disabled="!valid" type="submit" rounded>Login</v-btn>
             </v-card-actions>
           </v-card>
         </v-form>

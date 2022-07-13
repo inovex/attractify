@@ -54,7 +54,7 @@
       <v-col dense cols="auto" v-if="trait.operator && showValue(trait.operator)">
         <v-menu offset-y>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text>
+            <v-btn v-on="on" rounded>
               <v-icon>mdi-plus</v-icon>
               compare to
             </v-btn>

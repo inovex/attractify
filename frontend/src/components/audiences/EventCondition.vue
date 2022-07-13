@@ -132,7 +132,7 @@
         <v-col cols="auto" v-if="event.id">
           <v-menu offset-y>
             <template v-slot:activator="{ on }">
-              <v-btn v-on="on" text>
+              <v-btn v-on="on" rounded>
                 <v-icon>mdi-plus</v-icon>
                 compare property
               </v-btn>

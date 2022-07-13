@@ -31,7 +31,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer />
-      <v-btn color="primary" :disabled="!valid" @click="change()" text>Change Details</v-btn>
+      <v-btn color="primary" :disabled="!valid" @click="change()" rounded>Change Details</v-btn>
     </v-card-actions>
   </div>
 </template>

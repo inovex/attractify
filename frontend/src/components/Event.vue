@@ -49,8 +49,8 @@
     </v-row>
     <v-col class="sticky text-center">
       <v-spacer />
-      <v-btn rounded elevation="2" color="primary" :disabled="!valid" @click="save()">Save</v-btn>
       <v-btn rounded elevation="2" @click="cancel()">Cancel</v-btn>
+      <v-btn rounded elevation="2" color="primary" :disabled="!valid" @click="save()">Save</v-btn>
     </v-col>
   </v-container>
 </template>

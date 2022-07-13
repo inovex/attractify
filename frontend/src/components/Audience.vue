@@ -69,11 +69,11 @@
                         <EventCondition :event="event" />
                         <v-divider></v-divider>
                         <v-card-actions>
-                          <v-btn text @click="addFunnelEvent(event.internalId, false)">
+                          <v-btn rounded @click="addFunnelEvent(event.internalId, false)">
                             <v-icon>mdi-filter-plus-outline</v-icon>
                             <span class="ml-2">and then performed...</span>
                           </v-btn>
-                          <v-btn text @click="addFunnelEvent(event.internalId, true)">
+                          <v-btn rounded @click="addFunnelEvent(event.internalId, true)">
                             <v-icon>mdi-filter-minus-outline</v-icon>
                             <span class="ml-2">and then didn't perform...</span>
                           </v-btn>
@@ -150,17 +150,17 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text @click="dialog = false">Close</v-btn>
+          <v-btn rounded @click="dialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
     <v-col class="sticky text-center">
       <v-spacer />
-      <v-btn rounded elevation="2" color="primary" :disabled="!valid" @click="save()">Save</v-btn>
-      <v-btn rounded elevation="2" color="secondary" :disabled="!valid" @click="preview()">Preview</v-btn>
-      <v-btn rounded elevation="2" color="secondary" :disabled="!valid" @click="refresh()">Refresh</v-btn>
       <v-btn rounded elevation="2" @click="cancel()">Cancel</v-btn>
+      <v-btn rounded elevation="2" color="secondary" :disabled="!valid" @click="refresh()">Refresh</v-btn>
+      <v-btn rounded elevation="2" color="secondary" :disabled="!valid" @click="preview()">Preview</v-btn>
+      <v-btn rounded elevation="2" color="primary" :disabled="!valid" @click="save()">Save</v-btn>
     </v-col>
   </v-container>
 </template>
