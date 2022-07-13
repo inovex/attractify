@@ -167,7 +167,7 @@
                   <v-col>
                     <v-row v-for="(condition, key) of computedTrait.conditions" :key="key">
                       <v-col>
-                        <Condition :properties="eventProperties" :condition="condition" />
+                        <Condition :properties="eventProperties" :condition="condition"/>
                       </v-col>
                       <v-col class="col-lg-1">
                         <v-btn icon @click="deleteCondition(key)">

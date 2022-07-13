@@ -76,7 +76,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn text @click="cancel()">Cancel</v-btn>
-            <v-btn text color="primary" :disabled="!valid" @click="save()">Apply</v-btn>
+            <v-btn text color="primary" :disabled="!valid" @click="save()">Save</v-btn>
           </v-card-actions>
         </v-form>
       </v-card>
@@ -122,6 +122,7 @@ export default {
       this.$refs.form.reset()
     },
     save() {
+      this.$emit('savecallback')
       this.saveCallback(this.property)
       this.cancel()
     },
@@ -166,6 +167,7 @@ export default {
         items = this.structure
       }
 
+      this.$emit('savecallback')
       let i = 0
       for (let n of items) {
         if (n.id === id) {

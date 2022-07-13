@@ -40,7 +40,7 @@
                 Here you can define all allowed event properties.
               </v-card-subtitle>
               <v-card-text>
-                <Structure :structure="event.structure" />
+                <Structure :structure="event.structure" v-on:savecallback="onUpdate"/>
               </v-card-text>
             </div>
             <v-card-actions>
@@ -87,6 +87,11 @@ export default {
     },
     deleteCondition(index) {
       this.event.conditions.splice(index, 1)
+    },
+    onUpdate(){
+      if(this.valid){
+        this.save()
+      }
     },
     async save() {
       try {
