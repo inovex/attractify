@@ -115,14 +115,16 @@
                 </v-tab-item>
               </v-tabs-items>
             </v-card-text>
-            <v-card-actions>
-              <v-spacer />
-              <v-btn color="primary" :disabled="!valid" @click="save()" text>Save</v-btn>
-            </v-card-actions>
           </v-card>
         </v-form>
       </v-col>
     </v-row>
+
+    <v-col class="sticky text-center">
+      <v-spacer />
+      <v-btn rounded elevation="2" @click="cancel()">Cancel</v-btn>
+      <v-btn rounded elevation="2" color="primary" :disabled="!valid" @click="save()">Save</v-btn>
+    </v-col>
   </v-container>
 </template>
 
@@ -169,6 +171,9 @@ export default {
     }
   },
   methods: {
+    cancel(){
+      this.$router.push('/actions')
+    },
     ...mapActions('actions', ['show', 'create', 'update']),
     async save() {
       try {
@@ -206,5 +211,15 @@ export default {
 <style scoped>
 .raised {
   background-color: rgba(0, 0, 0, 0.05);
+}
+.sticky {
+  margin: 0.5rem 0 0 0;
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 1rem;
+  z-index: 1;
+}
+.sticky button{
+  margin: 0 0.5rem;
 }
 </style>

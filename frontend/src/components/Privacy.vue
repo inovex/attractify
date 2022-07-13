@@ -49,7 +49,7 @@
 
             <v-card-actions>
               <v-spacer />
-              <v-btn color="primary" :disabled="!valid" @click="run()" text>Create Request</v-btn>
+              <v-btn color="primary" :disabled="!valid" @click="run()" rounded>Create Request</v-btn>
             </v-card-actions>
           </v-card>
         </v-form>
@@ -85,8 +85,8 @@
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn text @click="close()">Close</v-btn>
-                    <v-btn text color="primary" :disabled="!valid" @click="create()">Create</v-btn>
+                    <v-btn rounded @click="close()">Close</v-btn>
+                    <v-btn rounded color="primary" :disabled="!valid" @click="create()">Create</v-btn>
                   </v-card-actions>
                 </v-form>
               </v-card>

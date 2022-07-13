@@ -69,11 +69,11 @@
                         <EventCondition :event="event" />
                         <v-divider></v-divider>
                         <v-card-actions>
-                          <v-btn text @click="addFunnelEvent(event.internalId, false)">
+                          <v-btn rounded @click="addFunnelEvent(event.internalId, false)">
                             <v-icon>mdi-filter-plus-outline</v-icon>
                             <span class="ml-2">and then performed...</span>
                           </v-btn>
-                          <v-btn text @click="addFunnelEvent(event.internalId, true)">
+                          <v-btn rounded @click="addFunnelEvent(event.internalId, true)">
                             <v-icon>mdi-filter-minus-outline</v-icon>
                             <span class="ml-2">and then didn't perform...</span>
                           </v-btn>
@@ -105,13 +105,6 @@
                 </v-col>
               </v-row>
             </v-card-text>
-
-            <v-card-actions>
-              <v-spacer />
-              <v-btn color="primary" :disabled="!valid" @click="save()" text>Save</v-btn>
-              <v-btn color="secondary" :disabled="!valid" @click="preview()" text>Preview</v-btn>
-              <v-btn color="secondary" :disabled="!valid" @click="refresh()" text>Refresh</v-btn>
-            </v-card-actions>
           </v-card>
         </v-form>
       </v-col>
@@ -157,10 +150,18 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn text @click="dialog = false">Close</v-btn>
+          <v-btn rounded @click="dialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-col class="sticky text-center">
+      <v-spacer />
+      <v-btn rounded elevation="2" @click="cancel()">Cancel</v-btn>
+      <v-btn rounded elevation="2" color="secondary" :disabled="!valid" @click="refresh()">Refresh</v-btn>
+      <v-btn rounded elevation="2" color="secondary" :disabled="!valid" @click="preview()">Preview</v-btn>
+      <v-btn rounded elevation="2" color="primary" :disabled="!valid" @click="save()">Save</v-btn>
+    </v-col>
   </v-container>
 </template>
 
@@ -194,6 +195,9 @@ export default {
     }
   },
   methods: {
+    cancel(){
+      this.$router.push('/audiences')
+    },
     show(item) {
       this.$router.push({ path: `/profile/${item.id}` })
     },
@@ -286,3 +290,16 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.sticky {
+  margin: 0.5rem 0 0 0;
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 1rem;
+  z-index: 1;
+}
+.sticky button{
+  margin: 0 0.5rem;
+}
+</style>

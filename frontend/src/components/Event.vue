@@ -43,14 +43,15 @@
                 <Structure :structure="event.structure" v-on:savecallback="onUpdate"/>
               </v-card-text>
             </div>
-            <v-card-actions>
-              <v-spacer />
-              <v-btn color="primary" text :disabled="!valid" @click="save()">Save</v-btn>
-            </v-card-actions>
           </v-card>
         </v-form>
       </v-col>
     </v-row>
+    <v-col class="sticky text-center">
+      <v-spacer />
+      <v-btn rounded elevation="2" @click="cancel()">Cancel</v-btn>
+      <v-btn rounded elevation="2" color="primary" :disabled="!valid" @click="save()">Save</v-btn>
+    </v-col>
   </v-container>
 </template>
 
@@ -82,6 +83,9 @@ export default {
     }
   },
   methods: {
+    cancel(){
+      this.$router.push('/events')
+    },
     addCondition() {
       this.event.conditions.push({})
     },
@@ -124,3 +128,16 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.sticky {
+  margin: 0.5rem 0 0 0;
+  position: -webkit-sticky;
+  position: sticky;
+  bottom: 1rem;
+  z-index: 1;
+}
+.sticky button{
+  margin: 0 0.5rem;
+}
+</style>

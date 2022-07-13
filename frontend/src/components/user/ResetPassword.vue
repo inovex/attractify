@@ -56,7 +56,7 @@
                 :disabled="!valid"
                 v-if="!resetMode"
                 type="submit"
-                text
+                rounded
                 >Request Code</v-btn
               >
               <v-btn
@@ -65,7 +65,7 @@
                 :disabled="!valid"
                 v-if="resetMode"
                 type="submit"
-                text
+                rounded
                 >Reset Password</v-btn
               >
             </v-card-actions>

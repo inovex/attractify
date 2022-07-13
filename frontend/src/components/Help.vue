@@ -14,7 +14,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="dialog = false">
+        <v-btn rounded @click="dialog = false">
           Close
         </v-btn>
       </v-card-actions>
