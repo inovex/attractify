@@ -39,7 +39,7 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer />
-              <v-btn color="primary" :disabled="!valid" @click.prevent="activate()" type="submit">Activate</v-btn>
+              <v-btn color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click.prevent="activate()" type="submit">Activate</v-btn>
             </v-card-actions>
           </v-card>
         </v-form>

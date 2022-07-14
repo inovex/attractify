@@ -15,7 +15,7 @@
                 <v-select :items="channels" label="Channel" prepend-icon="mdi-devices" v-model="channel"></v-select>
               </v-col>
               <v-col>
-                <v-btn @click="createToken" :disabled="channel === ''" rounded color="primary">Create Token</v-btn>
+                <v-btn @click="createToken" :disabled="channel === ''" rounded color="primary" style="color: var(--v-buttontext-base)">Create Token</v-btn>
               </v-col>
             </v-row>
             <v-row>
@@ -54,7 +54,7 @@
                 />
               </v-col>
               <v-col>
-                <v-btn @click="showKey()" rounded color="primary">Show Signature Key</v-btn>
+                <v-btn @click="showKey()" rounded color="primary" style="color: var(--v-buttontext-base)">Show Signature Key</v-btn>
               </v-col>
             </v-row>
             <v-row>
@@ -77,7 +77,7 @@
             </v-row>
             <v-row>
               <v-col>
-                <v-btn @click="getToken()" rounded color="primary">Generate Token</v-btn>
+                <v-btn @click="getToken()" rounded color="primary" style="color: var(--v-buttontext-base)">Generate Token</v-btn>
               </v-col>
             </v-row>
             <v-row>

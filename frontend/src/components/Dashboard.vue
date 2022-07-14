@@ -7,7 +7,7 @@
             <div class="title font-weight-light mb-2">Reactions last 24h</div>
           </v-card-text>
 
-          <v-sheet class="chart" color="white">
+          <v-sheet class="chart">
             <LineChart :chart-data="reactions" :options="chartOptions"></LineChart>
           </v-sheet>
 
@@ -26,7 +26,7 @@
             <div class="title font-weight-light mb-2">New users last 24h</div>
           </v-card-text>
 
-          <v-sheet class="chart" color="white">
+          <v-sheet class="chart">
             <LineChart :chart-data="profiles" :options="chartOptions"></LineChart>
           </v-sheet>
 
@@ -89,12 +89,10 @@ import LineChart from './analyze/LineChart.vue'
 import dashboard from '../lib/rest/dashboard'
 import moment from 'moment'
 
-var style = getComputedStyle(document.body);
-var chartColor = style.getPropertyValue('--v-primary-base');
-
 export default {
   components: { LineChart },
   data: () => ({
+    chartColor: {},
     reactions: {},
     profiles: {},
     actionCount: 0,
@@ -110,16 +108,18 @@ export default {
               display: false
             },
             ticks: {
-              fontColor: chartColor
+              fontColor: 'grey'
             }
           }
         ],
         yAxes: [
           {
             gridLines: {
+              color: 'grey',
               display: true
             },
             ticks: {
+              fontColor: 'grey',
               display: true,
               beginAtZero: true
             }
@@ -128,8 +128,17 @@ export default {
       }
     }
   }),
+  methods:{
+    updateChartColor(){
+      this.$bus.$on('darkmodechanged', this.updateChartColor)
+      let style = getComputedStyle(document.body);
+      this.chartColor = style.getPropertyValue('--v-primary-base');
+      this.chartOptions.scales.xAxes[0].ticks.fontColor = this.chartColor;
+    }
+  },
   async created() {
     try {
+      this.updateChartColor()
       let res = await dashboard.load()
       if (res !== null) {
         this.reactions = {
@@ -138,7 +147,7 @@ export default {
           }),
           datasets: [
             {
-              borderColor: chartColor,
+              borderColor: this.chartColor,
               fill: false,
               data: res.reactions.map(r => {
                 return r.count
@@ -152,7 +161,7 @@ export default {
           }),
           datasets: [
             {
-              borderColor: chartColor,
+              borderColor: this.chartColor,
               fill: false,
               data: res.profiles.map(r => {
                 return r.count

@@ -4,7 +4,6 @@
       flat
       @click="selectCompareEvent(event)"
       :class="{ event__selector: true, 'lighten-5': event.parentId, 'lighten-3': !event.parentId }"
-      color="grey"
     >
       <v-toolbar-title class="pl-0">
         <span v-if="!event.exclude && !event.parentId">performed</span>

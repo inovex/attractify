@@ -54,7 +54,7 @@
                   </v-btn>
                 </template>
                 <v-list>
-                  <v-list-item v-for="(item, index) in conditionTypes" :key="index" @click="addCondition(item.value)">
+                  <v-list-item  v-for="(item, index) in conditionTypes" :key="index" @click="addCondition(item.value)">
                     <v-list-item-title>{{ item.title }}</v-list-item-title>
                   </v-list-item>
                 </v-list>
@@ -88,7 +88,7 @@
                   <v-row v-for="(trait, key) of audience.traits" :key="`trait-${key}`">
                     <v-col>
                       <v-card outlined elevation="1" tile>
-                        <v-app-bar flat color="blue-grey" dense class="lighten-4">
+                        <v-app-bar flat dense class="lighten-4">
                           <v-toolbar-title class="pl-0 text-s">
                             <span v-if="trait.source === 'custom'">have custom trait</span>
                             <span v-if="trait.source === 'computed'">have computed trait</span>
@@ -160,7 +160,7 @@
       <v-btn rounded elevation="2" @click="cancel()">Cancel</v-btn>
       <v-btn rounded elevation="2" color="secondary" :disabled="!valid" @click="refresh()">Refresh</v-btn>
       <v-btn rounded elevation="2" color="secondary" :disabled="!valid" @click="preview()">Preview</v-btn>
-      <v-btn rounded elevation="2" color="primary" :disabled="!valid" @click="save()">Save</v-btn>
+      <v-btn rounded elevation="2" color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="save()">Save</v-btn>
     </v-col>
   </v-container>
 </template>

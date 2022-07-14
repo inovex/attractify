@@ -58,7 +58,7 @@
             <v-date-picker v-model="targeting.start.date" type="date" scrollable>
               <v-spacer></v-spacer>
               <v-btn rounded @click="modalStartDate = false">Cancel</v-btn>
-              <v-btn rounded color="primary" @click="$refs.dialogStartDate.save(targeting.start.date)">OK</v-btn>
+              <v-btn rounded color="primary" style="color: var(--v-buttontext-base)" @click="$refs.dialogStartDate.save(targeting.start.date)">OK</v-btn>
             </v-date-picker>
           </v-dialog>
         </v-col>
@@ -83,7 +83,7 @@
             <v-time-picker v-if="modalStartTime" v-model="targeting.start.time" full-width format="24hr">
               <v-spacer></v-spacer>
               <v-btn rounded @click="modalStartTime = false">Cancel</v-btn>
-              <v-btn rounded color="primary" @click="$refs.dialogStartTime.save(targeting.start.time)">OK</v-btn>
+              <v-btn rounded color="primary" style="color: var(--v-buttontext-base)" @click="$refs.dialogStartTime.save(targeting.start.time)">OK</v-btn>
             </v-time-picker>
           </v-dialog>
         </v-col>
@@ -108,7 +108,7 @@
             <v-date-picker v-model="targeting.end.date" type="date" scrollable>
               <v-spacer></v-spacer>
               <v-btn rounded @click="modalEndDate = false">Cancel</v-btn>
-              <v-btn rounded color="primary" @click="$refs.dialogEndDate.save(targeting.end.date)">OK</v-btn>
+              <v-btn rounded color="primary" style="color: var(--v-buttontext-base)" @click="$refs.dialogEndDate.save(targeting.end.date)">OK</v-btn>
             </v-date-picker>
           </v-dialog>
         </v-col>
@@ -133,7 +133,7 @@
             <v-time-picker v-if="modalEndTime" v-model="targeting.end.time" full-width format="24hr">
               <v-spacer></v-spacer>
               <v-btn rounded @click="modalEndTime = false">Cancel</v-btn>
-              <v-btn rounded color="primary" @click="$refs.dialogEndTime.save(targeting.end.time)">OK</v-btn>
+              <v-btn rounded color="primary" style="color: var(--v-buttontext-base)" @click="$refs.dialogEndTime.save(targeting.end.time)">OK</v-btn>
             </v-time-picker>
           </v-dialog>
         </v-col>
