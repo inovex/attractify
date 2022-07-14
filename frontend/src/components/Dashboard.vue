@@ -91,8 +91,18 @@ import moment from 'moment'
 
 export default {
   components: { LineChart },
+  props: {
+    darkmode: {
+      type: Boolean,
+      default: false
+    }
+  },
+  watch: {
+      darkmode: function() {
+          this.updateChartColor()
+      }
+  },
   data: () => ({
-    chartColor: {},
     reactions: {},
     profiles: {},
     actionCount: 0,
@@ -130,15 +140,16 @@ export default {
   }),
   methods:{
     updateChartColor(){
-      this.$bus.$on('darkmodechanged', this.updateChartColor)
       let style = getComputedStyle(document.body);
       this.chartColor = style.getPropertyValue('--v-primary-base');
       this.chartOptions.scales.xAxes[0].ticks.fontColor = this.chartColor;
+      this.reactions.datasets[0].borderColor = this.chartColor;
+      this.profiles.datasets[0].borderColor = this.chartColor;
+      //TODO: update chart color when darkmode is changed
     }
   },
   async created() {
     try {
-      this.updateChartColor()
       let res = await dashboard.load()
       if (res !== null) {
         this.reactions = {
@@ -176,6 +187,7 @@ export default {
         this.eventCount = res.events
         this.actionCount = res.actions
       }
+      this.updateChartColor()
     } catch (e) {
       this.$notify.error('Could not load dashboard.')
     }

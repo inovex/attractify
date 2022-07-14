@@ -67,7 +67,7 @@
         </v-row>
 
         <template v-if="$route.matched.length">
-          <router-view></router-view>
+          <router-view :darkmode="this.darkmode"></router-view>
         </template>
       </v-container>
     </v-main>
@@ -90,6 +90,7 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   data() {
     return {
+      darkmode: false,
       user: {},
       showNotification: false,
       notification: {},
@@ -211,6 +212,7 @@ export default {
     },
     darkMode() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+      this.darkmode = this.$vuetify.theme.dark
       window.localStorage.setItem('darkmode', this.$vuetify.theme.dark)
     }
   },
@@ -230,6 +232,7 @@ export default {
     }else if(window.matchMedia('(prefers-color-scheme: dark)').matches) {
       this.$vuetify.theme.dark = true
     }
+    this.darkmode = this.$vuetify.theme.dark
     this.refresh()
   }
 }
