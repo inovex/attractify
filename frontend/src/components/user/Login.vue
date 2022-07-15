@@ -2,7 +2,7 @@
   <v-container class="fill-height" fluid>
     <v-row align="center" justify="center">
       <v-col cols="12" sm="8" md="4">
-        <v-img class="logo" :src="require('../../assets/logo_black.svg')" c />
+        <v-img class="logo" :src="this.$vuetify.theme.dark ? require('../../assets/logo.svg') : require('../../assets/logo_black.svg')" c />
         <v-form ref="form" v-model="valid">
           <v-card class="elevation-12">
             <v-toolbar dark flat>
@@ -38,7 +38,7 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer />
-              <v-btn color="primary" @click.prevent="login()" :disabled="!valid" type="submit" rounded>Login</v-btn>
+              <v-btn color="primary" style="color: var(--v-buttontext-base)" @click.prevent="login()" :disabled="!valid" type="submit" rounded>Login</v-btn>
             </v-card-actions>
           </v-card>
         </v-form>

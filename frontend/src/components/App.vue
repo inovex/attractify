@@ -31,9 +31,28 @@
       <v-container fluid>
         <v-row justify="end">
           <v-col cols="auto" class="mr-3">
+            <v-tooltip v-if="!$vuetify.theme.dark" bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn v-on="on" width="48" height="48" fab @click="darkMode">
+                  <v-icon color="primary">mdi-white-balance-sunny</v-icon>
+                </v-btn>
+              </template>
+              <span>Dark Mode On</span>
+            </v-tooltip>
+
+            <v-tooltip v-else bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn v-on="on" width="48" height="48" fab @click="darkMode">
+                  <v-icon color="primary">mdi-moon-waning-crescent</v-icon>
+                </v-btn>
+              </template>
+              <span>Dark Mode Off</span>
+            </v-tooltip>
+          </v-col>
+          <v-col cols="auto" class="mr-3">
             <v-menu bottom v-if="isLoggedIn">
               <template v-slot:activator="{ on }">
-                <v-avatar class="avatar__icon" color="primary" size="48" v-on="on">{{ initials }}</v-avatar>
+                <v-avatar class="avatar__icon" color="primary" style="color: var(--v-buttontext-base)" size="48" v-on="on">{{ initials }}</v-avatar>
               </template>
               <v-list>
                 <v-list-item :to="{ path: '/user' }">
@@ -48,7 +67,7 @@
         </v-row>
 
         <template v-if="$route.matched.length">
-          <router-view></router-view>
+          <router-view :darkmode="this.darkmode"></router-view>
         </template>
       </v-container>
     </v-main>
@@ -71,6 +90,7 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   data() {
     return {
+      darkmode: false,
       user: {},
       showNotification: false,
       notification: {},
@@ -189,6 +209,11 @@ export default {
         return this.user.role === 'admin'
       }
       return true
+    },
+    darkMode() {
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+      this.darkmode = this.$vuetify.theme.dark
+      window.localStorage.setItem('darkmode', this.$vuetify.theme.dark)
     }
   },
   computed: {
@@ -202,6 +227,12 @@ export default {
     this.$bus.$on('user:update', this.refresh)
     this.$bus.$on('notify', this.notify)
     this.$bus.$on('user:logout', this.logout)
+    if(window.localStorage.getItem('darkmode') != null) {
+      this.$vuetify.theme.dark = JSON.parse(window.localStorage.getItem('darkmode'))
+    }else if(window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      this.$vuetify.theme.dark = true
+    }
+    this.darkmode = this.$vuetify.theme.dark
     this.refresh()
   }
 }

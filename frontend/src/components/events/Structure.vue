@@ -76,7 +76,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn rounded @click="cancel()">Cancel</v-btn>
-            <v-btn rounded color="primary" :disabled="!valid" @click="save()">Save</v-btn>
+            <v-btn rounded color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="save()">Save</v-btn>
           </v-card-actions>
         </v-form>
       </v-card>

@@ -51,7 +51,7 @@
             <v-card-actions>
               <v-spacer />
               <v-btn
-                color="primary"
+                color="primary" style="color: var(--v-buttontext-base)"
                 @click.prevent="requestCode()"
                 :disabled="!valid"
                 v-if="!resetMode"
@@ -60,7 +60,7 @@
                 >Request Code</v-btn
               >
               <v-btn
-                color="primary"
+                color="primary" style="color: var(--v-buttontext-base)"
                 @click.prevent="setNewPassword()"
                 :disabled="!valid"
                 v-if="resetMode"

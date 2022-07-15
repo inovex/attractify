@@ -7,7 +7,7 @@
             <div class="title font-weight-light mb-2">Reactions last 24h</div>
           </v-card-text>
 
-          <v-sheet class="chart" color="white">
+          <v-sheet class="chart">
             <LineChart :chart-data="reactions" :options="chartOptions"></LineChart>
           </v-sheet>
 
@@ -26,7 +26,7 @@
             <div class="title font-weight-light mb-2">New users last 24h</div>
           </v-card-text>
 
-          <v-sheet class="chart" color="white">
+          <v-sheet class="chart">
             <LineChart :chart-data="profiles" :options="chartOptions"></LineChart>
           </v-sheet>
 
@@ -89,11 +89,19 @@ import LineChart from './analyze/LineChart.vue'
 import dashboard from '../lib/rest/dashboard'
 import moment from 'moment'
 
-var style = getComputedStyle(document.body);
-var chartColor = style.getPropertyValue('--v-primary-base');
-
 export default {
   components: { LineChart },
+  props: {
+    darkmode: {
+      type: Boolean,
+      default: false
+    }
+  },
+  watch: {
+      darkmode: function() {
+          this.updateChartColor()
+      }
+  },
   data: () => ({
     reactions: {},
     profiles: {},
@@ -110,16 +118,18 @@ export default {
               display: false
             },
             ticks: {
-              fontColor: chartColor
+              fontColor: 'grey'
             }
           }
         ],
         yAxes: [
           {
             gridLines: {
+              color: 'grey',
               display: true
             },
             ticks: {
+              fontColor: 'grey',
               display: true,
               beginAtZero: true
             }
@@ -128,6 +138,16 @@ export default {
       }
     }
   }),
+  methods:{
+    updateChartColor(){
+      let style = getComputedStyle(document.body);
+      this.chartColor = style.getPropertyValue('--v-primary-base');
+      this.chartOptions.scales.xAxes[0].ticks.fontColor = this.chartColor;
+      this.reactions.datasets[0].borderColor = this.chartColor;
+      this.profiles.datasets[0].borderColor = this.chartColor;
+      //TODO: update chart color when darkmode is changed
+    }
+  },
   async created() {
     try {
       let res = await dashboard.load()
@@ -138,7 +158,7 @@ export default {
           }),
           datasets: [
             {
-              borderColor: chartColor,
+              borderColor: this.chartColor,
               fill: false,
               data: res.reactions.map(r => {
                 return r.count
@@ -152,7 +172,7 @@ export default {
           }),
           datasets: [
             {
-              borderColor: chartColor,
+              borderColor: this.chartColor,
               fill: false,
               data: res.profiles.map(r => {
                 return r.count
@@ -167,6 +187,7 @@ export default {
         this.eventCount = res.events
         this.actionCount = res.actions
       }
+      this.updateChartColor()
     } catch (e) {
       this.$notify.error('Could not load dashboard.')
     }

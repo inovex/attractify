@@ -52,7 +52,7 @@
     </v-card-text>
     <v-card-actions>
       <v-spacer />
-      <v-btn color="primary" :disabled="!valid" @click="change()" rounded>Change Password</v-btn>
+      <v-btn color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="change()" rounded>Change Password</v-btn>
     </v-card-actions>
   </div>
 </template>
