@@ -1,6 +1,7 @@
 package analytics
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -260,7 +261,7 @@ func (a Analytics) GetLastDaysEventCount(organizationID uuid.UUID) (int, error) 
 }
 
 const deleteEvent = `
-ALTER TABLE events_local ON CLUSTER attractify
+ALTER TABLE events%s %s
 DELETE
 WHERE organization_id = ?
 AND id = ?
@@ -272,12 +273,18 @@ type DeleteEventParams struct {
 }
 
 func (a Analytics) DeleteEvent(arg DeleteEventParams) error {
-	_, err := a.DB.Exec(deleteEvent, arg.OrganizationID, arg.ID)
+	var qry = deleteEventByIdentityID
+	if a.IsCluster {
+		qry = fmt.Sprint(qry, a.ClusterArgs.LocalSuffix, "On Cluster "+a.ClusterArgs.Cluster)
+	} else {
+		qry = fmt.Sprint(qry, "", "")
+	}
+	_, err := a.DB.Exec(qry, arg.OrganizationID, arg.ID)
 	return err
 }
 
 const deleteEventByIdentityID = `
-ALTER TABLE events_local ON CLUSTER attractify
+ALTER TABLE events%s %s
 DELETE
 WHERE organization_id = ?
 AND identity_id = ?
@@ -289,12 +296,18 @@ type DeleteEventByIdentityIDParams struct {
 }
 
 func (a Analytics) DeleteEventByIdentityID(arg DeleteEventByIdentityIDParams) error {
-	_, err := a.DB.Exec(deleteEventByIdentityID, arg.OrganizationID, arg.IdentityID)
+	var qry = deleteEventByIdentityID
+	if a.IsCluster {
+		qry = fmt.Sprint(qry, a.ClusterArgs.LocalSuffix, "On Cluster "+a.ClusterArgs.Cluster)
+	} else {
+		qry = fmt.Sprint(qry, "", "")
+	}
+	_, err := a.DB.Exec(qry, arg.OrganizationID, arg.IdentityID)
 	return err
 }
 
 const deleteEventsByIdentityIDs = `
-ALTER TABLE events_local ON CLUSTER attractify
+ALTER TABLE events%s %s
 DELETE
 WHERE organization_id = ?
 AND identity_id IN (?)
@@ -306,7 +319,13 @@ type DeleteEventsByIdentityIDsParams struct {
 }
 
 func (a Analytics) DeleteEventsByIdentityIDs(arg DeleteEventsByIdentityIDsParams) error {
-	query, args, err := sqlx.In(deleteEventsByIdentityIDs,
+	var qry = deleteEventsByIdentityIDs
+	if a.IsCluster {
+		qry = fmt.Sprint(qry, a.ClusterArgs.LocalSuffix, "On Cluster "+a.ClusterArgs.Cluster)
+	} else {
+		qry = fmt.Sprint(qry, "", "")
+	}
+	query, args, err := sqlx.In(qry,
 		arg.OrganizationID,
 		arg.IdentityIDs,
 	)
