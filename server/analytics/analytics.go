@@ -14,6 +14,13 @@ import (
 
 type Analytics struct {
 	*sqlx.DB
+	IsCluster   bool
+	ClusterArgs ClusterArgs
+}
+
+type ClusterArgs struct {
+	Cluster     string
+	LocalSuffix string
 }
 
 func OpenDB(dsn string) (*Analytics, error) {
@@ -45,5 +52,24 @@ func OpenDB(dsn string) (*Analytics, error) {
 		return nil, err
 	}
 
-	return &Analytics{db}, nil
+	var clusterArgs ClusterArgs
+	isCluster := false
+
+	if strings.Contains(dsn, "&cluster") && strings.Contains(dsn, "&local_suffix") {
+		isCluster = true
+		dsnArgs := strings.Split(dsn, "&")
+
+		for _, v := range dsnArgs {
+			splitted := strings.Split(v, "=")
+			key := splitted[0]
+			value := splitted[1]
+			if key == "cluster" {
+				clusterArgs.Cluster = value
+			} else if key == "local_suffix" {
+				clusterArgs.LocalSuffix = value
+			}
+		}
+	}
+
+	return &Analytics{db, isCluster, clusterArgs}, nil
 }
