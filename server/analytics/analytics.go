@@ -58,8 +58,8 @@ func OpenDB(dsn string) (*Analytics, error) {
 		return nil, err
 	}
 
-	if parsedDSN.Query().Has("cluster") && parsedDSN.Query().Has("local_suffix") {
-		clusterArgs.ClusterName = parsedDSN.Query().Get("cluster")
+	if parsedDSN.Query().Has("clusterName") && parsedDSN.Query().Has("local_suffix") {
+		clusterArgs.ClusterName = parsedDSN.Query().Get("clusterName")
 		clusterArgs.LocalSuffix = parsedDSN.Query().Get("local_suffix")
 	}
 
