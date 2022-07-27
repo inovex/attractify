@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net/url"
 	"strings"
 
 	"github.com/ClickHouse/clickhouse-go"
@@ -14,12 +15,11 @@ import (
 
 type Analytics struct {
 	*sqlx.DB
-	IsCluster   bool
-	ClusterArgs ClusterArgs
+	ClusterArgs *ClusterArgs
 }
 
 type ClusterArgs struct {
-	Cluster     string
+	ClusterName string
 	LocalSuffix string
 }
 
@@ -52,24 +52,23 @@ func OpenDB(dsn string) (*Analytics, error) {
 		return nil, err
 	}
 
-	var clusterArgs ClusterArgs
-	isCluster := false
-
-	if strings.Contains(dsn, "&cluster") && strings.Contains(dsn, "&local_suffix") {
-		isCluster = true
-		dsnArgs := strings.Split(dsn, "&")
-
-		for _, v := range dsnArgs {
-			splitted := strings.Split(v, "=")
-			key := splitted[0]
-			value := splitted[1]
-			if key == "cluster" {
-				clusterArgs.Cluster = value
-			} else if key == "local_suffix" {
-				clusterArgs.LocalSuffix = value
-			}
-		}
+	var clusterArgs *ClusterArgs
+	parsedDSN, err := url.Parse(dsn)
+	if err != nil {
+		return nil, err
 	}
 
-	return &Analytics{db, isCluster, clusterArgs}, nil
+	if parsedDSN.Query().Has("cluster") && parsedDSN.Query().Has("local_suffix") {
+		clusterArgs.ClusterName = parsedDSN.Query().Get("cluster")
+		clusterArgs.LocalSuffix = parsedDSN.Query().Get("local_suffix")
+	}
+
+	return &Analytics{db, clusterArgs}, nil
+}
+
+func (a Analytics) tableName(name string) string {
+	if a.ClusterArgs == nil {
+		return name
+	}
+	return fmt.Sprintf("%s_%s ON CLUSTER %s", name, a.ClusterArgs.LocalSuffix, a.ClusterArgs.ClusterName)
 }

@@ -275,7 +275,7 @@ func (a Analytics) GetReactionCount(arg GetReactionCountParams) (int, error) {
 }
 
 const deleteReaction = `
-ALTER TABLE reactions%s %s
+ALTER TABLE ?
 DELETE
 WHERE organization_id = ?
 AND id = ?
@@ -287,13 +287,7 @@ type DeleteReactionParams struct {
 }
 
 func (a Analytics) DeleteReaction(arg DeleteReactionParams) error {
-	var qry = deleteReaction
-	if a.IsCluster {
-		qry = fmt.Sprint(qry, a.ClusterArgs.LocalSuffix, "On Cluster "+a.ClusterArgs.Cluster)
-	} else {
-		qry = fmt.Sprint(qry, "", "")
-	}
-	_, err := a.DB.Exec(qry, arg.OrganizationID, arg.ID)
+	_, err := a.DB.Exec(deleteReaction, a.tableName("reactions"), arg.OrganizationID, arg.ID)
 	return err
 }
 
@@ -447,7 +441,7 @@ func (a Analytics) GetReactionChannelDeliveries(arg GetReactionChannelDeliveries
 }
 
 const deleteReactionByIdentityIDs = `
-ALTER TABLE reactions%s %s
+ALTER TABLE ?
 DELETE
 WHERE organization_id = ?
 AND identity_id IN (?)
@@ -459,13 +453,8 @@ type DeleteReactionByIdentityIDsParams struct {
 }
 
 func (a Analytics) DeleteReactionByIdentityIDs(arg DeleteReactionByIdentityIDsParams) error {
-	var qry = deleteReactionByIdentityIDs
-	if a.IsCluster {
-		qry = fmt.Sprint(qry, a.ClusterArgs.LocalSuffix, "On Cluster "+a.ClusterArgs.Cluster)
-	} else {
-		qry = fmt.Sprint(qry, "", "")
-	}
-	query, args, err := sqlx.In(qry,
+	query, args, err := sqlx.In(deleteEventsByIdentityIDs,
+		a.tableName("reactions"),
 		arg.OrganizationID,
 		arg.IdentityIDs,
 	)
