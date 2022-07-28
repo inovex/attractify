@@ -260,7 +260,7 @@ func (a Analytics) GetLastDaysEventCount(organizationID uuid.UUID) (int, error) 
 }
 
 const deleteEvent = `
-ALTER TABLE ?
+ALTER TABLE %s
 DELETE
 WHERE organization_id = ?
 AND id = ?
@@ -272,12 +272,12 @@ type DeleteEventParams struct {
 }
 
 func (a Analytics) DeleteEvent(arg DeleteEventParams) error {
-	_, err := a.DB.Exec(deleteEvent, a.tableName("events"), arg.OrganizationID, arg.ID)
+	_, err := a.DB.Exec(a.createAlterStatement(deleteEventsByIdentityIDs, "events"), arg.OrganizationID, arg.ID)
 	return err
 }
 
 const deleteEventByIdentityID = `
-ALTER TABLE ?
+ALTER TABLE %s
 DELETE
 WHERE organization_id = ?
 AND identity_id = ?
@@ -289,12 +289,12 @@ type DeleteEventByIdentityIDParams struct {
 }
 
 func (a Analytics) DeleteEventByIdentityID(arg DeleteEventByIdentityIDParams) error {
-	_, err := a.DB.Exec(deleteEventByIdentityID, a.tableName("events"), arg.OrganizationID, arg.IdentityID)
+	_, err := a.DB.Exec(a.createAlterStatement(deleteEventsByIdentityIDs, "events"), arg.OrganizationID, arg.IdentityID)
 	return err
 }
 
 const deleteEventsByIdentityIDs = `
-ALTER TABLE ?
+ALTER TABLE %s
 DELETE
 WHERE organization_id = ?
 AND identity_id IN (?)
@@ -306,8 +306,7 @@ type DeleteEventsByIdentityIDsParams struct {
 }
 
 func (a Analytics) DeleteEventsByIdentityIDs(arg DeleteEventsByIdentityIDsParams) error {
-	query, args, err := sqlx.In(deleteEventsByIdentityIDs,
-		a.tableName("events"),
+	query, args, err := sqlx.In(a.createAlterStatement(deleteEventsByIdentityIDs, "events"),
 		arg.OrganizationID,
 		arg.IdentityIDs,
 	)
