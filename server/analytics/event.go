@@ -272,7 +272,7 @@ type DeleteEventParams struct {
 }
 
 func (a Analytics) DeleteEvent(arg DeleteEventParams) error {
-	_, err := a.DB.Exec(a.createAlterStatement(deleteEventsByIdentityIDs, "reactions"), arg.OrganizationID, arg.ID)
+	_, err := a.DB.Exec(a.createAlterStatement(deleteEventsByIdentityIDs, "events"), arg.OrganizationID, arg.ID)
 	return err
 }
 
@@ -289,7 +289,7 @@ type DeleteEventByIdentityIDParams struct {
 }
 
 func (a Analytics) DeleteEventByIdentityID(arg DeleteEventByIdentityIDParams) error {
-	_, err := a.DB.Exec(a.createAlterStatement(deleteEventsByIdentityIDs, "reactions"), arg.OrganizationID, arg.IdentityID)
+	_, err := a.DB.Exec(a.createAlterStatement(deleteEventsByIdentityIDs, "events"), arg.OrganizationID, arg.IdentityID)
 	return err
 }
 
@@ -306,7 +306,7 @@ type DeleteEventsByIdentityIDsParams struct {
 }
 
 func (a Analytics) DeleteEventsByIdentityIDs(arg DeleteEventsByIdentityIDsParams) error {
-	query, args, err := sqlx.In(a.createAlterStatement(deleteEventsByIdentityIDs, "reactions"),
+	query, args, err := sqlx.In(a.createAlterStatement(deleteEventsByIdentityIDs, "events"),
 		arg.OrganizationID,
 		arg.IdentityIDs,
 	)
