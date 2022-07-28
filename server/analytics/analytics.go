@@ -72,3 +72,7 @@ func (a Analytics) tableName(name string) string {
 	}
 	return fmt.Sprintf("%s_%s ON CLUSTER %s", name, a.ClusterArgs.LocalSuffix, a.ClusterArgs.ClusterName)
 }
+
+func (a Analytics) createAlterStatement(qry string, name string) string {
+	return fmt.Sprintf(qry, a.tableName(name))
+}
