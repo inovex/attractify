@@ -75,5 +75,4 @@ func (a Analytics) tableName(name string) string {
 
 func (a Analytics) createAlterStatement(qry string, name string) string {
 	return fmt.Sprintf(qry, a.tableName(name))
-
 }
