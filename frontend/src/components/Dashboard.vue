@@ -145,7 +145,6 @@ export default {
       this.chartOptions.scales.xAxes[0].ticks.fontColor = this.chartColor;
       this.reactions.datasets[0].borderColor = this.chartColor;
       this.profiles.datasets[0].borderColor = this.chartColor;
-      //TODO: update chart color when darkmode is changed
     }
   },
   async created() {
