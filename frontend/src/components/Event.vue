@@ -78,7 +78,7 @@ export default {
         { text: 'Array', value: 'array' },
         { text: 'Object', value: 'object' }
       ],
-      changes: false,
+      changes: false, // TODO: check why it's true when the page is loaded
       valid: false,
       rules: {
         required: value => !!value || 'Required.'
