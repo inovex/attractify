@@ -19,6 +19,7 @@
                     type="text"
                     v-model="event.name"
                     :rules="[rules.required]"
+                    :v-on:keyUp="changes=true"
                   />
                 </v-col>
               </v-row>
@@ -30,6 +31,7 @@
                     prepend-icon="mdi-text"
                     type="text"
                     v-model="event.description"
+                    :v-on:keyUp="changes=true"
                   />
                 </v-col>
               </v-row>
@@ -76,6 +78,7 @@ export default {
         { text: 'Array', value: 'array' },
         { text: 'Object', value: 'object' }
       ],
+      changes: false,
       valid: false,
       rules: {
         required: value => !!value || 'Required.'
@@ -111,6 +114,7 @@ export default {
         }
 
         this.$notify.success('The structure has been saved successfully.')
+        this.changes = false
       } catch (e) {
         this.$notify.error('Could not save structure.')
       }
@@ -125,7 +129,16 @@ export default {
         this.$router.push({ path: '/404' })
       }
     }
-  }
+  },
+  beforeRouteLeave(to, from, next) {
+    if(this.changes){
+      var leave = confirm('You have unsaved changes. Are you sure you want to leave this page?');
+      if(!leave){
+        return false
+      }
+    }
+    next()
+  },
 }
 </script>
 
