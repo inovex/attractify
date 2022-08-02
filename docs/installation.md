@@ -16,7 +16,7 @@ To try the demo you need a local Docker host with Docker Compose installed. We p
 You just have to type the following command into your terminal. After a short wait, the individual services will start and you can play around with the demo.
 
 ```
-curl -o compose.yaml "https://raw.githubusercontent.com/inovex/attractify/master/docker-compose.demo.yml" ; docker-compose up
+curl -o compose.yaml "https://raw.githubusercontent.com/inovex/attractify/master/docker-compose.demo.yml" ; mkdir -p server/testdata/fixtures ; curl -o server/testdata/fixtures/postgres.sql "https://raw.githubusercontent.com/inovex/attractify/master/server/testdata/fixtures/postgres.sql"  ; docker-compose up
 ```
 
 Once Attractify is started, you can visit the example shop under [http://localhost:8000](http://localhost:8000)
