@@ -50,8 +50,6 @@ services:
       - postgres
       - clickhouse
     restart: always
-    volumes:
-      - ./server/config.sample.json:/app/config.json
 
   mariadb:
     image: ghcr.io/inovex/attractify/attractify-usecase-db
