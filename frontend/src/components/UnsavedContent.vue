@@ -6,7 +6,7 @@
           <v-spacer></v-spacer>
         </v-card-title>
         <v-card-text>
-            You have unsaved changes. Do you want to exit?
+            You have unsaved changes. Do you really want to exit?
         </v-card-text>
         <v-form ref="form">
           <v-card-actions>
