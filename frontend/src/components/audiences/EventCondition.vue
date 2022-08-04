@@ -16,7 +16,7 @@
           dense
           :loadCallback="loadEvents"
           :value="event.id || ''"
-          @change="setEvent"
+          @change="setEvent; changes"
           outlined
           placeholder="event"
           return-object
@@ -37,6 +37,7 @@
             :hide-details="true"
             placeholder="channel"
             :value="event.channels"
+            @change="changes"
             v-model="event.channels"
           ></v-select>
         </v-col>
@@ -47,6 +48,7 @@
             :hide-details="true"
             :items="eventOperators"
             :value="event.operator"
+            @change="changes"
             v-model="event.operator"
             :rules="[rules.required]"
           ></v-select>
@@ -57,6 +59,7 @@
             outlined
             name="count"
             type="number"
+            @input="changes"
             :hide-details="true"
             v-model.number="event.count"
             :rules="[rules.numberRequired]"
@@ -72,6 +75,7 @@
             :hide-details="true"
             :items="timeWindowTypes"
             :value="event.timeWindowOperator"
+            @change="changes"
             v-model="event.timeWindowOperator"
             :rules="[rules.required]"
           ></v-select>
@@ -84,6 +88,7 @@
             label="days"
             name="start"
             type="text"
+            @input="changes"
             :hide-details="true"
             v-model.number="event.timeWindowStart"
             :rules="[rules.required]"
@@ -95,6 +100,7 @@
             label="start days"
             name="start"
             type="text"
+            @input="changes"
             :hide-details="true"
             v-model.number="event.timeWindowStart"
             :rules="[rules.required]"
@@ -108,6 +114,7 @@
             label="end days"
             name="end"
             type="text"
+            @input="changes"
             v-model.number="event.timeWindowEnd"
             :rules="[rules.required]"
           />
@@ -123,7 +130,8 @@
         :event="event"
         :delete-callback="
           () => {
-            deleteProperty(key)
+            deleteProperty(key);
+            changes()
           }
         "
       />
@@ -203,7 +211,10 @@ export default {
     },
     loadEvents() {
       return client.listEventNames()
-    }
+    },
+    changes() {
+      this.$emit('change')
+    },
   },
   async created() {
     this.useTimeWindow = !!this.event.timeWindowOperator

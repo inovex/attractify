@@ -13,6 +13,7 @@
           @change="
             e => {
               setProperty(e)
+              changes()
             }
           "
           return-object
@@ -29,6 +30,7 @@
           @change="
             e => {
               setProperty(e)
+              changes()
             }
           "
           return-object
@@ -47,6 +49,7 @@
           @change="
             t => {
               setOperator(t)
+              changes()
             }
           "
         ></v-select>
@@ -74,6 +77,7 @@
           name="value"
           :hide-details="true"
           type="text"
+          @input="changes"
           v-model="trait.value"
           :rules="[rules.required]"
         />
@@ -91,6 +95,7 @@
           outlined
           placeholder="property"
           :hide-details="true"
+          @change="changes"
           :rules="[rules.required]"
           v-model="trait.eventProperty"
         ></v-select>
@@ -222,6 +227,9 @@ export default {
     },
     listComputedTraits() {
       return computedTraitsClient.listTraits()
+    },
+    changes(){
+      this.$emit('change')
     }
   },
   created() {

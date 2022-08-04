@@ -17,6 +17,7 @@
                     name="name"
                     prepend-icon="mdi-pencil"
                     type="text"
+                    @input="changes = true"
                     v-model="audience.name"
                     :rules="[rules.required]"
                   />
@@ -29,6 +30,7 @@
                     name="type"
                     prepend-icon="mdi-text"
                     type="text"
+                    @input="changes = true"
                     v-model="audience.description"
                     :rules="[rules.required]"
                   />
@@ -40,6 +42,7 @@
                     label="Include anonymous profiles"
                     prepend-icon="mdi-incognito"
                     v-model="audience.includeAnonymous"
+                    @change="changes = true"
                   />
                 </v-col>
               </v-row>
@@ -66,7 +69,7 @@
                   <v-row v-for="(event, key) of audience.events" :key="`event-${key}`">
                     <v-col>
                       <v-card outlined :class="event.parentId ? 'ml-8' : ''" elevation="1" tile>
-                        <EventCondition :event="event" />
+                        <EventCondition :event="event" @change="changes = true"/>
                         <v-divider></v-divider>
                         <v-card-actions>
                           <v-btn rounded @click="addFunnelEvent(event.internalId, false)">
@@ -98,7 +101,7 @@
                             <v-icon>mdi-trash-can-outline</v-icon>
                           </v-btn>
                         </v-app-bar>
-                        <TraitCondition :trait="trait" />
+                        <TraitCondition :trait="trait" @change="changes = true"/>
                       </v-card>
                     </v-col>
                   </v-row>
@@ -162,6 +165,10 @@
       <v-btn rounded elevation="2" color="secondary" :disabled="!valid" @click="preview()">Preview</v-btn>
       <v-btn rounded elevation="2" color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="save()">Save</v-btn>
     </v-col>
+
+    <v-dialog v-model="exitUnsaved" max-width="700px" closeable>
+      <UnsavedContent :valid="valid" @cancel="cancelExit" @save="save" @exit="exit"/>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -169,11 +176,12 @@
 import Help from './Help'
 import client from '../lib/rest/audiences'
 import TraitCondition from './audiences/TraitCondition.vue'
+import UnsavedContent from './UnsavedContent.vue'
 import EventCondition from './audiences/EventCondition.vue'
 import { v4 as uuid } from 'uuid'
 
 export default {
-  components: { TraitCondition, EventCondition, Help },
+  components: { TraitCondition, EventCondition, Help, UnsavedContent },
   data() {
     return {
       audience: {
@@ -186,6 +194,9 @@ export default {
         { title: 'have computed trait', value: 'computed_trait' }
       ],
       valid: false,
+      changes: false,
+      exitUnsaved: false,
+      exitUrl: null,
       showLoading: false,
       dialog: false,
       previewResult: {},
@@ -252,8 +263,23 @@ export default {
         }
 
         this.$notify.success('The audience has been saved successfully.')
+        if(this.exitUnsaved){
+          this.exit()
+        }
       } catch (e) {
         this.$notify.error('Could not save audience.')
+      }
+    },
+    cancelExit(){
+      this.exitUnsaved = false
+      this.exitUrl = null
+    },
+    exit(){
+      this.changes = false
+      if(this.exitUrl){
+        this.$router.push(this.exitUrl)
+      }else{
+        this.$router.push('/audiences')
       }
     },
     async preview() {
@@ -287,7 +313,15 @@ export default {
         this.$router.push({ path: '/404' })
       }
     }
-  }
+  },
+  beforeRouteLeave(to, from, next) {
+    if(this.changes){
+      this.exitUnsaved = true
+      this.exitUrl = to.path
+      return false
+    }
+    next()
+  },
 }
 </script>
 

@@ -19,6 +19,7 @@
                     type="text"
                     v-model="computedTrait.name"
                     :rules="[rules.required]"
+                    @input="changes=true"
                   />
                 </v-col>
               </v-row>
@@ -31,6 +32,7 @@
                     type="text"
                     v-model="computedTrait.key"
                     :rules="[rules.required]"
+                    @input="changes=true"
                   />
                 </v-col>
               </v-row>
@@ -41,7 +43,7 @@
                     prepend-icon="mdi-cog"
                     :items="types"
                     label="Type"
-                    @change="computedTrait.properties = {}"
+                    @change="computedTrait.properties = {}; changes = true"
                     v-model="computedTrait.type"
                     :rules="[rules.required]"
                   ></v-select>
@@ -52,7 +54,7 @@
                   <v-select
                     :items="events"
                     label="Event"
-                    @change="setEventId"
+                    @change="setEventId; changes = true"
                     prepend-icon="mdi-bell"
                     v-model="computedTrait.eventId"
                     :rules="[rules.required]"
@@ -77,7 +79,7 @@
                       prepend-icon="mdi-text"
                       :items="eventProperties.filter(p => p.type === 'float' || p.type === 'integer')"
                       v-model="computedTrait.properties.property"
-                      @change="setProperty"
+                      @change="setProperty; changes = true"
                       return-object
                     ></v-select>
                   </v-col>
@@ -86,6 +88,7 @@
                       prepend-icon="mdi-cog"
                       :items="aggregationTypes"
                       label="Aggregation Type"
+                      @change="changes = true"
                       v-model="computedTrait.properties.aggregationType"
                       :rules="[rules.required]"
                     ></v-select>
@@ -101,7 +104,7 @@
                       prepend-icon="mdi-text"
                       :items="eventProperties.filter(p => ['string', 'integer', 'float', 'array'].indexOf(p.type) > -1)"
                       v-model="computedTrait.properties.property"
-                      @change="setProperty"
+                      @change="setProperty; changes = true"
                       return-object
                     ></v-select>
                   </v-col>
@@ -110,6 +113,7 @@
                       label="Minimum frequency"
                       prepend-icon="mdi-number"
                       type="number"
+                      @change="changes = true"
                       v-model.number="computedTrait.properties.minFrequency"
                       :rules="[rules.required]"
                     />
@@ -123,7 +127,7 @@
                     <v-switch
                       label="Use timestamp instead of property value"
                       v-model="computedTrait.properties.useTimestamp"
-                      @change="computedTrait.properties.type = 'dateTime'"
+                      @change="computedTrait.properties.type = 'dateTime'; changes = true"
                     ></v-switch>
                   </v-col>
                   <v-col class="col-lg-3" v-if="!computedTrait.properties.useTimestamp">
@@ -132,7 +136,7 @@
                       prepend-icon="mdi-text"
                       :items="eventProperties"
                       v-model="computedTrait.properties.property"
-                      @change="setProperty"
+                      @change="setProperty; changes = true"
                       return-object
                     ></v-select>
                   </v-col>
@@ -147,7 +151,7 @@
                       prepend-icon="mdi-text"
                       :items="eventProperties.filter(p => ['string', 'integer', 'float'].indexOf(p.type) > -1)"
                       v-model="computedTrait.properties.property"
-                      @change="setProperty"
+                      @change="setProperty; changes = true"
                       return-object
                     ></v-select>
                   </v-col>
@@ -167,7 +171,7 @@
                   <v-col>
                     <v-row v-for="(condition, key) of computedTrait.conditions" :key="key">
                       <v-col>
-                        <Condition :properties="eventProperties" :condition="condition"/>
+                        <Condition :properties="eventProperties" :condition="condition" @change="changes = true"/>
                       </v-col>
                       <v-col class="col-lg-1">
                         <v-btn icon @click="deleteCondition(key)">
@@ -193,17 +197,22 @@
       <v-btn rounded elevation="2" @click="cancel()">Cancel</v-btn>
       <v-btn rounded elevation="2" color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="save()">Save</v-btn>
     </v-col>
+
+    <v-dialog v-model="exitUnsaved" max-width="700px" closeable>
+      <UnsavedContent :valid="valid" @cancel="cancelExit" @save="save" @exit="exit"/>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import Help from './Help'
 import client from '../lib/rest/computedTraits.js'
+import UnsavedContent from './UnsavedContent.vue'
 import eventsClient from '../lib/rest/events.js'
 import Condition from './computedTraits/Condition.vue'
 
 export default {
-  components: { Condition, Help },
+  components: { Condition, Help, UnsavedContent },
   data() {
     return {
       computedTrait: {
@@ -238,6 +247,9 @@ export default {
         { text: 'Maximum', value: 'max' }
       ],
       valid: false,
+      changes: false,
+      exitUnsaved: false,
+      exitUrl: null,
       showLoading: false,
       dialog: false,
       previewResult: {},
@@ -288,8 +300,24 @@ export default {
         }
 
         this.$notify.success('The computed trait has been saved successfully.')
+        this.changes = true
+        if(this.exitUnsaved){
+          this.exit()
+        }
       } catch (e) {
         this.$notify.error('Could not save computed trait.')
+      }
+    },
+    cancelExit(){
+      this.exitUnsaved = false
+      this.exitUrl = null
+    },
+    exit(){
+      this.changes = false
+      if(this.exitUrl){
+        this.$router.push(this.exitUrl)
+      }else{
+        this.$router.push('/computed-traits')
       }
     },
     async refresh() {
@@ -314,7 +342,15 @@ export default {
         this.$router.push({ path: '/404' })
       }
     }
-  }
+  },
+  beforeRouteLeave(to, from, next) {
+    if(this.changes){
+      this.exitUnsaved = true
+      this.exitUrl = to.path
+      return false
+    }
+    next()
+  },
 }
 </script>
 

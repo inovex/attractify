@@ -12,15 +12,16 @@
         <v-card-text>
           <v-row>
             <v-col class="col-lg-3">
-              <v-select :items="channels" label="Channel" v-model="capping[index].channels" multiple></v-select>
+              <v-select :items="channels" label="Channel" v-model="capping[index].channels" multiple @change="changes"></v-select>
             </v-col>
             <v-col class="col-lg-2">
-              <v-select :items="events" label="Event" v-model="capping[index].event"></v-select>
+              <v-select :items="events" label="Event" v-model="capping[index].event" @change="changes"></v-select>
             </v-col>
             <v-col class="col-lg-2">
               <v-select
                 :items="group"
                 label="Target group"
+                @change="changes"
                 v-model="capping[index].group"
                 :rules="[rules.required]"
               ></v-select>
@@ -30,6 +31,7 @@
                 label="Per User Show Count"
                 prepend-icon="mdi-number"
                 type="number"
+                @input="changes"
                 clearable
                 v-model.number="capping[index].count"
                 :rules="[rules.required]"
@@ -40,6 +42,7 @@
                 label="Days within"
                 prepend-icon="mdi-calendar"
                 type="number"
+                @input="changes"
                 clearable
                 v-model.number="capping[index].within"
               />
@@ -85,6 +88,9 @@ export default {
     },
     removeCondition(index) {
       this.capping.splice(index, 1)
+    },
+    changes(){
+      this.$emit('change')
     }
   },
   async created() {

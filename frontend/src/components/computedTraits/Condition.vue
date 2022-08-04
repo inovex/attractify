@@ -13,6 +13,7 @@
             @change="
               e => {
                 setProperty(condition, e)
+                changes()
               }
             "
           ></v-select>
@@ -22,6 +23,7 @@
             dense
             :items="getOperators(condition.type)"
             label="Operator"
+            @change="changes"
             :value="condition.operator"
             v-model="condition.operator"
             :rules="[rules.required]"
@@ -34,6 +36,7 @@
             label="Value"
             name="value"
             type="text"
+            @change="changes"
             v-model="condition.value"
             :rules="[rules.required]"
           />
@@ -121,6 +124,9 @@ export default {
         case 'array':
           return this.arrayOperators
       }
+    },
+    changes() {
+      this.$emit('change')
     }
   }
 }

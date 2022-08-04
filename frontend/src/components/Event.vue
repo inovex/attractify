@@ -19,7 +19,7 @@
                     type="text"
                     v-model="event.name"
                     :rules="[rules.required]"
-                    :v-on:keyUp="changes=true"
+                    @input="changes=true"
                   />
                 </v-col>
               </v-row>
@@ -31,7 +31,7 @@
                     prepend-icon="mdi-text"
                     type="text"
                     v-model="event.description"
-                    :v-on:keyUp="changes=true"
+                    @input="changes=true"
                   />
                 </v-col>
               </v-row>
@@ -54,16 +54,20 @@
       <v-btn rounded elevation="2" @click="cancel()">Cancel</v-btn>
       <v-btn rounded elevation="2" color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="save()">Save</v-btn>
     </v-col>
+    <v-dialog v-model="exitUnsaved" max-width="700px" closeable>
+      <UnsavedContent :valid="valid" @cancel="cancelExit" @save="save" @exit="exit"/>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import Help from './Help'
 import Structure from './events/Structure.vue'
+import UnsavedContent from './UnsavedContent.vue'
 import client from '../lib/rest/events'
 
 export default {
-  components: { Structure, Help },
+  components: { Structure, Help, UnsavedContent },
   data() {
     return {
       event: {
@@ -78,8 +82,10 @@ export default {
         { text: 'Array', value: 'array' },
         { text: 'Object', value: 'object' }
       ],
-      changes: false, // TODO: check why it's true when the page is loaded
+      changes: false,
       valid: false,
+      exitUnsaved: false,
+      exitUrl: null,
       rules: {
         required: value => !!value || 'Required.'
       }
@@ -100,6 +106,18 @@ export default {
         this.save()
       }
     },
+    cancelExit(){
+      this.exitUnsaved = false
+      this.exitUrl = null
+    },
+    exit(){
+      this.changes = false
+      if(this.exitUrl){
+        this.$router.push(this.exitUrl)
+      }else{
+        this.$router.push('/events')
+      }
+    },
     async save() {
       try {
         let res = null
@@ -115,6 +133,9 @@ export default {
 
         this.$notify.success('The structure has been saved successfully.')
         this.changes = false
+        if(this.exitUnsaved){
+          this.exit()
+        }
       } catch (e) {
         this.$notify.error('Could not save structure.')
       }
@@ -132,10 +153,9 @@ export default {
   },
   beforeRouteLeave(to, from, next) {
     if(this.changes){
-      var leave = confirm('You have unsaved changes. Are you sure you want to leave this page?');
-      if(!leave){
-        return false
-      }
+      this.exitUnsaved = true
+      this.exitUrl = to.path
+      return false
     }
     next()
   },

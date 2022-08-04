@@ -28,6 +28,7 @@
               multiple
               label="Channels"
               prepend-icon="mdi-bell"
+              @change="changes"
               v-model="hooks[index].channels"
               clearable
             ></v-select>
@@ -37,6 +38,7 @@
               :items="events"
               label="Subscribed event"
               prepend-icon="mdi-bell"
+              @change="changes"
               v-model="hooks[index].event"
               :rules="[rules.required]"
             ></v-select>
@@ -46,6 +48,7 @@
               label="Webhook URL"
               type="text"
               v-model="hooks[index].properties.url"
+              @input="changes"
               prepend-icon="mdi-link"
               :rules="[rules.required]"
               clearable
@@ -67,6 +70,7 @@
               type="text"
               v-model="hooks[index].properties.params"
               prepend-icon="mdi-code-json"
+              @input="changes"
               :rules="[rules.json]"
               clearable
             />
@@ -82,6 +86,7 @@
               multiple
               label="Channels"
               prepend-icon="mdi-bell"
+              @change="changes"
               v-model="hooks[index].channels"
               clearable
             ></v-select>
@@ -91,6 +96,7 @@
               :items="events"
               label="Subscribed event"
               prepend-icon="mdi-bell"
+              @change="changes"
               v-model="hooks[index].event"
               :rules="[rules.required]"
             ></v-select>
@@ -161,6 +167,9 @@ export default {
     },
     loadEvents() {
       return client.listEventNames()
+    },
+    changes(){
+      this.$emit('change')
     }
   },
   async created() {
