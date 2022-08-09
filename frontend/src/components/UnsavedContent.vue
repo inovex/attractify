@@ -2,7 +2,7 @@
     <div>
       <v-card>
         <v-card-title>
-          <span class="headline">Unsaved changes</span>
+          <span class="headline">Unsaved Changes</span>
           <v-spacer></v-spacer>
         </v-card-title>
         <v-card-text>
@@ -13,7 +13,7 @@
             <v-spacer></v-spacer>
             <v-btn rounded @click="cancel()">Cancel</v-btn>
             <v-btn rounded color="primary" style="color: var(--v-buttontext-base)" @click="exit()">Exit</v-btn>
-            <v-btn rounded color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="save()">Save</v-btn>
+            <v-btn rounded color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="save()">Save & Exit</v-btn>
           </v-card-actions>
         </v-form>
       </v-card>
