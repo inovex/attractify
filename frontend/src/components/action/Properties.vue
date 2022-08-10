@@ -31,6 +31,7 @@
               :items="channels"
               label="Channels"
               :value="prop.channels"
+              @change="changes"
               v-model="properties[index].channels"
               multiple
             ></v-select>
@@ -40,6 +41,7 @@
               dense
               label="Name"
               type="text"
+              @input="changes"
               v-model="properties[index].name"
               :rules="[rules.required]"
             />
@@ -50,6 +52,7 @@
               v-if="prop.type === 'text'"
               label="Value"
               :type="prop.type"
+              @input="changes"
               v-model="properties[index].value"
               :rules="[rules.required]"
             />
@@ -60,7 +63,7 @@
               label="Trait Key"
               :loadCallback="listCustomTraitKeys"
               :value="prop.sourceKey || ''"
-              @change="(e) => {setProperty(prop, e)}"
+              @change="(e) => {setProperty(prop, e); changes()}"
               return-object
             />
 
@@ -70,7 +73,7 @@
               label="Trait Key"
               :loadCallback="listComputedTraitKeys"
               :value="prop.sourceKey || ''"
-              @change="(e) => {setProperty(prop, e)}"
+              @change="(e) => {setProperty(prop, e); changes()}"
               return-object
             />
           </v-col>
@@ -147,6 +150,9 @@ export default {
     },
     listComputedTraitKeys() {
       return computedTraitsClient.listTraits()
+    },
+    changes(){
+      this.$emit('change')
     }
   },
   async created() {

@@ -13,7 +13,8 @@
             :value="condition.key || ''"
             @change="
               e => {
-                setProperty(condition, e)
+                setProperty(condition, e);
+                changes()
               }
             "
             return-object
@@ -27,7 +28,8 @@
             :value="condition.key || ''"
             @change="
               e => {
-                setProperty(condition, e)
+                setProperty(condition, e);
+                changes()
               }
             "
             return-object
@@ -38,6 +40,7 @@
             dense
             :items="getOperators(condition.type)"
             label="Operator"
+            @change="changes"
             :value="condition.operator"
             v-model="condition.operator"
             :rules="[rules.required]"
@@ -50,6 +53,7 @@
             label="Value"
             name="value"
             type="text"
+            @input="changes"
             v-model.number="condition.value"
             :rules="[rules.required]"
           />
@@ -60,6 +64,7 @@
               label="Value"
               name="value"
               type="text"
+              @input="changes"
               v-model="condition.value"
               :rules="[rules.required]"
             />
@@ -196,6 +201,9 @@ export default {
     },
     listComputedTraitKeys() {
       return computedTraitsClient.listTraits()
+    },
+    changes(){
+      this.$emit('change')
     }
   }
 }

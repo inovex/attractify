@@ -9,6 +9,7 @@
             :items="channels"
             v-model="condition.channel"
             :value="condition.channel"
+            @change="changes"
             prepend-icon="mdi-cellphone"
           ></v-select>
         </v-col>
@@ -20,7 +21,8 @@
             :value="condition.key || ''"
             @change="
               e => {
-                setProperty(condition, e)
+                setProperty(condition, e);
+                changes()
               }
             "
             return-object
@@ -32,6 +34,7 @@
             :items="getOperators(condition.type)"
             label="Operator"
             :value="condition.operator"
+            @change="changes"
             v-model="condition.operator"
             :rules="[rules.required]"
           ></v-select>
@@ -43,6 +46,7 @@
             label="Value"
             name="value"
             type="text"
+            @input="changes"
             v-model.number="condition.value"
             :rules="[rules.required]"
           />
@@ -53,6 +57,7 @@
               label="Value"
               name="value"
               type="text"
+              @input="changes"
               v-model="condition.value"
               :rules="[rules.required]"
             />
@@ -163,6 +168,9 @@ export default {
     },
     listContextKeys() {
       return contextClient.listProperties(this.condition.channel)
+    },
+    changes(){
+      this.$emit('change')
     }
   },
   async created() {

@@ -41,6 +41,8 @@ func (p property) generateForTraits(traitType string) string {
 	case "funnel_property":
 		k := fmt.Sprintf("%s.properties", sqlID(p.InternalEventID))
 		return p.targetCondition(traitType, p.keyPath(p.Key), k, p.keyPath(p.EventProperty))
+	case "exists":
+		return p.booleanCondition(traitType, p.keyPath(p.Key))
 	}
 	return ""
 }

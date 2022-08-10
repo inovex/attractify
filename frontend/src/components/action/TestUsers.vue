@@ -18,18 +18,19 @@
                 :items="channels"
                 label="Channel"
                 :value="testUser.channels"
+                @change="changes"
                 v-model="testUsers[index].channels"
                 multiple
               ></v-select>
             </v-col>
             <v-col class="col-lg-3">
-              <v-text-field label="User ID" type="text" v-model="testUsers[index].userId" :rules="[rules.required]" />
+              <v-text-field label="User ID" type="text" v-model="testUsers[index].userId" :rules="[rules.required]" @input="changes" />
             </v-col>
             <v-col class="col-lg-4">
-              <v-text-field label="Description" type="text" v-model="testUsers[index].description" />
+              <v-text-field label="Description" type="text" v-model="testUsers[index].description" @input="changes" />
             </v-col>
             <v-col class="col-lg-2">
-              <v-switch toggle label="Skip targeting" v-model="testUsers[index].skipTargeting" />
+              <v-switch toggle label="Skip targeting" v-model="testUsers[index].skipTargeting" @change="changes" />
             </v-col>
             <v-col class="col-lg-1">
               <v-btn icon @click="removeTestuser(index)">
@@ -62,6 +63,9 @@ export default {
     },
     removeTestuser(index) {
       this.testUsers.splice(index, 1)
+    },
+    changes(){
+      this.$emit('change')
     }
   },
   async created() {

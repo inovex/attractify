@@ -17,6 +17,7 @@
                     :items="channels"
                     v-model="context.channel"
                     prepend-icon="mdi-cellphone"
+                    @change="changes=true"
                   ></v-select>
                 </v-col>
               </v-row>
@@ -39,17 +40,21 @@
       <v-btn rounded elevation="2" @click="cancel()">Cancel</v-btn>
       <v-btn rounded elevation="2" color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="save()">Save</v-btn>
     </v-col>
+    <v-dialog v-model="exitUnsaved" max-width="700px" closeable>
+      <UnsavedContent :valid="valid" @cancel="cancelExit" @save="save" @exit="exit"/>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import Help from './Help'
 import Structure from './events/Structure.vue'
+import UnsavedContent from './UnsavedContent.vue'
 import client from '../lib/rest/contexts'
 import channelClient from '../lib/rest/channels.js'
 
 export default {
-  components: { Structure, Help },
+  components: { Structure, Help, UnsavedContent },
   data() {
     return {
       channels: [],
@@ -66,6 +71,9 @@ export default {
         { text: 'Object', value: 'object' }
       ],
       valid: false,
+      changes: false,
+      exitUnsaved: false,
+      exitUrl: null,
       rules: {
         required: value => !!value || 'Required.'
       }
@@ -100,10 +108,26 @@ export default {
         }
 
         this.$notify.success('The structure has been saved successfully.')
+        this.changes = false
+        if(this.exitUnsaved){
+          this.exit()
+        }
       } catch (e) {
         this.$notify.error('Could not save structure.')
       }
-    }
+    },
+    cancelExit(){
+      this.exitUnsaved = false
+      this.exitUrl = null
+    },
+    exit(){
+      this.changes = false
+      if(this.exitUrl){
+        this.$router.push(this.exitUrl)
+      }else{
+        this.$router.push('/contexts')
+      }
+    },
   },
   async created() {
     const id = this.$route.params.id
@@ -115,7 +139,15 @@ export default {
       }
     }
     this.channels = await channelClient.select()
-  }
+  },
+  beforeRouteLeave(to, from, next) {
+    if(this.changes){
+      this.exitUnsaved = true
+      this.exitUrl = to.path
+      return false
+    }
+    next()
+  },
 }
 </script>
 

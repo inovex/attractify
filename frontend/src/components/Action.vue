@@ -19,6 +19,7 @@
                     name="name"
                     prepend-icon="mdi-pencil"
                     type="text"
+                    @input="changes = true"
                     v-model="action.name"
                     :rules="[rules.required]"
                   />
@@ -31,6 +32,7 @@
                     name="type"
                     prepend-icon="mdi-tune"
                     type="text"
+                    @input="changes = true"
                     v-model="action.type"
                     :rules="[rules.required]"
                   />
@@ -47,6 +49,7 @@
                     type="text"
                     ref="tag"
                     v-model="tag"
+                    @input="changes = true"
                     append-icon="mdi-plus"
                     @click:append="
                       action.tags.push(tag.toLowerCase())
@@ -79,6 +82,7 @@
                     :items="state"
                     v-model="action.state"
                     prepend-icon="mdi-play-pause"
+                    @change="changes = true"
                   ></v-select>
                 </v-col>
               </v-row>
@@ -95,23 +99,23 @@
 
               <v-tabs-items v-model="tabs">
                 <v-tab-item value="properties">
-                  <Properties :properties="action.properties" />
+                  <Properties :properties="action.properties" @change="changes=true" />
                 </v-tab-item>
 
                 <v-tab-item value="targeting">
-                  <Targeting :targeting="action.targeting" />
+                  <Targeting :targeting="action.targeting" @change="changes=true" />
                 </v-tab-item>
 
                 <v-tab-item value="capping">
-                  <Capping :capping="action.capping" />
+                  <Capping :capping="action.capping" @change="changes=true" />
                 </v-tab-item>
 
                 <v-tab-item value="hooks">
-                  <Hooks :hooks="action.hooks" />
+                  <Hooks :hooks="action.hooks" @change="changes=true" />
                 </v-tab-item>
 
                 <v-tab-item value="testUsers">
-                  <TestUsers :test-users="action.testUsers" />
+                  <TestUsers :test-users="action.testUsers" @change="changes=true" />
                 </v-tab-item>
               </v-tabs-items>
             </v-card-text>
@@ -125,6 +129,10 @@
       <v-btn rounded elevation="2" @click="cancel()">Cancel</v-btn>
       <v-btn rounded elevation="2" color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="save()">Save</v-btn>
     </v-col>
+
+    <v-dialog v-model="exitUnsaved" max-width="700px" closeable>
+      <UnsavedContent :valid="valid" @cancel="cancelExit" @save="save" @exit="exit"/>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -135,10 +143,11 @@ import Targeting from './action/Targeting.vue'
 import Capping from './action/Capping.vue'
 import Hooks from './action/Hooks.vue'
 import TestUsers from './action/TestUsers.vue'
+import UnsavedContent from './UnsavedContent.vue'
 import Help from './Help'
 
 export default {
-  components: { Properties, Targeting, Capping, Hooks, TestUsers, Help },
+  components: { Properties, Targeting, Capping, Hooks, TestUsers, Help, UnsavedContent },
   data() {
     return {
       tabs: '',
@@ -165,6 +174,9 @@ export default {
       tag: '',
       path: '',
       valid: false,
+      changes: false,
+      exitUnsaved: false,
+      exitUrl: null,
       rules: {
         required: value => !!value || 'Required.'
       }
@@ -189,8 +201,23 @@ export default {
         }
 
         this.$notify.success('Your action has been saved.')
+        if(this.exitUnsaved){
+          this.exit()
+        }
       } catch (e) {
         this.$notify.error('Could not save action.')
+      }
+    },
+    cancelExit(){
+      this.exitUnsaved = false
+      this.exitUrl = null
+    },
+    exit(){
+      this.changes = false
+      if(this.exitUrl){
+        this.$router.push(this.exitUrl)
+      }else{
+        this.$router.push('/actions')
       }
     }
   },
@@ -204,7 +231,15 @@ export default {
         this.$router.push({ path: '/404' })
       }
     }
-  }
+  },
+  beforeRouteLeave(to, from, next) {
+    if(this.changes){
+      this.exitUnsaved = true
+      this.exitUrl = to.path
+      return false
+    }
+    next()
+  },
 }
 </script>
 
