@@ -149,7 +149,7 @@ export default {
         { divider: true },
         { header: true, text: 'Actions' },
         { icon: 'mdi-ticket-percent', text: 'Actions', link: '/actions' },
-        { icon: 'mdi-clipboard-text-outline', text: 'Actiontemplates', link: '/actiontemplates' },
+        { icon: 'mdi-clipboard-text-outline', text: 'Action Templates', link: '/actiontemplates' },
         {
           icon: 'mdi-gesture-tap',
           text: 'Reactions',
