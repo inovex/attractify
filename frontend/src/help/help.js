@@ -404,6 +404,16 @@ If you enable *skip targeting*, the action will be testable, regardless of the
 filters that are configured under targeting.
 `
   },
+  actiontemplates: {
+    title: 'What are action templates?',
+    body: `
+An action template is a predefined type of action which defines which properties the action has.
+
+# Actions
+* Edit actiontemplate
+* Delete actiontemplate
+`
+  },
   reactions: {
     title: 'What are reactions?',
     body: `
