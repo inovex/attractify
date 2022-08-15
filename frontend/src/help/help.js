@@ -410,8 +410,8 @@ filters that are configured under targeting.
 An action template is a predefined type of action which defines which properties the action has.
 
 # Actions
-* Edit actiontemplate
-* Delete actiontemplate
+* Edit action template
+* Delete action template
 `
   },
   reactions: {
