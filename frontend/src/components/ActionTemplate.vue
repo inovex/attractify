@@ -5,8 +5,8 @@
         <v-form ref="form" v-model="valid" on>
           <v-card>
             <v-toolbar dark>
-              <v-toolbar-title v-if="id">Edit Action Template</v-toolbar-title>
-              <v-toolbar-title v-if="!id">Create new Action Template</v-toolbar-title>
+              <v-toolbar-title v-if="actiontemplate.id">Edit Action Template</v-toolbar-title>
+              <v-toolbar-title v-if="!actiontemplate.id">Create new Action Template</v-toolbar-title>
               <v-spacer></v-spacer>
               <help name="action" />
             </v-toolbar>
@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import Properties from './action/Properties.vue'
 import UnsavedContent from './UnsavedContent.vue'
 import Help from './Help'
@@ -70,17 +71,18 @@ export default {
     cancel(){
       this.$router.push('/actiontemplates')
     },
+    ...mapActions('actiontemplates', ['show', 'create', 'update']),
     async save() {
       try {
         let res = null
-        if (this.action.id) {
-          res = await this.update(this.action)
+        if (this.actiontemplate.id) {
+          res = await this.update(this.actiontemplate)
         } else {
-          res = await this.create(this.action)
+          res = await this.create(this.actiontemplate)
         }
 
         if (res && res.id) {
-          this.action.id = res.id
+          this.actiontemplate.id = res.id
         }
 
         this.$notify.success('Your action has been saved.')
@@ -100,7 +102,7 @@ export default {
       if(this.exitUrl){
         this.$router.push(this.exitUrl)
       }else{
-        this.$router.push('/actions')
+        this.$router.push('/actiontemplates')
       }
     }
   },
@@ -108,8 +110,8 @@ export default {
     const id = this.$route.params.id
     if (id) {
       try {
-        this.action = await this.show(id)
-        delete this.action.trigger
+        this.actiontemplate = await this.show(id)
+        delete this.actiontemplate.trigger
       } catch (error) {
         this.$router.push({ path: '/404' })
       }

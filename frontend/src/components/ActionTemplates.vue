@@ -36,7 +36,7 @@
 
 <script>
 import Help from './Help'
-import client from '../lib/rest/actions.js'
+import client from '../lib/rest/actiontemplates.js'
 import moment from 'moment'
 
 export default {
@@ -62,8 +62,8 @@ export default {
     create() {
       this.$router.push({ path: '/actiontemplate' })
     },
-    edit(action) {
-      this.$router.push({ path: `/actiontemplate/${action.id}` })
+    edit(actiontemplate) {
+      this.$router.push({ path: `/actiontemplate/${actiontemplate.id}` })
     },
     async remove(action) { // TODO: check if action template is in use and cannot be deleted
       if (confirm('Do you really want to delete this action?')) {
@@ -79,7 +79,7 @@ export default {
     }
   },
   async created() {
-    this.actions = await client.list()
+    this.actiontemplates = await client.list()
   }
 }
 </script>

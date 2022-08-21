@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 
 import actions from './modules/actions'
+import actiontemplates from './modules/actiontemplates'
 import organization from './modules/organization'
 import user from './modules/user'
 import users from './modules/users'
@@ -16,6 +17,7 @@ const vuexLocal = new VuexPersistence({
 const store = new Vuex.Store({
   modules: {
     actions: actions,
+    actiontemplates: actiontemplates,
     organization: organization,
     user: user,
     users: users
