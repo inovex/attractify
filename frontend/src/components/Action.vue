@@ -36,6 +36,15 @@
                     v-model="action.type"
                     :rules="[rules.required]"
                   />
+                  <v-select
+                    dense
+                    :items="actionTypes"
+                    label="Type of Action"
+                    @change="changes"
+                    v-model="action.type"
+                    multiple
+                    :rules="[rules.required]"
+                  ></v-select>
                 </v-col>
               </v-row>
             </v-card-text>

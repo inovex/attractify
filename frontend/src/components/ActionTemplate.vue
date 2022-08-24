@@ -26,7 +26,7 @@
               </v-row>
             </v-card-text>
             <v-divider></v-divider>
-            <Properties :properties="actiontemplate.properties" @change="changes=true" />
+            <PropertiesTemplates :properties="actiontemplate.properties" @change="changes=true" />
           </v-card>
         </v-form>
       </v-col>
@@ -46,12 +46,12 @@
 
 <script>
 import { mapActions } from 'vuex'
-import Properties from './action/Properties.vue'
 import UnsavedContent from './UnsavedContent.vue'
 import Help from './Help'
+import PropertiesTemplates from './action/PropertiesTemplates.vue'
 
 export default {
-  components: { Help, UnsavedContent, Properties },
+  components: { Help, UnsavedContent, PropertiesTemplates },
   data() {
     return {
       actiontemplate: {

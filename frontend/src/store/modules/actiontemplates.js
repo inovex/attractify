@@ -37,7 +37,7 @@ export default {
       state.actiontemplates.splice(idx, 1)
     }
   },
-  actiontemplates: {
+  actions: {
     async list({ commit }) {
       try {
         let res = await restClient.get('/actiontemplates')
