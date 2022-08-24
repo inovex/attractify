@@ -75,7 +75,7 @@ class Attractify {
     return fetch(`${this.baseUrl}${path}`, request)
   }
 
-  identify(userId, type = 'user_id', traits = null, ignorePrevious = false) {
+  identify(userId, type = 'user_id', traits = null, ignorePreviousUser = false) {
     if (!userId || userId.length === 0) {
       if (!this.state.isAnonymous) {
         this.state.previousUserId = null
@@ -97,7 +97,7 @@ class Attractify {
       traits: traits,
     }
 
-    if (this.state.userID !== this.state.previousUserId && !ignorePrevious) {
+    if (this.state.userID !== this.state.previousUserId && !ignorePreviousUser) {
       params.previousUserId = this.state.previousUserId
     }
 
