@@ -2,6 +2,7 @@ package actions
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"attractify.io/platform/app"
 	"attractify.io/platform/db"
@@ -55,12 +56,15 @@ func (a Action) RunHooks(userID, event, channel string, context, properties *jso
 
 		switch hook.Type {
 		case "execute_webhook":
+			fmt.Println("api.actions.webhook.execute.properties", properties)
+			fmt.Println("api.actions.webhook.execute", h)
 			res, err := h.ExecuteWebhook()
 			if err != nil {
 				return nil, err
 			}
 			if res != nil {
 				result, _ = json.Marshal(res)
+				fmt.Println("api.actions.webhook.result", result)
 			}
 		case "track_event":
 			if err := h.TrackEvent(); err != nil {

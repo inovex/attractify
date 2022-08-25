@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -61,6 +62,8 @@ func (h Hook) ExecuteWebhook() (*result, error) {
 		CustomProperties: json.RawMessage(props),
 		Timestamp:        time.Now().UTC(),
 	}
+
+	fmt.Println("api.actions.webhook.execute.payload", pl)
 
 	buf, err := json.Marshal(pl)
 	if err != nil {
