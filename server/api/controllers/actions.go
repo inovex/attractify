@@ -187,9 +187,6 @@ func (ac ActionsController) Act(c *gin.Context) {
 		}
 	}
 
-	ac.App.Logger.Info("api.actions.act.hook.event", zap.String("event", event))
-	ac.App.Logger.Info("api.actions.act.hook.userid", zap.String("userid", req.UserID))
-	ac.App.Logger.Info("api.actions.act.hook.properties", zap.String("props", string(*req.Properties)))
 	res, err := a.RunHooks(req.UserID, event, auth.Channel, req.Context, req.Properties)
 	if err != nil {
 		ac.App.Logger.Warn("api.actions.act.runReactions")
