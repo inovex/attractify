@@ -84,12 +84,10 @@ func (a *Action) ShouldDisplay(actionType string, tags []string, channel string,
 		return false
 	}
 
-	fmt.Println("Checking traitconditions")
 	// Trait conditions
 	if !a.TraitConditions() {
 		return false
 	}
-	fmt.Println("Traitconditions ok")
 
 	// Context conditions
 	if !a.ContextConditions(channel, context) {
@@ -185,6 +183,8 @@ func (a Action) SkipTargeting(userID, channel string) bool {
 		return false
 	}
 
+	fmt.Println("testuser:", testUser)
+	fmt.Println("testuser.skipTargeting:", testUser.SkipTargeting)
 	return testUser.SkipTargeting
 }
 
