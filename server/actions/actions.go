@@ -72,9 +72,11 @@ func (a *Action) ShouldDisplay(actionType string, tags []string, channel string,
 		if !a.HasTestUser(userID, channel) {
 			return false
 		}
+		fmt.Println("found testusers")
 		if a.SkipTargeting(userID, channel) {
 			return true
 		}
+		fmt.Println("user does't skip targeting")
 	}
 
 	// Time range
@@ -82,10 +84,12 @@ func (a *Action) ShouldDisplay(actionType string, tags []string, channel string,
 		return false
 	}
 
+	fmt.Println("Checking traitconditions")
 	// Trait conditions
 	if !a.TraitConditions() {
 		return false
 	}
+	fmt.Println("Traitconditions ok")
 
 	// Context conditions
 	if !a.ContextConditions(channel, context) {
