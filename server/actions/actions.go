@@ -72,11 +72,10 @@ func (a *Action) ShouldDisplay(actionType string, tags []string, channel string,
 		if !a.HasTestUser(userID, channel) {
 			return false
 		}
-		fmt.Println("found testusers")
+
 		if a.SkipTargeting(userID, channel) {
 			return true
 		}
-		fmt.Println("user does't skip targeting")
 	}
 
 	// Time range
@@ -167,24 +166,24 @@ func (a Action) HasTestUser(userID, channel string) bool {
 }
 
 func (a Action) SkipTargeting(userID, channel string) bool {
-	var testUser *db.ActionTestUser
+	var testUser db.ActionTestUser
+	var foundTestUser bool
 	for _, t := range a.testUsers {
 		if t.UserID == userID {
 			for _, c := range t.Channels {
 				if c == channel {
-					testUser = &t
+					testUser = t
+					foundTestUser = true
 					break
 				}
 			}
 		}
 	}
 
-	if testUser == nil {
+	if !foundTestUser {
 		return false
 	}
 
-	fmt.Println("testuser:", testUser)
-	fmt.Println("testuser.skipTargeting:", testUser.SkipTargeting)
 	return testUser.SkipTargeting
 }
 
