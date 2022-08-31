@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"go.uber.org/zap"
 )
 
 const timeout = time.Second * 30
@@ -95,8 +94,6 @@ func (h Hook) ExecuteWebhook() (*result, error) {
 	body, err := ioutil.ReadAll(webhookRes.Body)
 	res.StatusCode = webhookRes.StatusCode
 	res.Body = string(body)
-
-	h.App.Logger.Debug("actions.webhook", zap.Any("result", res))
 
 	if config.ReturnResult {
 		return &res, err
