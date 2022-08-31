@@ -189,7 +189,7 @@ func (ac ActionsController) Act(c *gin.Context) {
 
 	res, err := a.RunHooks(req.UserID, event, auth.Channel, req.Context, req.Properties)
 	if err != nil {
-		ac.App.Logger.Warn("api.actions.act.runReactions")
+		ac.App.Logger.Error("api.actions.act.executeWebhook", zap.Error(err))
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
