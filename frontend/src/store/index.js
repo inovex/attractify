@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 
 import actions from './modules/actions'
-import actiontemplates from './modules/actiontemplates'
+import actiontemplates from './modules/actionTemplates'
 import organization from './modules/organization'
 import user from './modules/user'
 import users from './modules/users'

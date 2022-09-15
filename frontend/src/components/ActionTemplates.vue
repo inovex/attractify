@@ -36,7 +36,7 @@
 
 <script>
 import Help from './Help'
-import client from '../lib/rest/actiontemplates.js'
+import client from '../lib/rest/actionTemplates.js'
 import moment from 'moment'
 
 export default {

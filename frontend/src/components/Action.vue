@@ -27,22 +27,13 @@
               </v-row>
               <v-row>
                 <v-col class="col-lg-6">
-                  <v-text-field
-                    label="Type of Action"
-                    name="type"
-                    prepend-icon="mdi-tune"
-                    type="text"
-                    @input="changes = true"
-                    v-model="action.type"
-                    :rules="[rules.required]"
-                  />
                   <v-select
                     dense
+                    prepend-icon="mdi-tune"
                     :items="actionTypes"
                     label="Type of Action"
                     @change="changes"
                     v-model="action.type"
-                    multiple
                     :rules="[rules.required]"
                   ></v-select>
                 </v-col>
@@ -188,7 +179,8 @@ export default {
       exitUrl: null,
       rules: {
         required: value => !!value || 'Required.'
-      }
+      },
+      actionTypes: []
     }
   },
   methods: {
@@ -235,6 +227,7 @@ export default {
     if (id) {
       try {
         this.action = await this.show(id)
+        this.actionTypes = [] // TODO: get list of templates
         delete this.action.trigger
       } catch (error) {
         this.$router.push({ path: '/404' })

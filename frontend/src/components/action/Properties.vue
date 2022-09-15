@@ -2,18 +2,6 @@
   <div>
     <v-card-title>
       Properties
-      <v-menu offset-y>
-        <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon>
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item v-for="(item, index) in types" :key="index" @click="addProperty(item.value)">
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
     </v-card-title>
     <v-card-subtitle>
       Action Properties are used to assign values to names and use them later in
@@ -21,6 +9,7 @@
     </v-card-subtitle>
     <v-card outlined v-for="(prop, index) in properties" v-bind:key="index" class="mb-4">
       <v-card-text>
+        <h4 v-if="!prop.required">Optional Property</h4>
         <h4 v-if="prop.type === 'text'">Text</h4>
         <h4 v-if="prop.type === 'custom_trait'">Custom Trait</h4>
         <h4 v-if="prop.type === 'computed_trait'">Computed Trait</h4>
@@ -28,6 +17,7 @@
           <v-col class="col-lg-3">
             <v-select
               dense
+              disabled
               :items="channels"
               label="Channels"
               :value="prop.channels"
@@ -39,6 +29,7 @@
           <v-col class="col-lg-2">
             <v-text-field
               dense
+              disabled
               label="Name"
               type="text"
               @input="changes"

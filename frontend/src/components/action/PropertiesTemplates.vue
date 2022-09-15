@@ -77,6 +77,9 @@
               return-object
             />
           </v-col>
+          <v-col>
+                <v-switch label="Required" prepend-icon="mdi-debug-step-over" v-model="properties.isRequired" />
+          </v-col>
           <v-col class="col-lg-1">
             <v-btn icon @click="removeProperty(index)">
               <v-icon>mdi-trash-can-outline</v-icon>
