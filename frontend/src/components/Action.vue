@@ -236,7 +236,7 @@ export default {
       }
     },
     selectType() {
-      changes = true
+      this.changes = true
 
       // get
     }
