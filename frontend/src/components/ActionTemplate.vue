@@ -14,6 +14,7 @@
               <v-row>
                 <v-col class="col-lg-6">
                   <v-text-field
+                    :disabled="actiontemplate.version != 1"
                     label="Type of Action"
                     name="type"
                     prepend-icon="mdi-tune"
@@ -93,9 +94,6 @@ export default {
     ...mapActions('actiontemplates', ['show', 'create', 'update']),
     async save() {
       try {
-        if (this.inUse()) {
-          this.actiontemplate.version++
-        }
         let res = null
         if (this.actiontemplate.id) {
           res = await this.update(this.actiontemplate)
@@ -130,7 +128,7 @@ export default {
     inUse() {
       let actions = actionClient.list()
       for (let action in actions) {
-        if (action.type == this.type) {
+        if (action.type == this.actiontemplate.type && action.version == this.actiontemplate.version) {
           return true
         }
       }
@@ -142,6 +140,9 @@ export default {
     if (id) {
       try {
         this.actiontemplate = await this.show(id)
+        if (this.inUse()) {
+          this.actiontemplate.version++
+        }
         delete this.actiontemplate.trigger
       } catch (error) {
         this.$router.push({ path: '/404' })

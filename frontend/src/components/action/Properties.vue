@@ -16,10 +16,9 @@
       </v-menu>
     </v-card-title>
     <v-card-subtitle>
-      Action Properties are used to assign values to names and use them later in
-      the actions.
+      Action Properties are used to assign values to names and use them later in the actions.
     </v-card-subtitle>
-    <v-card outlined v-for="(prop, index) in typeproperties" v-bind:key="index" class="mb-4">
+    <v-card outlined v-for="(prop, index) in typeProperties" v-bind:key="index" class="mb-4">
       <v-card-text>
         <h4 v-if="prop.type === 'text'">Text</h4>
         <h4 v-if="prop.type === 'custom_trait'">Custom Trait</h4>
@@ -65,7 +64,12 @@
               label="Trait Key"
               :loadCallback="listCustomTraitKeys"
               :value="prop.sourceKey || ''"
-              @change="(e) => {setProperty(prop, e); changes()}"
+              @change="
+                (e) => {
+                  setProperty(prop, e)
+                  changes()
+                }
+              "
               return-object
             />
 
@@ -75,7 +79,12 @@
               label="Trait Key"
               :loadCallback="listComputedTraitKeys"
               :value="prop.sourceKey || ''"
-              @change="(e) => {setProperty(prop, e); changes()}"
+              @change="
+                (e) => {
+                  setProperty(prop, e)
+                  changes()
+                }
+              "
               return-object
             />
           </v-col>
@@ -128,7 +137,12 @@
               label="Trait Key"
               :loadCallback="listCustomTraitKeys"
               :value="prop.sourceKey || ''"
-              @change="(e) => {setProperty(prop, e); changes()}"
+              @change="
+                (e) => {
+                  setProperty(prop, e)
+                  changes()
+                }
+              "
               return-object
             />
 
@@ -138,7 +152,12 @@
               label="Trait Key"
               :loadCallback="listComputedTraitKeys"
               :value="prop.sourceKey || ''"
-              @change="(e) => {setProperty(prop, e); changes()}"
+              @change="
+                (e) => {
+                  setProperty(prop, e)
+                  changes()
+                }
+              "
               return-object
             />
           </v-col>
@@ -161,7 +180,7 @@ import computedTraitsClient from '../../lib/rest/computedTraits.js'
 
 export default {
   components: { APISelect },
-  props: ['properties', 'typeproperties'],
+  props: ['properties', 'typeProperties'],
   data() {
     return {
       types: [
@@ -171,7 +190,7 @@ export default {
       ],
       channels: [],
       rules: {
-        required: value => !!value || 'Required.'
+        required: (value) => !!value || 'Required.'
       }
     }
   },
@@ -216,13 +235,14 @@ export default {
     listComputedTraitKeys() {
       return computedTraitsClient.listTraits()
     },
-    changes(){
+    changes() {
       this.$emit('change')
     }
   },
   async created() {
     this.channels = await channelClient.select()
-    console.log(this.typeproperties)
+    console.log(this.typeProperties)
+    console.log(this.properties)
   }
 }
 </script>

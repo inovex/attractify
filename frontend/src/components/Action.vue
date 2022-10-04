@@ -32,7 +32,7 @@
                     prepend-icon="mdi-tune"
                     :items="actionTypes"
                     label="Type of Action"
-                    @change="changes"
+                    @change="selectType"
                     v-model="action.type"
                     :rules="[rules.required]"
                   ></v-select>
@@ -101,7 +101,7 @@
                 <v-tab-item value="properties">
                   <Properties
                     :properties="action.properties"
-                    :typeproperties="action.typeproperties"
+                    :typeProperties="action.typeProperties"
                     @change="changes = true"
                   />
                 </v-tab-item>
@@ -156,6 +156,7 @@ import Capping from './action/Capping.vue'
 import Hooks from './action/Hooks.vue'
 import TestUsers from './action/TestUsers.vue'
 import UnsavedContent from './UnsavedContent.vue'
+import actionTypesClient from '../lib/rest/actionTemplates'
 import Help from './Help'
 
 export default {
@@ -167,6 +168,7 @@ export default {
         state: 'inactive',
         tags: [],
         properties: [],
+        typeProperties: [],
         targeting: {
           channels: [],
           start: {},
@@ -192,7 +194,7 @@ export default {
       rules: {
         required: (value) => !!value || 'Required.'
       },
-      actionTypes: []
+      actionTypes: [] // save types with id and name and versions
     }
   },
   methods: {
@@ -232,6 +234,11 @@ export default {
       } else {
         this.$router.push('/actions')
       }
+    },
+    selectType() {
+      changes = true
+
+      // get
     }
   },
   async created() {
@@ -239,7 +246,7 @@ export default {
     if (id) {
       try {
         this.action = await this.show(id)
-        this.action.typeproperties = [
+        this.action.typeProperties = [
           {
             channels: ['confluence'],
             name: 'typeproperty',
@@ -249,12 +256,25 @@ export default {
             value: 'Dies ist eine Property aus dem type'
           }
         ]
-        this.actionTypes = [] // TODO: get list of templates
+        let actionTypeList = await actionTypesClient.listNames()
+        actionTypeList.array.forEach((actionType) => {
+          this.actionTypes.push(actionType.text)
+        })
         delete this.action.trigger
       } catch (error) {
         this.$router.push({ path: '/404' })
       }
     }
+    this.action.typeProperties = [
+      {
+        channels: ['confluence'],
+        name: 'typeproperty',
+        sourceKey: '',
+        sourceType: '',
+        type: 'text',
+        value: 'Dies ist eine Property aus dem type'
+      }
+    ]
   },
   beforeRouteLeave(to, from, next) {
     if (this.changes) {

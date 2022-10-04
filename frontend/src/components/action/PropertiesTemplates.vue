@@ -16,8 +16,7 @@
       </v-menu>
     </v-card-title>
     <v-card-subtitle>
-      Action Properties are used to assign values to names and use them later in
-      the actions.
+      Action Properties are used to assign values to names and use them later in the actions.
     </v-card-subtitle>
     <v-card outlined v-for="(prop, index) in properties" v-bind:key="index" class="mb-4">
       <v-card-text>
@@ -63,7 +62,12 @@
               label="Default Trait Key"
               :loadCallback="listCustomTraitKeys"
               :value="prop.sourceKey || ''"
-              @change="(e) => {setProperty(prop, e); changes()}"
+              @change="
+                (e) => {
+                  setProperty(prop, e)
+                  changes()
+                }
+              "
               return-object
             />
 
@@ -73,12 +77,14 @@
               label="Default Trait Key"
               :loadCallback="listComputedTraitKeys"
               :value="prop.sourceKey || ''"
-              @change="(e) => {setProperty(prop, e); changes()}"
+              @change="
+                (e) => {
+                  setProperty(prop, e)
+                  changes()
+                }
+              "
               return-object
             />
-          </v-col>
-          <v-col>
-                <v-switch label="Required" prepend-icon="mdi-debug-step-over" v-model="properties.isRequired" />
           </v-col>
           <v-col class="col-lg-1">
             <v-btn icon @click="removeProperty(index)">
@@ -109,7 +115,7 @@ export default {
       ],
       channels: [],
       rules: {
-        required: value => !!value || 'Required.'
+        required: (value) => !!value || 'Required.'
       }
     }
   },
@@ -154,7 +160,7 @@ export default {
     listComputedTraitKeys() {
       return computedTraitsClient.listTraits()
     },
-    changes(){
+    changes() {
       this.$emit('change')
     }
   },
