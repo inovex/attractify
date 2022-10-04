@@ -99,23 +99,27 @@
 
               <v-tabs-items v-model="tabs">
                 <v-tab-item value="properties">
-                  <Properties :properties="action.properties" @change="changes=true" />
+                  <Properties
+                    :properties="action.properties"
+                    :typeproperties="action.typeproperties"
+                    @change="changes = true"
+                  />
                 </v-tab-item>
 
                 <v-tab-item value="targeting">
-                  <Targeting :targeting="action.targeting" @change="changes=true" />
+                  <Targeting :targeting="action.targeting" @change="changes = true" />
                 </v-tab-item>
 
                 <v-tab-item value="capping">
-                  <Capping :capping="action.capping" @change="changes=true" />
+                  <Capping :capping="action.capping" @change="changes = true" />
                 </v-tab-item>
 
                 <v-tab-item value="hooks">
-                  <Hooks :hooks="action.hooks" @change="changes=true" />
+                  <Hooks :hooks="action.hooks" @change="changes = true" />
                 </v-tab-item>
 
                 <v-tab-item value="testUsers">
-                  <TestUsers :test-users="action.testUsers" @change="changes=true" />
+                  <TestUsers :test-users="action.testUsers" @change="changes = true" />
                 </v-tab-item>
               </v-tabs-items>
             </v-card-text>
@@ -127,11 +131,19 @@
     <v-col class="sticky text-center">
       <v-spacer />
       <v-btn rounded elevation="2" @click="cancel()">Cancel</v-btn>
-      <v-btn rounded elevation="2" color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="save()">Save</v-btn>
+      <v-btn
+        rounded
+        elevation="2"
+        color="primary"
+        style="color: var(--v-buttontext-base)"
+        :disabled="!valid"
+        @click="save()"
+        >Save</v-btn
+      >
     </v-col>
 
     <v-dialog v-model="exitUnsaved" max-width="700px" closeable>
-      <UnsavedContent :valid="valid" @cancel="cancelExit" @save="save" @exit="exit"/>
+      <UnsavedContent :valid="valid" @cancel="cancelExit" @save="save" @exit="exit" />
     </v-dialog>
   </v-container>
 </template>
@@ -178,13 +190,13 @@ export default {
       exitUnsaved: false,
       exitUrl: null,
       rules: {
-        required: value => !!value || 'Required.'
+        required: (value) => !!value || 'Required.'
       },
       actionTypes: []
     }
   },
   methods: {
-    cancel(){
+    cancel() {
       this.$router.push('/actions')
     },
     ...mapActions('actions', ['show', 'create', 'update']),
@@ -202,22 +214,22 @@ export default {
         }
 
         this.$notify.success('Your action has been saved.')
-        if(this.exitUnsaved){
+        if (this.exitUnsaved) {
           this.exit()
         }
       } catch (e) {
         this.$notify.error('Could not save action.')
       }
     },
-    cancelExit(){
+    cancelExit() {
       this.exitUnsaved = false
       this.exitUrl = null
     },
-    exit(){
+    exit() {
       this.changes = false
-      if(this.exitUrl){
+      if (this.exitUrl) {
         this.$router.push(this.exitUrl)
-      }else{
+      } else {
         this.$router.push('/actions')
       }
     }
@@ -227,6 +239,16 @@ export default {
     if (id) {
       try {
         this.action = await this.show(id)
+        this.action.typeproperties = [
+          {
+            channels: ['confluence'],
+            name: 'typeproperty',
+            sourceKey: '',
+            sourceType: '',
+            type: 'text',
+            value: 'Dies ist eine Property aus dem type'
+          }
+        ]
         this.actionTypes = [] // TODO: get list of templates
         delete this.action.trigger
       } catch (error) {
@@ -235,13 +257,13 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    if(this.changes){
+    if (this.changes) {
       this.exitUnsaved = true
       this.exitUrl = to.path
       return false
     }
     next()
-  },
+  }
 }
 </script>
 
@@ -256,7 +278,7 @@ export default {
   bottom: 1rem;
   z-index: 1;
 }
-.sticky button{
+.sticky button {
   margin: 0 0.5rem;
 }
 </style>

@@ -23,10 +23,18 @@
                     :rules="[rules.required]"
                   />
                 </v-col>
+                <v-col align-self="center" class="col-lg-6">
+                  <v-row align="center" style="height: 100%; top: auto">
+                    <v-icon>mdi-timeline-clock-outline</v-icon>
+                    <v-card-text style="width: auto; font-size: 16px"
+                      >Version: {{ actiontemplate.version }}</v-card-text
+                    >
+                  </v-row>
+                </v-col>
               </v-row>
             </v-card-text>
             <v-divider></v-divider>
-            <PropertiesTemplates :properties="actiontemplate.properties" @change="changes=true" />
+            <PropertiesTemplates :properties="actiontemplate.properties" @change="changes = true" />
           </v-card>
         </v-form>
       </v-col>
@@ -35,11 +43,19 @@
     <v-col class="sticky text-center">
       <v-spacer />
       <v-btn rounded elevation="2" @click="cancel()">Cancel</v-btn>
-      <v-btn rounded elevation="2" color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="save()">Save</v-btn>
+      <v-btn
+        rounded
+        elevation="2"
+        color="primary"
+        style="color: var(--v-buttontext-base)"
+        :disabled="!valid"
+        @click="save()"
+        >Save</v-btn
+      >
     </v-col>
 
     <v-dialog v-model="exitUnsaved" max-width="700px" closeable>
-      <UnsavedContent :valid="valid" @cancel="cancelExit" @save="save" @exit="exit"/>
+      <UnsavedContent :valid="valid" @cancel="cancelExit" @save="save" @exit="exit" />
     </v-dialog>
   </v-container>
 </template>
@@ -49,6 +65,7 @@ import { mapActions } from 'vuex'
 import UnsavedContent from './UnsavedContent.vue'
 import Help from './Help'
 import PropertiesTemplates from './action/PropertiesTemplates.vue'
+import actionClient from '../lib/rest/actions'
 
 export default {
   components: { Help, UnsavedContent, PropertiesTemplates },
@@ -56,6 +73,8 @@ export default {
     return {
       actiontemplate: {
         properties: [],
+        type: '',
+        version: 1
       },
       path: '',
       valid: false,
@@ -63,17 +82,20 @@ export default {
       exitUnsaved: false,
       exitUrl: null,
       rules: {
-        required: value => !!value || 'Required.'
+        required: (value) => !!value || 'Required.'
       }
     }
   },
   methods: {
-    cancel(){
+    cancel() {
       this.$router.push('/actiontemplates')
     },
     ...mapActions('actiontemplates', ['show', 'create', 'update']),
     async save() {
       try {
+        if (this.inUse()) {
+          this.actiontemplate.version++
+        }
         let res = null
         if (this.actiontemplate.id) {
           res = await this.update(this.actiontemplate)
@@ -85,25 +107,34 @@ export default {
           this.actiontemplate.id = res.id
         }
 
-        this.$notify.success('Your action has been saved.')
-        if(this.exitUnsaved){
+        this.$notify.success('Your actiontype has been saved as version ' + this.actiontemplate.version + '.')
+        if (this.exitUnsaved) {
           this.exit()
         }
       } catch (e) {
-        this.$notify.error('Could not save action.')
+        this.$notify.error('Could not save actiontemplate.')
       }
     },
-    cancelExit(){
+    cancelExit() {
       this.exitUnsaved = false
       this.exitUrl = null
     },
-    exit(){
+    exit() {
       this.changes = false
-      if(this.exitUrl){
+      if (this.exitUrl) {
         this.$router.push(this.exitUrl)
-      }else{
+      } else {
         this.$router.push('/actiontemplates')
       }
+    },
+    inUse() {
+      let actions = actionClient.list()
+      for (let action in actions) {
+        if (action.type == this.type) {
+          return true
+        }
+      }
+      return false
     }
   },
   async created() {
@@ -118,13 +149,13 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    if(this.changes){
+    if (this.changes) {
       this.exitUnsaved = true
       this.exitUrl = to.path
       return false
     }
     next()
-  },
+  }
 }
 </script>
 
@@ -139,7 +170,7 @@ export default {
   bottom: 1rem;
   z-index: 1;
 }
-.sticky button{
+.sticky button {
   margin: 0 0.5rem;
 }
 </style>
