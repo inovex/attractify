@@ -23,8 +23,8 @@
             <template v-slot:item.createdAt="{ item }">
               <span>{{ formatDate(item.createdAt) }}</span>
             </template>
-            <template v-slot:item.updatedAt="{ item }">
-              <span>{{ timeAgo(item.updatedAt) }}</span>
+            <template v-slot:item.version="{ item }">
+              <span>{{ item.version }}</span>
             </template>
             <template v-slot:no-data>No Templates Available</template>
           </v-data-table>
@@ -53,7 +53,7 @@ export default {
           value: 'name'
         },
         { text: 'Created', value: 'createdAt' },
-        { text: 'Updated', value: 'updatedAt' },
+        { text: 'Version', value: 'version' },
         { text: 'Actions', value: 'action', align: 'right', sortable: false }
       ]
     }
@@ -81,6 +81,15 @@ export default {
   },
   async created() {
     this.actiontypes = await client.list()
+    let lastTypeName = ''
+    console.log(this.actiontypes)
+    for (let i = this.actiontypes.length - 1; i >= 0; i -= 1) {
+      let item = this.actiontypes[i]
+      if (lastTypeName == item.name) {
+        this.actiontypes.splice(i, 1)
+      }
+      lastTypeName = item.name
+    }
   }
 }
 </script>
