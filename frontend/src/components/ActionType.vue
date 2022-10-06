@@ -20,16 +20,14 @@
                     prepend-icon="mdi-tune"
                     type="text"
                     @input="changes = true"
-                    v-model="actiontype.type"
+                    v-model="actiontype.name"
                     :rules="[rules.required]"
                   />
                 </v-col>
                 <v-col align-self="center" class="col-lg-6">
                   <v-row align="center" style="height: 100%; top: auto">
                     <v-icon>mdi-timeline-clock-outline</v-icon>
-                    <v-card-text style="width: auto; font-size: 16px"
-                      >Version: {{ actiontype.version }}</v-card-text
-                    >
+                    <v-card-text style="width: auto; font-size: 16px">Version: {{ actiontype.version }}</v-card-text>
                   </v-row>
                 </v-col>
               </v-row>
@@ -74,7 +72,7 @@ export default {
     return {
       actiontype: {
         properties: [],
-        type: '',
+        name: '',
         version: 1
       },
       path: '',
@@ -104,7 +102,7 @@ export default {
         if (res && res.id) {
           this.actiontype.id = res.id
         }
-
+        this.changes = false
         this.$notify.success('Your actiontype has been saved as version ' + this.actiontype.version + '.')
         if (this.exitUnsaved) {
           this.exit()
@@ -126,9 +124,9 @@ export default {
       }
     },
     inUse() {
-      let actions = actionClient.list()
+      let actions = actionClient.list() // TODO: only load actions with actiontypes name
       for (let action in actions) {
-        if (action.type == this.actiontype.type && action.version == this.actiontype.version) {
+        if (action.name == this.actiontype.name && action.version == this.actiontype.version) {
           return true
         }
       }

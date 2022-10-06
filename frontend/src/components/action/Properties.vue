@@ -241,8 +241,6 @@ export default {
   },
   async created() {
     this.channels = await channelClient.select()
-    console.log(this.typeProperties)
-    console.log(this.properties)
   }
 }
 </script>

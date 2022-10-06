@@ -25,11 +25,12 @@ CREATE TABLE IF NOT EXISTS actions (
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	name text NOT NULL,
-	type_name NOT NULL,
-	type_version uuid NOT NULL,‚
+	type_name,
+	type_version uuid,
 	tags jsonb NOT NULL DEFAULT '[]'::jsonb,
 	state text NOT NULL DEFAULT 'inactive',
 	properties jsonb NOT NULL DEFAULT '[]'::jsonb,
+	type_properties jsonb NOT NULL DEFAULT '[]'::jsonb,
 	targeting jsonb NOT NULL DEFAULT '{}'::jsonb,
 	capping jsonb NOT NULL DEFAULT '{}'::jsonb,
 	hooks jsonb NOT NULL DEFAULT '[]'::jsonb,
@@ -41,11 +42,11 @@ CREATE TABLE IF NOT EXISTS actions (
 CREATE TABLE IF NOT EXISTS actiontypes (
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	type text NOT NULL,
+	name text NOT NULL,
 	version int not NULL DEFAULT 1,
 	properties jsonb NOT NULL DEFAULT '[]'::jsonb,
-	created_at timestamp NOT NULL DEFAULT now(),
-	updated_at timestamp NOT NULL DEFAULT now()
+	archived bool NOT NULL DEFAULT false,
+	created_at timestamp NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS profiles (

@@ -26,14 +26,25 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col class="col-lg-6">
+                <v-col class="col-lg-3">
                   <v-select
                     dense
                     prepend-icon="mdi-tune"
-                    :items="actionTypes"
+                    :items="actionTypeSelector"
                     label="Type of Action"
                     @change="selectType"
                     v-model="action.type"
+                    :rules="[rules.required]"
+                  ></v-select>
+                </v-col>
+                <v-col class="col-lg-3">
+                  <v-select
+                    dense
+                    prepend-icon="mdi-tune"
+                    :items="versionSelector"
+                    label="Version of Type"
+                    @change="selectVersion"
+                    v-model="action.version"
                     :rules="[rules.required]"
                   ></v-select>
                 </v-col>
@@ -166,6 +177,8 @@ export default {
       tabs: '',
       action: {
         state: 'inactive',
+        type: '',
+        version: 1,
         tags: [],
         properties: [],
         typeProperties: [],
@@ -194,7 +207,9 @@ export default {
       rules: {
         required: (value) => !!value || 'Required.'
       },
-      actionTypes: [] // save types with id and name and versions
+      actionTypes: [],
+      actionTypeSelector: [],
+      versionSelector: []
     }
   },
   methods: {
@@ -238,7 +253,27 @@ export default {
     selectType() {
       this.changes = true
 
-      // get
+      this.versionSelector = []
+      this.actionTypes.forEach((actionType) => {
+        if (actionType.name == this.action.type) {
+          this.versionSelector.push(actionType.version)
+        }
+      })
+
+      this.action.version = this.versionSelector[this.versionSelector.length - 1]
+      this.selectVersion()
+    },
+    selectVersion() {
+      let currentVersion
+      this.actionTypes.every((actionType) => {
+        if (this.action.version == actionType.version && this.action.type == actionType.name) {
+          currentVersion = actionType
+          return false
+        }
+        return true
+      })
+
+      this.action.typeProperties = currentVersion.properties
     }
   },
   async created() {
@@ -246,35 +281,18 @@ export default {
     if (id) {
       try {
         this.action = await this.show(id)
-        this.action.typeProperties = [
-          {
-            channels: ['confluence'],
-            name: 'typeproperty',
-            sourceKey: '',
-            sourceType: '',
-            type: 'text',
-            value: 'Dies ist eine Property aus dem type'
-          }
-        ]
-        let actionTypeList = await actionTypesClient.listNames()
-        actionTypeList.array.forEach((actionType) => {
-          this.actionTypes.push(actionType.text)
-        })
         delete this.action.trigger
       } catch (error) {
         this.$router.push({ path: '/404' })
       }
     }
-    this.action.typeProperties = [
-      {
-        channels: ['confluence'],
-        name: 'typeproperty',
-        sourceKey: '',
-        sourceType: '',
-        type: 'text',
-        value: 'Dies ist eine Property aus dem type'
-      }
-    ]
+
+    actionTypesClient.list().then((actionTypes) => {
+      this.actionTypes = actionTypes
+      this.actionTypes.forEach((actionType) => {
+        this.actionTypeSelector.push(actionType.name)
+      })
+    })
   },
   beforeRouteLeave(to, from, next) {
     if (this.changes) {
