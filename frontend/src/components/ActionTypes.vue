@@ -6,13 +6,13 @@
           <v-toolbar dark>
             <v-toolbar-title>Action template overview</v-toolbar-title>
             <v-spacer></v-spacer>
-            <help name="actiontemplates" />
+            <help name="actiontypes" />
             <v-btn icon @click="create()">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
           </v-toolbar>
-          <v-data-table disable-pagination hide-default-footer :headers="headers" :items="actiontemplates">
-            <template v-slot:item.actiontemplate="{ item }">
+          <v-data-table disable-pagination hide-default-footer :headers="headers" :items="actiontypes">
+            <template v-slot:item.actiontype="{ item }">
               <v-btn icon @click="edit(item)">
                 <v-icon title="Edit action">mdi-pencil</v-icon>
               </v-btn>
@@ -36,14 +36,14 @@
 
 <script>
 import Help from './Help'
-import client from '../lib/rest/actionTemplates.js'
+import client from '../lib/rest/actionTypes.js'
 import moment from 'moment'
 
 export default {
   components: { Help },
   data() {
     return {
-      actiontemplates: [],
+      actiontypes: [],
       dialog: false,
       infoDialog: false,
       headers: [
@@ -60,12 +60,13 @@ export default {
   },
   methods: {
     create() {
-      this.$router.push({ path: '/actiontemplate' })
+      this.$router.push({ path: '/actiontype' })
     },
-    edit(actiontemplate) {
-      this.$router.push({ path: `/actiontemplate/${actiontemplate.id}` })
+    edit(actiontype) {
+      this.$router.push({ path: `/actiontype/${actiontype.id}` })
     },
-    async remove(action) { // TODO: check if action template is in use and cannot be deleted
+    async remove(action) {
+      // TODO: check if action template is in use and cannot be deleted
       if (confirm('Do you really want to delete this action?')) {
         await client.delete(action.id)
         this.actions = await client.list()
@@ -79,7 +80,7 @@ export default {
     }
   },
   async created() {
-    this.actiontemplates = await client.list()
+    this.actiontypes = await client.list()
   }
 }
 </script>

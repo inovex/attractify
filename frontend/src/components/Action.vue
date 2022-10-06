@@ -156,7 +156,7 @@ import Capping from './action/Capping.vue'
 import Hooks from './action/Hooks.vue'
 import TestUsers from './action/TestUsers.vue'
 import UnsavedContent from './UnsavedContent.vue'
-import actionTypesClient from '../lib/rest/actionTemplates'
+import actionTypesClient from '../lib/rest/actionTypes'
 import Help from './Help'
 
 export default {

@@ -5,8 +5,8 @@
         <v-form ref="form" v-model="valid" on>
           <v-card>
             <v-toolbar dark>
-              <v-toolbar-title v-if="actiontemplate.id">Edit Action Template</v-toolbar-title>
-              <v-toolbar-title v-if="!actiontemplate.id">Create new Action Template</v-toolbar-title>
+              <v-toolbar-title v-if="actiontype.id">Edit Action Template</v-toolbar-title>
+              <v-toolbar-title v-if="!actiontype.id">Create new Action Template</v-toolbar-title>
               <v-spacer></v-spacer>
               <help name="action" />
             </v-toolbar>
@@ -14,13 +14,13 @@
               <v-row>
                 <v-col class="col-lg-6">
                   <v-text-field
-                    :disabled="actiontemplate.version != 1"
+                    :disabled="actiontype.version != 1"
                     label="Type of Action"
                     name="type"
                     prepend-icon="mdi-tune"
                     type="text"
                     @input="changes = true"
-                    v-model="actiontemplate.type"
+                    v-model="actiontype.type"
                     :rules="[rules.required]"
                   />
                 </v-col>
@@ -28,14 +28,14 @@
                   <v-row align="center" style="height: 100%; top: auto">
                     <v-icon>mdi-timeline-clock-outline</v-icon>
                     <v-card-text style="width: auto; font-size: 16px"
-                      >Version: {{ actiontemplate.version }}</v-card-text
+                      >Version: {{ actiontype.version }}</v-card-text
                     >
                   </v-row>
                 </v-col>
               </v-row>
             </v-card-text>
             <v-divider></v-divider>
-            <PropertiesTemplates :properties="actiontemplate.properties" @change="changes = true" />
+            <PropertiesTemplates :properties="actiontype.properties" @change="changes = true" />
           </v-card>
         </v-form>
       </v-col>
@@ -72,7 +72,7 @@ export default {
   components: { Help, UnsavedContent, PropertiesTemplates },
   data() {
     return {
-      actiontemplate: {
+      actiontype: {
         properties: [],
         type: '',
         version: 1
@@ -89,28 +89,28 @@ export default {
   },
   methods: {
     cancel() {
-      this.$router.push('/actiontemplates')
+      this.$router.push('/actiontypes')
     },
-    ...mapActions('actiontemplates', ['show', 'create', 'update']),
+    ...mapActions('actiontypes', ['show', 'create', 'update']),
     async save() {
       try {
         let res = null
-        if (this.actiontemplate.id) {
-          res = await this.update(this.actiontemplate)
+        if (this.actiontype.id) {
+          res = await this.update(this.actiontype)
         } else {
-          res = await this.create(this.actiontemplate)
+          res = await this.create(this.actiontype)
         }
 
         if (res && res.id) {
-          this.actiontemplate.id = res.id
+          this.actiontype.id = res.id
         }
 
-        this.$notify.success('Your actiontype has been saved as version ' + this.actiontemplate.version + '.')
+        this.$notify.success('Your actiontype has been saved as version ' + this.actiontype.version + '.')
         if (this.exitUnsaved) {
           this.exit()
         }
       } catch (e) {
-        this.$notify.error('Could not save actiontemplate.')
+        this.$notify.error('Could not save actiontype.')
       }
     },
     cancelExit() {
@@ -122,13 +122,13 @@ export default {
       if (this.exitUrl) {
         this.$router.push(this.exitUrl)
       } else {
-        this.$router.push('/actiontemplates')
+        this.$router.push('/actiontypes')
       }
     },
     inUse() {
       let actions = actionClient.list()
       for (let action in actions) {
-        if (action.type == this.actiontemplate.type && action.version == this.actiontemplate.version) {
+        if (action.type == this.actiontype.type && action.version == this.actiontype.version) {
           return true
         }
       }
@@ -139,11 +139,11 @@ export default {
     const id = this.$route.params.id
     if (id) {
       try {
-        this.actiontemplate = await this.show(id)
+        this.actiontype = await this.show(id)
         if (this.inUse()) {
-          this.actiontemplate.version++
+          this.actiontype.version++
         }
-        delete this.actiontemplate.trigger
+        delete this.actiontype.trigger
       } catch (error) {
         this.$router.push({ path: '/404' })
       }

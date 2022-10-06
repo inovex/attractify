@@ -4,7 +4,7 @@ export default {
     async list(offset, limit) {
         try {
             const params = { offset, limit }
-            const res = await restClient.get('/actiontemplates', params)
+            const res = await restClient.get('/actiontypes', params)
 
             return res.data
         } catch (e) {
@@ -13,7 +13,7 @@ export default {
     },
     async show(id) {
         try {
-            const res = await restClient.get(`/actiontemplates/${id}`)
+            const res = await restClient.get(`/actiontypes/${id}`)
 
             return res.data
         } catch (e) {
@@ -22,14 +22,14 @@ export default {
     },
     async delete(id) {
         try {
-            await restClient.delete(`/actiontemplates/${id}`)
+            await restClient.delete(`/actiontypes/${id}`)
         } catch (e) {
             throw e
         }
     },
     async create(params) {
         try {
-            const res = await restClient.post('/actiontemplates', params)
+            const res = await restClient.post('/actiontypes', params)
             return res.data
         } catch (e) {
             throw e
@@ -37,14 +37,14 @@ export default {
     },
     async update(params) {
         try {
-            await restClient.put(`/actiontemplates/${params.id}`, params)
+            await restClient.put(`/actiontypes/${params.id}`, params)
         } catch (e) {
             throw e
         }
     },
     async listNames() {
         try {
-            let res = await restClient.get('/actiontemplates')
+            let res = await restClient.get('/actiontypes')
             return res.data.map(item => {
                 return { text: item.name, value: item.id }
             })
