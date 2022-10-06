@@ -19,9 +19,11 @@ type Action struct {
 	OrganizationID uuid.UUID       `json:"organizationId"`
 	Name           string          `json:"name"`
 	Type           string          `json:"type"`
+	Version        int             `json:"version"`
 	State          string          `json:"state"`
 	Tags           json.RawMessage `json:"tags"`
 	Properties     json.RawMessage `json:"properties"`
+	TypeProperties json.RawMessage `json:"type_properties"`
 	Targeting      json.RawMessage `json:"targeting"`
 	Capping        json.RawMessage `json:"capping"`
 	Hooks          json.RawMessage `json:"hooks"`

@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS actions (
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	name text NOT NULL,
-	type_name,
+	type_name text,
 	type_version uuid,
 	tags jsonb NOT NULL DEFAULT '[]'::jsonb,
 	state text NOT NULL DEFAULT 'inactive',

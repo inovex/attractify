@@ -29,7 +29,8 @@ type Action struct {
 	ID             uuid.UUID       `db:"id"`
 	OrganizationID uuid.UUID       `db:"organization_id"`
 	Name           string          `db:"name"`
-	Type           string          `db:"type"`
+	Type           string          `db:"type_name"`
+	Version        int             `db:"type_version"`
 	Tags           json.RawMessage `db:"tags"`
 	Properties     json.RawMessage `db:"properties"`
 	TypeProperties json.RawMessage `db:"type_properties"`
@@ -120,6 +121,7 @@ type CreateActionParams struct {
 	OrganizationID uuid.UUID
 	Name           string
 	Type           string
+	Version        int
 	Tags           json.RawMessage
 	State          ActionState
 	Properties     json.RawMessage
@@ -220,6 +222,7 @@ LIMIT 1
 type UpdateActionParams struct {
 	Name           string
 	Type           string
+	Version        int
 	Tags           json.RawMessage
 	State          ActionState
 	Properties     json.RawMessage

@@ -73,15 +73,17 @@ type testUser struct {
 }
 
 type ActionCreate struct {
-	Type       string     `json:"type" binding:"required,min=1"`
-	Name       string     `json:"name" binding:"required,min=1"`
-	State      string     `json:"state" binding:"required,oneof=inactive staging active"`
-	Tags       []string   `json:"tags" binding:"dive,min=1"`
-	Properties []property `json:"properties" binding:"dive"`
-	Targeting  targeting  `json:"targeting"`
-	Capping    []capping  `json:"capping"`
-	Hooks      []hook     `json:"hooks"`
-	TestUsers  []testUser `json:"testUsers"`
+	Type           string     `json:"type" binding:"required,min=1"`
+	Version        int        `json:"version" binding:"required,min=1"`
+	Name           string     `json:"name" binding:"required,min=1"`
+	State          string     `json:"state" binding:"required,oneof=inactive staging active"`
+	Tags           []string   `json:"tags" binding:"dive,min=1"`
+	Properties     []property `json:"properties" binding:"dive"`
+	TypeProperties []property `json:"type_properties" binding:"dive"`
+	Targeting      targeting  `json:"targeting"`
+	Capping        []capping  `json:"capping"`
+	Hooks          []hook     `json:"hooks"`
+	TestUsers      []testUser `json:"testUsers"`
 }
 
 type ActionState struct {
