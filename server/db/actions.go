@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -242,23 +241,25 @@ func (d *DB) UpdateAction(ctx context.Context, arg UpdateActionParams) error {
 	const q = `
 UPDATE actions
 SET name = $1,
-	type = $2,
-	tags = $3,
-	state = $4,
-    properties = $5,
-    type_properties = $6,
-    targeting = $7,
-    capping = $8,
-	hooks = $9,
-	test_users = $10,
+	type_name = $2,
+	type_version = $3,
+	tags = $4,
+	state = $5,
+    properties = $6,
+    type_properties = $7,
+    targeting = $8,
+    capping = $9,
+	hooks = $10,
+	test_users = $11,
     updated_at = now()
-WHERE organization_id = $11
-AND id = $12
+WHERE organization_id = $12
+AND id = $13
 `
 
 	_, err := d.db.ExecContext(ctx, q,
 		arg.Name,
 		arg.Type,
+		arg.Version,
 		arg.Tags,
 		arg.State,
 		arg.Properties,

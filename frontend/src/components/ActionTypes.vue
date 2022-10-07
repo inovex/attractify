@@ -4,7 +4,7 @@
       <v-col>
         <v-card>
           <v-toolbar dark>
-            <v-toolbar-title>Action template overview</v-toolbar-title>
+            <v-toolbar-title>Action Types</v-toolbar-title>
             <v-spacer></v-spacer>
             <help name="actiontypes" />
             <v-btn icon @click="create()">
@@ -12,12 +12,12 @@
             </v-btn>
           </v-toolbar>
           <v-data-table disable-pagination hide-default-footer :headers="headers" :items="actiontypes">
-            <template v-slot:item.actiontype="{ item }">
+            <template v-slot:item.action="{ item }">
               <v-btn icon @click="edit(item)">
-                <v-icon title="Edit action">mdi-pencil</v-icon>
+                <v-icon title="Edit type">mdi-pencil</v-icon>
               </v-btn>
-              <v-btn icon @click="remove(item)" v-if="!item.active">
-                <v-icon title="Delete action">mdi-delete</v-icon>
+              <v-btn icon @click="remove(item)">
+                <v-icon title="Archive type">mdi-archive</v-icon>
               </v-btn>
             </template>
             <template v-slot:item.createdAt="{ item }">
@@ -52,8 +52,8 @@ export default {
           align: 'left',
           value: 'name'
         },
-        { text: 'Created', value: 'createdAt' },
         { text: 'Version', value: 'version' },
+        { text: 'Created', value: 'createdAt' },
         { text: 'Actions', value: 'action', align: 'right', sortable: false }
       ]
     }
@@ -66,8 +66,8 @@ export default {
       this.$router.push({ path: `/actiontype/${actiontype.id}` })
     },
     async remove(action) {
-      // TODO: check if action template is in use and cannot be deleted
-      if (confirm('Do you really want to delete this action?')) {
+      // TODO: archive action
+      if (confirm('Do you really want to archive this type?')) {
         await client.delete(action.id)
         this.actions = await client.list()
       }

@@ -230,6 +230,7 @@ export default {
           this.action.id = res.id
         }
 
+        this.changes = false
         this.$notify.success('Your action has been saved.')
         if (this.exitUnsaved) {
           this.exit()

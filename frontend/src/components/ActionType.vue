@@ -14,7 +14,7 @@
               <v-row>
                 <v-col class="col-lg-6">
                   <v-text-field
-                    :disabled="actiontype.version != 1"
+                    :disabled="inUse"
                     label="Type of Action"
                     name="type"
                     prepend-icon="mdi-tune"
@@ -76,6 +76,7 @@ export default {
         version: 1
       },
       path: '',
+      inUse: false,
       valid: false,
       changes: false,
       exitUnsaved: false,
@@ -123,14 +124,18 @@ export default {
         this.$router.push('/actiontypes')
       }
     },
-    inUse() {
-      let actions = actionClient.list() // TODO: only load actions with actiontypes name
-      for (let action in actions) {
-        if (action.name == this.actiontype.name && action.version == this.actiontype.version) {
-          return true
+    checkUsage() {
+      actionClient.list().then((actions) => {
+        // TODO: improve performance
+        for (let i in actions) {
+          const action = actions[i]
+          if (action.type == this.actiontype.name && action.version == this.actiontype.version) {
+            this.actiontype.version++
+            this.inUse = true
+            return
+          }
         }
-      }
-      return false
+      })
     }
   },
   async created() {
@@ -138,9 +143,7 @@ export default {
     if (id) {
       try {
         this.actiontype = await this.show(id)
-        if (this.inUse()) {
-          this.actiontype.version++
-        }
+        await this.checkUsage()
         delete this.actiontype.trigger
       } catch (error) {
         this.$router.push({ path: '/404' })

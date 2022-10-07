@@ -110,21 +110,6 @@ LIMIT 1
 	return c, row.StructScan(&c)
 }
 
-func (d *DB) GetActionTypeByUUIDAndVersion(ctx context.Context, orgID, id uuid.UUID, version int) (ActionType, error) {
-	const q = `
-SELECT *
-FROM actiontypes
-WHERE organization_id = $1
-AND id = $2
-AND version = $3
-LIMIT 1
-`
-
-	row := d.db.QueryRowxContext(ctx, q, orgID, id, version)
-	var c ActionType
-	return c, row.StructScan(&c)
-}
-
 func (d *DB) GetActionTypes(ctx context.Context, orgID uuid.UUID) ([]ActionType, error) {
 	const q = `
 SELECT *
@@ -160,17 +145,4 @@ AND version = $3
 
 	var items []ActionType
 	return items, d.db.SelectContext(ctx, &items, q, orgID, name, version)
-}
-
-type UpdateActionTypeParams struct {
-	Name           string
-	Tags           json.RawMessage
-	State          ActionState
-	Properties     json.RawMessage
-	Targeting      json.RawMessage
-	Capping        json.RawMessage
-	Hooks          json.RawMessage
-	TestUsers      json.RawMessage
-	OrganizationID uuid.UUID
-	ID             uuid.UUID
 }

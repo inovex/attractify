@@ -52,7 +52,14 @@
           <v-col cols="auto" class="mr-3">
             <v-menu bottom v-if="isLoggedIn">
               <template v-slot:activator="{ on }">
-                <v-avatar class="avatar__icon" color="primary" style="color: var(--v-buttontext-base)" size="48" v-on="on">{{ initials }}</v-avatar>
+                <v-avatar
+                  class="avatar__icon"
+                  color="primary"
+                  style="color: var(--v-buttontext-base)"
+                  size="48"
+                  v-on="on"
+                  >{{ initials }}</v-avatar
+                >
               </template>
               <v-list>
                 <v-list-item :to="{ path: '/user' }">
@@ -149,7 +156,7 @@ export default {
         { divider: true },
         { header: true, text: 'Actions' },
         { icon: 'mdi-ticket-percent', text: 'Actions', link: '/actions' },
-        { icon: 'mdi-clipboard-text-outline', text: 'Action Templates', link: '/actiontypes' },
+        { icon: 'mdi-clipboard-text-outline', text: 'Action Types', link: '/actiontypes' },
         {
           icon: 'mdi-gesture-tap',
           text: 'Reactions',
@@ -216,17 +223,17 @@ export default {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark
       this.darkmode = this.$vuetify.theme.dark
       window.localStorage.setItem('darkmode', this.$vuetify.theme.dark)
-      if(window.location.pathname == "/"){
-        this.forceRerender();
+      if (window.location.pathname == '/') {
+        this.forceRerender()
       }
     },
     forceRerender() {
-          this.renderComponent = false;
+      this.renderComponent = false
 
-          this.$nextTick(() => {
-            this.renderComponent = true;
-          });
-    },
+      this.$nextTick(() => {
+        this.renderComponent = true
+      })
+    }
   },
   computed: {
     ...mapGetters('user', ['get']),
@@ -239,9 +246,9 @@ export default {
     this.$bus.$on('user:update', this.refresh)
     this.$bus.$on('notify', this.notify)
     this.$bus.$on('user:logout', this.logout)
-    if(window.localStorage.getItem('darkmode') != null) {
+    if (window.localStorage.getItem('darkmode') != null) {
       this.$vuetify.theme.dark = JSON.parse(window.localStorage.getItem('darkmode'))
-    }else if(window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
       this.$vuetify.theme.dark = true
     }
     this.darkmode = this.$vuetify.theme.dark
