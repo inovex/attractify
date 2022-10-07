@@ -65,6 +65,7 @@ import UnsavedContent from './UnsavedContent.vue'
 import Help from './Help'
 import PropertiesTemplates from './action/PropertiesTemplates.vue'
 import actionClient from '../lib/rest/actions'
+import actionTypeClient from '../lib/rest/actionTypes'
 
 export default {
   components: { Help, UnsavedContent, PropertiesTemplates },
@@ -90,21 +91,39 @@ export default {
     cancel() {
       this.$router.push('/actiontypes')
     },
-    ...mapActions('actiontypes', ['show', 'create', 'update']),
+    ...mapActions('actiontypes', ['show', 'create', 'update', 'list']),
     async save() {
       try {
         let res = null
         if (this.actiontype.id) {
           res = await this.update(this.actiontype)
         } else {
-          res = await this.create(this.actiontype)
+          await actionTypeClient.list().then((types) => {
+            let exists = false
+            for (let i in types) {
+              const type = types[i]
+              if (type.name == this.actiontype.name) {
+                exists = true
+                break
+              }
+            }
+            if (
+              exists &&
+              !confirm(
+                'This type already exists. Do you want to create a new version of this type and take older versions out of the archive?'
+              )
+            ) {
+              return
+            }
+            res = this.create(this.actiontype)
+          })
         }
 
         if (res && res.id) {
           this.actiontype.id = res.id
         }
         this.changes = false
-        this.$notify.success('Your actiontype has been saved as version ' + this.actiontype.version + '.')
+        this.$notify.success('Your actiontype has been saved.')
         if (this.exitUnsaved) {
           this.exit()
         }

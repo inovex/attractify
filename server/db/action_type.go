@@ -8,11 +8,6 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-const (
-//TraitConditionTypeCustom   = "custom"
-//TraitConditionTypeComputed = "computed"
-)
-
 type ActionType struct {
 	ID             uuid.UUID       `db:"id"`
 	OrganizationID uuid.UUID       `db:"organization_id"`
@@ -72,15 +67,15 @@ RETURNING *
 	return a, row.StructScan(&a)
 }
 
-func (d *DB) ArchiveActionType(ctx context.Context, orgID, id uuid.UUID) error {
+func (d *DB) ArchiveActionType(ctx context.Context, orgID uuid.UUID, name string) error {
 	const q = `
 UPDATE actiontypes 
-SET archived=true
+SET archived='true'
 WHERE organization_id = $1
-AND id = $2
+AND name = $2
 `
 
-	_, err := d.db.ExecContext(ctx, q, orgID, id)
+	_, err := d.db.ExecContext(ctx, q, orgID, name)
 	return err
 }
 
@@ -128,6 +123,7 @@ SELECT *
 FROM actiontypes
 WHERE organization_id = $1
 AND name = $2
+ORDER BY version
 `
 
 	var items []ActionType

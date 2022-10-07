@@ -23,7 +23,7 @@ func InitActionTypes(router *gin.RouterGroup, app *app.App) {
 	c.Router.GET("/actiontypes", c.List)
 	c.Router.GET("/actiontypes/:id", c.Show)
 	c.Router.POST("/actiontypes", c.Create)
-	c.Router.DELETE("/actiontypes/:id", c.Delete)
+	c.Router.DELETE("/actiontypes/:id", c.Archive)
 	c.Router.PUT("/actiontypes/:id", c.Create)
 }
 
@@ -44,6 +44,7 @@ func (ac ActionTypesController) List(c *gin.Context) {
 			Name:           a.Name,
 			Version:        a.Version,
 			Properties:     a.Properties,
+			Archived:       a.Archived,
 			CreatedAt:      a.CreatedAt,
 		})
 	}
@@ -88,17 +89,22 @@ func (ac ActionTypesController) Create(c *gin.Context) {
 	name := req.Name
 	version := req.Version
 
-	existingActionType, err := ac.App.DB.GetActionTypesByNameAndVersion(c, user.OrganizationID, name, version)
-	if existingActionType != nil || err != nil {
-		ac.App.Logger.Error("actiontypes.create.ActiontypeExists", zap.Error(err))
+	archivedTypes, err := ac.App.DB.GetActionTypesByName(c, user.OrganizationID, name)
+	if err != nil {
+		ac.App.Logger.Error("actiontypes.create.listArchivedVersions", zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
+	}
+
+	for _, archivedType := range archivedTypes {
+		ac.App.DB.UnArchiveActionType(c, user.OrganizationID, archivedType.ID)
+		version = archivedType.Version + 1
 	}
 
 	args := db.CreateActionTypeParams{
 		OrganizationID: user.OrganizationID,
 		Name:           req.Name,
-		Version:        req.Version,
+		Version:        version,
 		Properties:     properties,
 	}
 
@@ -121,12 +127,12 @@ func (ac ActionTypesController) Create(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func (ac ActionTypesController) Delete(c *gin.Context) {
+func (ac ActionTypesController) Archive(c *gin.Context) {
 	user := c.MustGet("user").(*db.User)
 
-	id := uuid.FromStringOrNil(c.Param("id"))
-	if err := ac.App.DB.DeleteAction(c.Request.Context(), user.OrganizationID, id); err != nil {
-		ac.App.Logger.Error("actiontypes.delete.deleteAction", zap.Error(err))
+	name := c.Param("id")
+	if err := ac.App.DB.ArchiveActionType(c.Request.Context(), user.OrganizationID, name); err != nil {
+		ac.App.Logger.Error("actiontypes.archive.archiveType", zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}

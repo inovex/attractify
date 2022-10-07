@@ -16,7 +16,7 @@
               <v-btn icon @click="edit(item)">
                 <v-icon title="Edit type">mdi-pencil</v-icon>
               </v-btn>
-              <v-btn icon @click="remove(item)">
+              <v-btn icon @click="archive(item)">
                 <v-icon title="Archive type">mdi-archive</v-icon>
               </v-btn>
             </template>
@@ -65,11 +65,10 @@ export default {
     edit(actiontype) {
       this.$router.push({ path: `/actiontype/${actiontype.id}` })
     },
-    async remove(action) {
-      // TODO: archive action
+    async archive(action) {
       if (confirm('Do you really want to archive this type?')) {
-        await client.delete(action.id)
-        this.actions = await client.list()
+        await client.delete(action.name)
+        this.actiontypes = await client.list()
       }
     },
     formatDate(date) {
@@ -82,10 +81,9 @@ export default {
   async created() {
     this.actiontypes = await client.list()
     let lastTypeName = ''
-    console.log(this.actiontypes)
     for (let i = this.actiontypes.length - 1; i >= 0; i -= 1) {
       let item = this.actiontypes[i]
-      if (lastTypeName == item.name) {
+      if (lastTypeName == item.name || item.archived) {
         this.actiontypes.splice(i, 1)
       }
       lastTypeName = item.name

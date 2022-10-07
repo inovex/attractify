@@ -294,13 +294,15 @@ export default {
       .then((actionTypes) => {
         this.actionTypes = actionTypes
         this.actionTypes.forEach((actionType) => {
-          this.actionTypeSelector.push(actionType.name)
+          if (!actionType.archived) {
+            this.actionTypeSelector.push(actionType.name)
+          }
         })
       })
       .finally(() => {
         this.versionSelector = []
         this.actionTypes.forEach((actionType) => {
-          if (actionType.name == this.action.type) {
+          if (actionType.name == this.action.type && !actionType.archived) {
             this.versionSelector.push(actionType.version)
           }
         })
