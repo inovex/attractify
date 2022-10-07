@@ -100,7 +100,6 @@
           <v-col class="col-lg-3">
             <v-select
               dense
-              disabled
               :items="channels"
               label="Channels"
               :value="prop.channels"
@@ -112,7 +111,6 @@
           <v-col class="col-lg-2">
             <v-text-field
               dense
-              disabled
               label="Name"
               type="text"
               @input="changes"

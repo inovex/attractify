@@ -23,7 +23,7 @@ type Action struct {
 	State          string          `json:"state"`
 	Tags           json.RawMessage `json:"tags"`
 	Properties     json.RawMessage `json:"properties"`
-	TypeProperties json.RawMessage `json:"type_properties"`
+	TypeProperties json.RawMessage `json:"typeProperties"`
 	Targeting      json.RawMessage `json:"targeting"`
 	Capping        json.RawMessage `json:"capping"`
 	Hooks          json.RawMessage `json:"hooks"`

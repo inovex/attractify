@@ -29,6 +29,9 @@
                 <v-icon title="Duplicate action">mdi-content-copy</v-icon>
               </v-btn>
             </template>
+            <template v-slot:item.type_name="{ item }">
+              <span>{{ item.type }} V{{ item.version }}</span>
+            </template>
             <template v-slot:item.state="{ item }">
               <span v-if="item.state === 'inactive'"> <v-icon size="medium">mdi-pause</v-icon>Inactive </span>
               <span v-if="item.state === 'staging'"> <v-icon size="medium">mdi-test-tube</v-icon>Staging </span>
@@ -72,6 +75,7 @@ export default {
           align: 'left',
           value: 'name'
         },
+        { text: 'Type', value: 'type_name' },
         { text: 'State', value: 'state' },
         { text: 'Channels', value: 'targeting.channels' },
         { text: 'Tags', value: 'tags' },

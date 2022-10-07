@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -137,7 +138,8 @@ func (d *DB) CreateAction(ctx context.Context, arg CreateActionParams) (Action, 
 INSERT INTO actions (
     organization_id,
     name,
-	type,
+	type_name,
+	type_version,
 	tags,
 	state,
     properties,
@@ -147,7 +149,7 @@ INSERT INTO actions (
 	hooks,
 	test_users
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12
 )
 RETURNING *
 `
@@ -156,6 +158,7 @@ RETURNING *
 		arg.OrganizationID,
 		arg.Name,
 		arg.Type,
+		arg.Version,
 		arg.Tags,
 		arg.State,
 		arg.Properties,

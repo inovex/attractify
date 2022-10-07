@@ -281,18 +281,29 @@ export default {
     if (id) {
       try {
         this.action = await this.show(id)
+        console.log(this.action)
         delete this.action.trigger
       } catch (error) {
         this.$router.push({ path: '/404' })
       }
     }
 
-    actionTypesClient.list().then((actionTypes) => {
-      this.actionTypes = actionTypes
-      this.actionTypes.forEach((actionType) => {
-        this.actionTypeSelector.push(actionType.name)
+    actionTypesClient
+      .list()
+      .then((actionTypes) => {
+        this.actionTypes = actionTypes
+        this.actionTypes.forEach((actionType) => {
+          this.actionTypeSelector.push(actionType.name)
+        })
       })
-    })
+      .finally(() => {
+        this.versionSelector = []
+        this.actionTypes.forEach((actionType) => {
+          if (actionType.name == this.action.type) {
+            this.versionSelector.push(actionType.version)
+          }
+        })
+      })
   },
   beforeRouteLeave(to, from, next) {
     if (this.changes) {

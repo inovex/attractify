@@ -79,7 +79,7 @@ type ActionCreate struct {
 	State          string     `json:"state" binding:"required,oneof=inactive staging active"`
 	Tags           []string   `json:"tags" binding:"dive,min=1"`
 	Properties     []property `json:"properties" binding:"dive"`
-	TypeProperties []property `json:"type_properties" binding:"dive"`
+	TypeProperties []property `json:"typeProperties" binding:"dive"`
 	Targeting      targeting  `json:"targeting"`
 	Capping        []capping  `json:"capping"`
 	Hooks          []hook     `json:"hooks"`
