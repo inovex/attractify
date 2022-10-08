@@ -23,7 +23,7 @@ export default {
     async inUse(id) {
         try {
             const res = await restClient.get(`/actiontypes/${id}/used`)
-            console.log(res.data)
+
             return res.data.inUse
         } catch (e) {
             throw e
