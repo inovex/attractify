@@ -265,6 +265,8 @@ export default {
       this.selectVersion()
     },
     selectVersion() {
+      this.changes = true
+
       let currentVersion
       this.actionTypes.every((actionType) => {
         if (this.action.version == actionType.version && this.action.type == actionType.name) {
