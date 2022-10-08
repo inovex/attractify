@@ -14,7 +14,7 @@
               <v-row>
                 <v-col class="col-lg-6">
                   <v-text-field
-                    :disabled="inUse"
+                    :disabled="existed"
                     label="Type of Action"
                     name="type"
                     prepend-icon="mdi-tune"
@@ -64,7 +64,7 @@ import { mapActions } from 'vuex'
 import UnsavedContent from './UnsavedContent.vue'
 import Help from './Help'
 import PropertiesTemplates from './action/PropertiesTemplates.vue'
-import actionClient from '../lib/rest/actions'
+//import actionClient from '../lib/rest/actions'
 import actionTypeClient from '../lib/rest/actionTypes'
 
 export default {
@@ -78,6 +78,7 @@ export default {
       },
       path: '',
       inUse: false,
+      existed: false,
       valid: false,
       changes: false,
       exitUnsaved: false,
@@ -91,7 +92,7 @@ export default {
     cancel() {
       this.$router.push('/actiontypes')
     },
-    ...mapActions('actiontypes', ['show', 'create', 'update', 'list']),
+    ...mapActions('actiontypes', ['show', 'create', 'update']),
     async save() {
       try {
         let res = null
@@ -142,27 +143,15 @@ export default {
       } else {
         this.$router.push('/actiontypes')
       }
-    },
-    checkUsage() {
-      actionClient.list().then((actions) => {
-        // TODO: improve performance
-        for (let i in actions) {
-          const action = actions[i]
-          if (action.type == this.actiontype.name && action.version == this.actiontype.version) {
-            this.actiontype.version++
-            this.inUse = true
-            return
-          }
-        }
-      })
     }
   },
   async created() {
     const id = this.$route.params.id
     if (id) {
+      this.existed = true
       try {
         this.actiontype = await this.show(id)
-        await this.checkUsage()
+        this.inUse = await actionTypeClient.inUse(this.$route.params.id)
         delete this.actiontype.trigger
       } catch (error) {
         this.$router.push({ path: '/404' })

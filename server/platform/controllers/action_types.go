@@ -22,6 +22,7 @@ func InitActionTypes(router *gin.RouterGroup, app *app.App) {
 	c := ActionTypesController{Router: router, App: app}
 	c.Router.GET("/actiontypes", c.List)
 	c.Router.GET("/actiontypes/:id", c.Show)
+	c.Router.GET("/actiontypes/:id/used", c.InUse)
 	c.Router.POST("/actiontypes", c.Create)
 	c.Router.DELETE("/actiontypes/:id", c.Archive)
 	c.Router.PUT("/actiontypes/:id", c.Create)
@@ -138,4 +139,43 @@ func (ac ActionTypesController) Archive(c *gin.Context) {
 	}
 
 	c.AbortWithStatus(http.StatusNoContent)
+}
+
+type Usage struct {
+	InUse bool `json:"inUse"`
+}
+
+func (ac ActionTypesController) InUse(c *gin.Context) {
+	user := c.MustGet("user").(*db.User)
+
+	id := uuid.FromStringOrNil(c.Param("id"))
+
+	actionType, err := ac.App.DB.GetActionTypeByUUID(c, user.OrganizationID, id)
+	if err != nil {
+		ac.App.Logger.Error("actiontypes.inuse.actionTypeNotFound", zap.Error(err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	actions, err := ac.App.DB.GetActions(c, user.OrganizationID)
+
+	if err != nil {
+		ac.App.Logger.Error("actiontypes.inuse.getActions", zap.Error(err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	res := Usage{
+		InUse: true,
+	}
+
+	for _, action := range actions {
+		if action.Type == actionType.Name && action.Version == actionType.Version {
+			c.JSON(http.StatusOK, res)
+			return
+		}
+	}
+	res.InUse = false
+
+	c.JSON(http.StatusOK, res)
 }
