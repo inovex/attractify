@@ -17,7 +17,7 @@
           :loadCallback="loadEvents"
           :value="event.id || ''"
           @change="
-            setEvent()
+            setEvent(event)
             changes()
           "
           outlined
@@ -200,7 +200,7 @@ export default {
   methods: {
     setEvent(e) {
       this.event.properties = []
-      this.event.id = e.value || null
+      this.event.id = e.internalId || null
       this.$forceUpdate()
     },
     addProperty(target) {
