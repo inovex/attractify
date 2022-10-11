@@ -16,7 +16,10 @@
           dense
           :loadCallback="loadEvents"
           :value="event.id || ''"
-          @change="setEvent; changes"
+          @change="
+            setEvent()
+            changes()
+          "
           outlined
           placeholder="event"
           return-object
@@ -130,7 +133,7 @@
         :event="event"
         :delete-callback="
           () => {
-            deleteProperty(key);
+            deleteProperty(key)
             changes()
           }
         "
@@ -189,8 +192,8 @@ export default {
       useTimeWindow: false,
       valid: false,
       rules: {
-        required: value => !!value || 'Required.',
-        numberRequired: value => value > -1
+        required: (value) => !!value || 'Required.',
+        numberRequired: (value) => value > -1
       }
     }
   },
@@ -214,7 +217,7 @@ export default {
     },
     changes() {
       this.$emit('change')
-    },
+    }
   },
   async created() {
     this.useTimeWindow = !!this.event.timeWindowOperator
