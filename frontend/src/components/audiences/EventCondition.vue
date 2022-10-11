@@ -16,10 +16,7 @@
           dense
           :loadCallback="loadEvents"
           :value="event.id || ''"
-          @change="
-            setEvent(event)
-            changes()
-          "
+          @change="setEvent"
           outlined
           placeholder="event"
           return-object
@@ -200,8 +197,9 @@ export default {
   methods: {
     setEvent(e) {
       this.event.properties = []
-      this.event.id = e.internalId || null
+      this.event.id = e.value || null
       this.$forceUpdate()
+      this.changes()
     },
     addProperty(target) {
       this.event.properties.push({ target: target })
