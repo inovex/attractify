@@ -318,7 +318,7 @@ export default {
         }
 
         this.$notify.success('The computed trait has been saved successfully.')
-        this.changes = true
+        this.changes = false
         if (this.exitUnsaved) {
           this.exit()
         }

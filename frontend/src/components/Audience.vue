@@ -57,7 +57,7 @@
                   </v-btn>
                 </template>
                 <v-list>
-                  <v-list-item  v-for="(item, index) in conditionTypes" :key="index" @click="addCondition(item.value)">
+                  <v-list-item v-for="(item, index) in conditionTypes" :key="index" @click="addCondition(item.value)">
                     <v-list-item-title>{{ item.title }}</v-list-item-title>
                   </v-list-item>
                 </v-list>
@@ -69,7 +69,7 @@
                   <v-row v-for="(event, key) of audience.events" :key="`event-${key}`">
                     <v-col>
                       <v-card outlined :class="event.parentId ? 'ml-8' : ''" elevation="1" tile>
-                        <EventCondition :event="event" @change="changes = true"/>
+                        <EventCondition :event="event" @change="changes = true" />
                         <v-divider></v-divider>
                         <v-card-actions>
                           <v-btn rounded @click="addFunnelEvent(event.internalId, false)">
@@ -101,7 +101,7 @@
                             <v-icon>mdi-trash-can-outline</v-icon>
                           </v-btn>
                         </v-app-bar>
-                        <TraitCondition :trait="trait" @change="changes = true"/>
+                        <TraitCondition :trait="trait" @change="changes = true" />
                       </v-card>
                     </v-col>
                   </v-row>
@@ -163,11 +163,19 @@
       <v-btn rounded elevation="2" @click="cancel()">Cancel</v-btn>
       <v-btn rounded elevation="2" color="secondary" :disabled="!valid" @click="refresh()">Refresh</v-btn>
       <v-btn rounded elevation="2" color="secondary" :disabled="!valid" @click="preview()">Preview</v-btn>
-      <v-btn rounded elevation="2" color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="save()">Save</v-btn>
+      <v-btn
+        rounded
+        elevation="2"
+        color="primary"
+        style="color: var(--v-buttontext-base)"
+        :disabled="!valid"
+        @click="save()"
+        >Save</v-btn
+      >
     </v-col>
 
     <v-dialog v-model="exitUnsaved" max-width="700px" closeable>
-      <UnsavedContent :valid="valid" @cancel="cancelExit" @save="save" @exit="exit"/>
+      <UnsavedContent :valid="valid" @cancel="cancelExit" @save="save" @exit="exit" />
     </v-dialog>
   </v-container>
 </template>
@@ -206,7 +214,7 @@ export default {
     }
   },
   methods: {
-    cancel(){
+    cancel() {
       this.$router.push('/audiences')
     },
     show(item) {
@@ -263,22 +271,23 @@ export default {
         }
 
         this.$notify.success('The audience has been saved successfully.')
-        if(this.exitUnsaved){
+        this.changes = false
+        if (this.exitUnsaved) {
           this.exit()
         }
       } catch (e) {
         this.$notify.error('Could not save audience.')
       }
     },
-    cancelExit(){
+    cancelExit() {
       this.exitUnsaved = false
       this.exitUrl = null
     },
-    exit(){
+    exit() {
       this.changes = false
-      if(this.exitUrl){
+      if (this.exitUrl) {
         this.$router.push(this.exitUrl)
-      }else{
+      } else {
         this.$router.push('/audiences')
       }
     },
@@ -315,13 +324,13 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    if(this.changes){
+    if (this.changes) {
       this.exitUnsaved = true
       this.exitUrl = to.path
       return false
     }
     next()
-  },
+  }
 }
 </script>
 
@@ -333,7 +342,7 @@ export default {
   bottom: 1rem;
   z-index: 1;
 }
-.sticky button{
+.sticky button {
   margin: 0 0.5rem;
 }
 </style>
