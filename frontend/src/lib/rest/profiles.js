@@ -51,5 +51,13 @@ export default {
     } catch (e) {
       throw e
     }
+  },
+  async search(id) {
+    try {
+      const res = await restClient.get(`/profiles/search/${id}`) // TODO: backend
+      return res.data
+    } catch (e) {
+      throw e
+    }
   }
 }

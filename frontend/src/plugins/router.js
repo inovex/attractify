@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 import Dashboard from '../components/Dashboard.vue'
 import Action from '../components/Action.vue'
 import Actions from '../components/Actions.vue'
+import ActionSimulation from '../components/ActionSimulation.vue'
 import Reactions from '../components/Reactions.vue'
 import Analyze from '../components/Analyze.vue'
 
@@ -68,6 +69,7 @@ export default new VueRouter({
   routes: [
     { path: '/', component: Dashboard, beforeEnter: requireAuth },
     { path: '/actions', component: Actions, beforeEnter: requireAuth },
+    { path: '/action-simulation', component: ActionSimulation, beforeEnter: requireAuth },
     { path: '/reactions', component: Reactions, beforeEnter: requireAuth },
     { path: '/action/:id?', component: Action, beforeEnter: requireAuth },
     { path: '/analyze/:id?', component: Analyze, beforeEnter: requireAuth },
