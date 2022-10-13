@@ -527,5 +527,13 @@ Here you can either update your name or email address or change your password. I
 you want to change your password, make sure it is at least 8 chars long. We recommend
 a longer password (> 20 chars) with a combination of numbers (upper- and lowercase), letters and special chars.
 `
+  },
+  actionsimulation: {
+    title: 'Action Simulation',
+    body: `
+  Here you can debug an action with an user.
+  That way you can figure out what is causing an action not to be displayed.
+  `
   }
 }
+
