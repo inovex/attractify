@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -83,6 +84,25 @@ AND id = $2
 	row := d.db.QueryRowxContext(ctx, q, orgID, id)
 	var p Profile
 	return p, row.StructScan(&p)
+}
+
+func (d *DB) SearchForProfiles(ctx context.Context, orgID uuid.UUID, id string) ([]Profile, error) {
+	q := `
+SELECT p.*
+FROM profiles p INNER JOIN profile_identities i ON p.id = i.profile_id
+WHERE p.organization_id = $1
+AND (
+	p.id::TEXT LIKE '%s%%'
+	OR i.id::TEXT LIKE '%s%%'
+	OR i.user_id::TEXT LIKE '%s%%'
+)
+LIMIT 10
+`
+
+	q = fmt.Sprintf(q, id, id, id)
+
+	var items []Profile
+	return items, d.db.SelectContext(ctx, &items, q, orgID)
 }
 
 type UpdateProfileParams struct {

@@ -3,6 +3,7 @@ package platform
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 	"time"
 
 	"attractify.io/platform/analytics"
@@ -25,6 +26,7 @@ func InitProfiles(router *gin.RouterGroup, app *app.App) {
 	p := ProfilesController{Router: router, App: app}
 	p.Router.GET("/profiles", p.List)
 	p.Router.GET("/profiles/:id", p.Show)
+	p.Router.GET("/profiles/search/:id", p.Search)
 	p.Router.DELETE("/profiles/:id", p.Delete)
 	p.Router.GET("/profiles/:id/identities", p.ListIdentities)
 	p.Router.GET("/profiles/:id/events", p.ListEvents)
@@ -71,6 +73,31 @@ func (pc ProfilesController) Show(c *gin.Context) {
 		ComputedTraits: p.ComputedTraits,
 		CreatedAt:      p.CreatedAt,
 		UpdatedAt:      p.UpdatedAt,
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (pc ProfilesController) Search(c *gin.Context) {
+	user := c.MustGet("user").(*db.User)
+
+	id := escape(c.Param("id"))
+	profiles, err := pc.App.DB.SearchForProfiles(c.Request.Context(), user.OrganizationID, id)
+	if err != nil {
+		pc.App.Logger.Warn("profile.search.searchForProfiles", zap.Error(err))
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	res := []responses.Profile{}
+	for _, p := range profiles {
+		res = append(res, responses.Profile{
+			ID:             p.ID,
+			CustomTraits:   p.CustomTraits,
+			ComputedTraits: p.ComputedTraits,
+			CreatedAt:      p.CreatedAt,
+			UpdatedAt:      p.UpdatedAt,
+		})
 	}
 
 	c.JSON(http.StatusOK, res)
@@ -191,4 +218,8 @@ func (pc ProfilesController) RefreshComputedTraits(c *gin.Context) {
 	}
 
 	c.AbortWithStatus(http.StatusNoContent)
+}
+
+func escape(v string) string {
+	return strings.NewReplacer(`\`, `\\`, `'`, `\'`).Replace(v)
 }
