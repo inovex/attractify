@@ -11,32 +11,18 @@
               <!-- TODO: write help page -->
             </v-toolbar>
             <v-card-text class="raised">
-              <v-card-title>Action & User</v-card-title>
+              <v-card-title>User</v-card-title>
               <v-row>
                 <v-col class="col-lg-6">
-                  <APISelect
-                    label="Action"
-                    icon="mdi-ticket-percent"
-                    :loadCallback="loadActions"
-                    v-model="actionId"
-                    :valid="true"
-                  />
-                </v-col>
-                <v-col class="col-lg-6">
-                  <!-- TODO: Find a better way to handle showing the profile ID when searching for a user_id or identity_id-->
                   <v-autocomplete
                     v-model="selectedProfile"
                     :items="foundProfiles"
                     :loading="isLoading"
                     :search-input.sync="userSearch"
-                    :filter="
-                      () => {
-                        return true
-                      }
-                    "
+                    prepend-icon="mdi-account"
                     hide-no-data
                     item-text="name"
-                    label="Profile ID"
+                    label="User ID"
                     return-object
                   ></v-autocomplete>
                 </v-col>
@@ -49,10 +35,51 @@
                     style="color: var(--v-buttontext-base)"
                     :disabled="actionId == '' || selectedProfile == null"
                     @click="startSimulation()"
-                    >Start Simulation</v-btn
+                    >Check Actions</v-btn
                   >
                 </v-col>
               </v-row>
+            </v-card-text>
+            <v-divider></v-divider>
+            <v-card-text>
+              <div class="grids">
+                <v-card class="pa-2" outlined elevated="5">
+                  Action 1 <br />
+                  Status: Displayed <br />
+                  Errors: None <br />
+                  <v-btn>Details</v-btn>
+                </v-card>
+                <v-card class="pa-2" outlined elevated="5">
+                  Action 2 <br />
+                  Status: Displayed <br />
+                  Errors: None <br />
+                  <v-btn>Details</v-btn>
+                </v-card>
+                <v-card class="pa-2" outlined elevated="5">
+                  Action 3 <br />
+                  Status: Displayed <br />
+                  Errors: None <br />
+                  <v-btn>Details</v-btn>
+                </v-card>
+                <v-card class="pa-2" outlined elevated="5">
+                  Action 4 <br />
+                  Status: Displayed <br />
+                  Errors: None <br />
+                  <v-btn>Details</v-btn>
+                </v-card>
+                <v-card class="pa-2" outlined elevated="5">
+                  Action 5 <br />
+                  Status: Displayed <br />
+                  Errors: None <br />
+                  <v-btn>Details</v-btn>
+                </v-card>
+                <v-card class="pa-2" style="border-color: red" outlined elevated="5">
+                  Action 6 <br />
+                  Status: Not Displayed <br />
+                  Errors: Capping <br />
+                  <v-btn>Details</v-btn>
+                </v-card>
+              </div>
             </v-card-text>
           </v-card>
         </v-form>
@@ -62,13 +89,12 @@
 </template>
   
 <script>
-import APISelect from './common/APISelect.vue'
 import actionsClient from '../lib/rest/actions'
 import profilesClient from '../lib/rest/profiles'
 import Help from './Help'
 
 export default {
-  components: { APISelect, Help },
+  components: { Help },
   data() {
     return {
       selectedProfile: null,
@@ -102,7 +128,7 @@ export default {
         .search(u)
         .then((res) => {
           res.map((e) => {
-            this.foundProfiles.push({ name: e.id, value: e })
+            this.foundProfiles.push({ name: e.userId, value: e })
           })
         })
         .finally(() => {
@@ -113,3 +139,11 @@ export default {
   async created() {}
 }
 </script>
+
+<style>
+div.grids {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+</style>

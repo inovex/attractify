@@ -2,10 +2,25 @@ package db
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"github.com/gofrs/uuid"
 )
+
+type ProfileIdentityWithTraits struct {
+	ID             uuid.UUID       `db:"id" json:"-"`
+	OrganizationID uuid.UUID       `db:"organization_id" json:"-"`
+	ProfileID      uuid.UUID       `db:"profile_id" json:"-"`
+	Channel        string          `db:"channel" json:"channel"`
+	Type           string          `db:"type" json:"type"`
+	UserID         string          `db:"user_id" json:"userId"`
+	CustomTraits   json.RawMessage `db:"custom_traits" json:"customTraits"`
+	ComputedTraits json.RawMessage `db:"computed_traits" json:"computedTraits"`
+	IsAnonymous    bool            `db:"is_anonymous" json:"isAnonymous"`
+	CreatedAt      time.Time       `db:"created_at" json:"createdAt"`
+	UpdatedAt      time.Time       `db:"updated_at" json:"deletedAt"`
+}
 
 type ProfileIdentity struct {
 	ID             uuid.UUID `db:"id" json:"-"`

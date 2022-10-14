@@ -86,22 +86,18 @@ AND id = $2
 	return p, row.StructScan(&p)
 }
 
-func (d *DB) SearchForProfiles(ctx context.Context, orgID uuid.UUID, id string) ([]Profile, error) {
+func (d *DB) SearchForUserID(ctx context.Context, orgID uuid.UUID, id string) ([]ProfileIdentityWithTraits, error) {
 	q := `
-SELECT p.*
+SELECT i.*, p.custom_traits, p.computed_traits
 FROM profiles p INNER JOIN profile_identities i ON p.id = i.profile_id
 WHERE p.organization_id = $1
-AND (
-	p.id::TEXT LIKE '%s%%'
-	OR i.id::TEXT LIKE '%s%%'
-	OR i.user_id::TEXT LIKE '%s%%'
-)
+AND i.user_id::TEXT LIKE '%s%%'
 LIMIT 10
 `
 
-	q = fmt.Sprintf(q, id, id, id)
+	q = fmt.Sprintf(q, id)
 
-	var items []Profile
+	var items []ProfileIdentityWithTraits
 	return items, d.db.SelectContext(ctx, &items, q, orgID)
 }
 
