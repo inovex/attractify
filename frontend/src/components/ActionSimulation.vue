@@ -33,7 +33,7 @@
                     rounded
                     color="primary"
                     style="color: var(--v-buttontext-base)"
-                    :disabled="actionId == '' || selectedProfile == null"
+                    :disabled="selectedProfile == null"
                     @click="startSimulation()"
                     >Check Actions</v-btn
                   >
@@ -43,37 +43,37 @@
             <v-divider></v-divider>
             <v-card-text>
               <div class="grids">
-                <v-card class="pa-2" outlined elevated="5">
+                <v-card class="pa-2" outlined>
                   Action 1 <br />
                   Status: Displayed <br />
                   Errors: None <br />
                   <v-btn>Details</v-btn>
                 </v-card>
-                <v-card class="pa-2" outlined elevated="5">
+                <v-card class="pa-2" outlined>
                   Action 2 <br />
                   Status: Displayed <br />
                   Errors: None <br />
                   <v-btn>Details</v-btn>
                 </v-card>
-                <v-card class="pa-2" outlined elevated="5">
+                <v-card class="pa-2" outlined>
                   Action 3 <br />
                   Status: Displayed <br />
                   Errors: None <br />
                   <v-btn>Details</v-btn>
                 </v-card>
-                <v-card class="pa-2" outlined elevated="5">
+                <v-card class="pa-2" outlined>
                   Action 4 <br />
                   Status: Displayed <br />
                   Errors: None <br />
                   <v-btn>Details</v-btn>
                 </v-card>
-                <v-card class="pa-2" outlined elevated="5">
+                <v-card class="pa-2" outlined>
                   Action 5 <br />
                   Status: Displayed <br />
                   Errors: None <br />
                   <v-btn>Details</v-btn>
                 </v-card>
-                <v-card class="pa-2" style="border-color: red" outlined elevated="5">
+                <v-card class="pa-2 error-box" outlined>
                   Action 6 <br />
                   Status: Not Displayed <br />
                   Errors: Capping <br />
@@ -145,5 +145,14 @@ div.grids {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
+  row-gap: 2rem;
+}
+
+div.grids div {
+  width: 30%;
+}
+
+.error-box {
+  border: 1px solid red !important;
 }
 </style>
