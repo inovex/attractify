@@ -13,7 +13,7 @@
             <v-card-text class="raised">
               <v-card-title>User</v-card-title>
               <v-row>
-                <v-col class="col-lg-6">
+                <v-col class="col-5">
                   <v-autocomplete
                     v-model="selectedProfile"
                     :items="foundProfiles"
@@ -28,7 +28,7 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col class="col-lg-6">
+                <v-col class="col-lg-3">
                   <v-btn
                     rounded
                     color="primary"
@@ -43,41 +43,28 @@
             <v-divider></v-divider>
             <v-card-text>
               <div class="grids">
-                <v-card class="pa-2" outlined>
-                  Action 1 <br />
-                  Status: Displayed <br />
-                  Errors: None <br />
-                  <v-btn>Details</v-btn>
-                </v-card>
-                <v-card class="pa-2" outlined>
-                  Action 2 <br />
-                  Status: Displayed <br />
-                  Errors: None <br />
-                  <v-btn>Details</v-btn>
-                </v-card>
-                <v-card class="pa-2" outlined>
-                  Action 3 <br />
-                  Status: Displayed <br />
-                  Errors: None <br />
-                  <v-btn>Details</v-btn>
-                </v-card>
-                <v-card class="pa-2" outlined>
-                  Action 4 <br />
-                  Status: Displayed <br />
-                  Errors: None <br />
-                  <v-btn>Details</v-btn>
-                </v-card>
-                <v-card class="pa-2" outlined>
-                  Action 5 <br />
-                  Status: Displayed <br />
-                  Errors: None <br />
-                  <v-btn>Details</v-btn>
-                </v-card>
-                <v-card class="pa-2 error-box" outlined>
-                  Action 6 <br />
-                  Status: Not Displayed <br />
-                  Errors: Capping <br />
-                  <v-btn>Details</v-btn>
+                <v-card outlined v-for="index in 10" :key="index">
+                  <v-toolbar dark>
+                    <v-toolbar-title>Action {{ index }}</v-toolbar-title>
+                  </v-toolbar>
+                  <br />
+                  <v-row>
+                    <v-column class="col-5">
+                      <v-card-text>
+                        <p style="font-size: 16px">Status:</p>
+                      </v-card-text>
+                    </v-column>
+                    <v-column class="col-5">
+                      <v-chip class="ma-2" color="green">Displayed</v-chip>
+                    </v-column>
+                    <v-column></v-column>
+                  </v-row>
+                  <v-card-text>
+                    <p class="text--primary">Errors: None</p>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn>Details</v-btn>
+                  </v-card-actions>
                 </v-card>
               </div>
             </v-card-text>
@@ -148,7 +135,7 @@ div.grids {
   row-gap: 2rem;
 }
 
-div.grids div {
+div.grids > div {
   width: 30%;
 }
 
