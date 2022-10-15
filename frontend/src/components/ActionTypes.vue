@@ -6,12 +6,12 @@
           <v-toolbar dark>
             <v-toolbar-title>Action Types</v-toolbar-title>
             <v-spacer></v-spacer>
-            <help name="actiontypes" />
+            <help name="actionTypes" />
             <v-btn icon @click="create()">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
           </v-toolbar>
-          <v-data-table disable-pagination hide-default-footer :headers="headers" :items="actiontypes">
+          <v-data-table disable-pagination hide-default-footer :headers="headers" :items="actionTypes">
             <template v-slot:item.action="{ item }">
               <v-btn icon @click="edit(item)">
                 <v-icon title="Edit type">mdi-pencil</v-icon>
@@ -43,7 +43,7 @@ export default {
   components: { Help },
   data() {
     return {
-      actiontypes: [],
+      actionTypes: [],
       dialog: false,
       infoDialog: false,
       headers: [
@@ -60,34 +60,35 @@ export default {
   },
   methods: {
     create() {
-      this.$router.push({ path: '/actiontype' })
+      this.$router.push({ path: '/action-type' })
     },
     edit(actiontype) {
-      this.$router.push({ path: `/actiontype/${actiontype.id}` })
+      this.$router.push({ path: `/action-type/${actiontype.id}` })
     },
     async archive(action) {
       if (confirm('Do you really want to archive this type?')) {
         await client.delete(action.name)
-        this.actiontypes = await client.list()
+        this.actionTypes = await client.list()
+        this.cleanupTypeList()
       }
     },
     formatDate(date) {
       return moment(date).format('YYYY-MM-DD, HH:mm')
     },
-    timeAgo(date) {
-      return moment(date).fromNow()
+    cleanupTypeList() {
+      let lastTypeName = ''
+      for (let i = this.actionTypes.length - 1; i >= 0; i -= 1) {
+        let item = this.actionTypes[i]
+        if (lastTypeName == item.name || item.isArchived) {
+          this.actionTypes.splice(i, 1)
+        }
+        lastTypeName = item.name
+      }
     }
   },
   async created() {
-    this.actiontypes = await client.list()
-    let lastTypeName = ''
-    for (let i = this.actiontypes.length - 1; i >= 0; i -= 1) {
-      let item = this.actiontypes[i]
-      if (lastTypeName == item.name || item.archived) {
-        this.actiontypes.splice(i, 1)
-      }
-      lastTypeName = item.name
-    }
+    this.actionTypes = await client.list()
+    this.cleanupTypeList()
   }
 }
 </script>

@@ -4,17 +4,17 @@ import restClient from '../../lib/restClient'
 export default {
   namespaced: true,
   state: {
-    actiontypes: []
+    actionTypes: []
   },
   getters: {
     all(state) {
-      return state.actiontypes
+      return state.actionTypes
     },
     getById(state) {
       return id => {
-        for (const actiontype of state.actiontypes) {
-          if (actiontype.id === id) {
-            return actiontype
+        for (const actionType of state.actionTypes) {
+          if (actionType.id === id) {
+            return actionType
           }
         }
         return null
@@ -23,29 +23,29 @@ export default {
   },
   mutations: {
     clear(state) {
-      Vue.set(state, 'actiontypes', [])
+      Vue.set(state, 'actionTypes', [])
     },
-    add(state, actiontype) {
-      state.actiontypes.push(actiontype)
+    add(state, actionType) {
+      state.actionTypes.push(actionType)
     },
-    update(state, actiontype) {
-      const idx = state.actiontypes.findIndex(obj => obj.id == actiontype.id)
-      state.actiontypes[idx] = actiontype
+    update(state, actionType) {
+      const idx = state.actionTypes.findIndex(obj => obj.id == actionType.id)
+      state.actionTypes[idx] = actionType
     },
     delete(state, id) {
-      const idx = state.actiontypes.findIndex(obj => obj.id == id)
-      state.actiontypes.splice(idx, 1)
+      const idx = state.actionTypes.findIndex(obj => obj.id == id)
+      state.actionTypes.splice(idx, 1)
     }
   },
   actions: {
     async list({ commit }) {
       try {
-        let res = await restClient.get('/actiontypes')
+        let res = await restClient.get('/action-types')
         commit('clear')
 
         if (res.data.length > 0) {
-          for (const actiontype of res.data) {
-            commit('add', actiontype)
+          for (const actionType of res.data) {
+            commit('add', actionType)
           }
         }
       } catch (e) {
@@ -54,32 +54,32 @@ export default {
     },
     async show(_, id) {
       try {
-        const res = await restClient.get(`/actiontypes/${id}`)
+        const res = await restClient.get(`/action-types/${id}`)
         return res.data
       } catch (e) {
         throw e
       }
     },
-    async create({ commit }, actiontype) {
+    async create({ commit }, actionType) {
       try {
-        const res = await restClient.post('/actiontypes', actiontype)
+        const res = await restClient.post('/action-types', actionType)
         commit('add', res.data)
         return res.data
       } catch (e) {
         throw e
       }
     },
-    async update({ commit }, actiontype) {
+    async update({ commit }, actionType) {
       try {
-        await restClient.put(`/actiontypes/${actiontype.id}`, actiontype)
-        commit('update', actiontype)
+        await restClient.put(`/action-types/${actionType.id}`, actionType)
+        commit('update', actionType)
       } catch (e) {
         throw e
       }
     },
     async delete({ commit }, id) {
       try {
-        await restClient.delete(`/actiontypes/${id}`)
+        await restClient.delete(`/action-types/${id}`)
         commit('delete', id)
       } catch (e) {
         throw e

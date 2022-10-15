@@ -14,7 +14,7 @@ type ActionType struct {
 	Name           string          `db:"name"`
 	Version        int             `db:"version"`
 	Properties     json.RawMessage `db:"properties"`
-	Archived       bool            `db:"archived"`
+	IsArchived     bool            `db:"is_archived"`
 	CreatedAt      time.Time       `db:"created_at"`
 }
 
@@ -46,11 +46,11 @@ type CreateActionTypeParams struct {
 
 func (d *DB) CreateActionType(ctx context.Context, arg CreateActionTypeParams) (ActionType, error) {
 	const q = `
-INSERT INTO actiontypes (
-    organization_id,
+INSERT INTO action_types(
+	organization_id,
 	name,
 	version,
-    properties
+	properties
 ) VALUES (
     $1, $2, $3, $4
 )
@@ -69,8 +69,8 @@ RETURNING *
 
 func (d *DB) ArchiveActionType(ctx context.Context, orgID uuid.UUID, name string) error {
 	const q = `
-UPDATE actiontypes 
-SET archived='true'
+UPDATE action_types
+SET is_archived = true
 WHERE organization_id = $1
 AND name = $2
 `
@@ -81,8 +81,8 @@ AND name = $2
 
 func (d *DB) UnArchiveActionType(ctx context.Context, orgID, id uuid.UUID) error {
 	const q = `
-UPDATE actiontypes 
-SET archived=false
+UPDATE action_types
+SET is_archived = false
 WHERE organization_id = $1
 AND id = $2
 `
@@ -94,7 +94,7 @@ AND id = $2
 func (d *DB) GetActionTypeByUUID(ctx context.Context, orgID, id uuid.UUID) (ActionType, error) {
 	const q = `
 SELECT *
-FROM actiontypes
+FROM action_types
 WHERE organization_id = $1
 AND id = $2
 LIMIT 1
@@ -108,7 +108,7 @@ LIMIT 1
 func (d *DB) GetActionTypes(ctx context.Context, orgID uuid.UUID) ([]ActionType, error) {
 	const q = `
 SELECT *
-FROM actiontypes
+FROM action_types
 WHERE organization_id = $1
 ORDER BY name, version
 `
@@ -120,7 +120,7 @@ ORDER BY name, version
 func (d *DB) GetActionTypesByName(ctx context.Context, orgID uuid.UUID, name string) ([]ActionType, error) {
 	const q = `
 SELECT *
-FROM actiontypes
+FROM action_types
 WHERE organization_id = $1
 AND name = $2
 ORDER BY version
@@ -133,7 +133,7 @@ ORDER BY version
 func (d *DB) GetActionTypesByNameAndVersion(ctx context.Context, orgID uuid.UUID, name string, version int) ([]ActionType, error) {
 	const q = `
 SELECT *
-FROM actiontypes
+FROM action_types
 WHERE organization_id = $1
 AND name = $2
 AND version = $3

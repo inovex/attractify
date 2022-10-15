@@ -29,8 +29,9 @@ type Action struct {
 	ID             uuid.UUID       `db:"id"`
 	OrganizationID uuid.UUID       `db:"organization_id"`
 	Name           string          `db:"name"`
-	Type           string          `db:"type_name"`
-	Version        int             `db:"type_version"`
+	Type           uuid.UUID       `db:"type_id"`
+	TypeName       string          `db:"type_name"`
+	TypeVersion    int             `db:"type_version"`
 	Tags           json.RawMessage `db:"tags"`
 	Properties     json.RawMessage `db:"properties"`
 	TypeProperties json.RawMessage `db:"type_properties"`
@@ -120,8 +121,7 @@ type ActionTestUser struct {
 type CreateActionParams struct {
 	OrganizationID uuid.UUID
 	Name           string
-	Type           string
-	Version        int
+	Type           uuid.UUID
 	Tags           json.RawMessage
 	State          ActionState
 	Properties     json.RawMessage
@@ -137,8 +137,7 @@ func (d *DB) CreateAction(ctx context.Context, arg CreateActionParams) (Action, 
 INSERT INTO actions (
     organization_id,
     name,
-	type_name,
-	type_version,
+	type_id,
 	tags,
 	state,
     properties,
@@ -148,7 +147,7 @@ INSERT INTO actions (
 	hooks,
 	test_users
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
 )
 RETURNING *
 `
@@ -157,7 +156,6 @@ RETURNING *
 		arg.OrganizationID,
 		arg.Name,
 		arg.Type,
-		arg.Version,
 		arg.Tags,
 		arg.State,
 		arg.Properties,
@@ -184,10 +182,10 @@ AND id = $2
 
 func (d *DB) GetAction(ctx context.Context, orgID, id uuid.UUID) (Action, error) {
 	const q = `
-SELECT *
-FROM actions
-WHERE organization_id = $1
-AND id = $2
+SELECT a.*, t.name as type_name, t.version as type_version
+FROM actions a INNER JOIN action_types t ON a.type_id = t.id
+WHERE a.organization_id = $1
+AND a.id = $2
 LIMIT 1
 `
 
@@ -198,9 +196,9 @@ LIMIT 1
 
 func (d *DB) GetActions(ctx context.Context, orgID uuid.UUID) ([]Action, error) {
 	const q = `
-SELECT *
-FROM actions
-WHERE organization_id = $1
+SELECT a.*, t.name as type_name, t.version as type_version
+FROM actions a INNER JOIN action_types t ON a.type_id = t.id
+WHERE a.organization_id = $1
 `
 
 	var items []Action
@@ -223,8 +221,7 @@ LIMIT 1
 
 type UpdateActionParams struct {
 	Name           string
-	Type           string
-	Version        int
+	Type           uuid.UUID
 	Tags           json.RawMessage
 	State          ActionState
 	Properties     json.RawMessage
@@ -241,25 +238,23 @@ func (d *DB) UpdateAction(ctx context.Context, arg UpdateActionParams) error {
 	const q = `
 UPDATE actions
 SET name = $1,
-	type_name = $2,
-	type_version = $3,
-	tags = $4,
-	state = $5,
-    properties = $6,
-    type_properties = $7,
-    targeting = $8,
-    capping = $9,
-	hooks = $10,
-	test_users = $11,
+	type_id = $2,
+	tags = $3,
+	state = $4,
+    properties = $5,
+    type_properties = $6,
+    targeting = $7,
+    capping = $8,
+	hooks = $9,
+	test_users = $10,
     updated_at = now()
-WHERE organization_id = $12
-AND id = $13
+WHERE organization_id = $11
+AND id = $12
 `
 
 	_, err := d.db.ExecContext(ctx, q,
 		arg.Name,
 		arg.Type,
-		arg.Version,
 		arg.Tags,
 		arg.State,
 		arg.Properties,

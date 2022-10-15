@@ -1,6 +1,7 @@
 package requests
 
 import (
+	"github.com/gofrs/uuid"
 	"github.com/jmoiron/sqlx/types"
 )
 
@@ -73,8 +74,7 @@ type testUser struct {
 }
 
 type ActionCreate struct {
-	Type           string     `json:"type" binding:"required,min=1"`
-	Version        int        `json:"version" binding:"required,min=1"`
+	Type           uuid.UUID  `json:"type" binding:"required,min=1"`
 	Name           string     `json:"name" binding:"required,min=1"`
 	State          string     `json:"state" binding:"required,oneof=inactive staging active"`
 	Tags           []string   `json:"tags" binding:"dive,min=1"`

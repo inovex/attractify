@@ -2,11 +2,13 @@ package requests
 
 import (
 	"encoding/json"
+
+	"github.com/gofrs/uuid"
 )
 
 type Actions struct {
 	UserID  string          `form:"userId" binding:"required,min=1"`
-	Type    string          `form:"type" binding:"omitempty,min=1"`
+	Type    uuid.UUID       `form:"type" binding:"omitempty,min=1"`
 	Tags    []string        `form:"tags" binding:"omitempty,dive,min=1"`
 	Context json.RawMessage `form:"context" binding:"omitempty,min=1"`
 }

@@ -404,14 +404,33 @@ If you enable *skip targeting*, the action will be testable, regardless of the
 filters that are configured under targeting.
 `
   },
-  actiontypes: {
-    title: 'What are action templates?',
+  actionTypes: {
+    title: 'What are action types?',
     body: `
 An action template is a predefined type of action which defines which properties the action has.
 
 # Actions
 * Edit action template
 * Delete action template
+`
+  },
+  actionType: {
+    title: 'Defining an action type',
+    body: `
+
+    Properties can be used to supply content or configuration to the corresponding
+    UI element, which renders the action on the user's device. You can see them as parameters,
+    which are customizable and/or can contain placeholders.
+    
+    Different properties can also be shown on different channels. This is very useful
+    to display an action differently on various devices. Maybe your text should be
+    shorter on mobile and more explanative on desktop. Just specify
+    the same property name with different values for different channels.
+    
+    Properties can either be static text, or you can access custom or computed traits
+    from the current user.
+
+    Whenever an action type is in use. A new version is created when you edit a feature.
 `
   },
   reactions: {

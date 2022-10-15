@@ -13,6 +13,6 @@ type ActionType struct {
 	Name           string          `json:"name"`
 	Version        int             `json:"version"`
 	Properties     json.RawMessage `json:"properties"`
-	Archived       bool            `json:"archived"`
+	IsArchived     bool            `json:"isArchived"`
 	CreatedAt      time.Time       `json:"createdAt"`
 }

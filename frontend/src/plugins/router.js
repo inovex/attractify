@@ -70,10 +70,10 @@ export default new VueRouter({
   routes: [
     { path: '/', component: Dashboard, beforeEnter: requireAuth },
     { path: '/actions', component: Actions, beforeEnter: requireAuth },
-    { path: '/actiontypes', component: ActionTypes, beforeEnter: requireAuth },
+    { path: '/action-types', component: ActionTypes, beforeEnter: requireAuth },
     { path: '/reactions', component: Reactions, beforeEnter: requireAuth },
     { path: '/action/:id?', component: Action, beforeEnter: requireAuth },
-    { path: '/actiontype/:id?', component: ActionType, beforeEnter: requireAuth },
+    { path: '/action-type/:id?', component: ActionType, beforeEnter: requireAuth },
     { path: '/analyze/:id?', component: Analyze, beforeEnter: requireAuth },
     {
       path: '/organization',

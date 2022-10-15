@@ -10,7 +10,7 @@ type typeProperty struct {
 }
 
 type ActionTypeCreate struct {
-	Name       string     `json:"Name" binding:"required,min=1"`
+	Name       string     `json:"name" binding:"required,min=1"`
 	Version    int        `json:"version" binding:"required,min=1"`
 	Properties []property `json:"properties" binding:"dive"`
 }

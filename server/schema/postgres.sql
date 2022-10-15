@@ -25,8 +25,7 @@ CREATE TABLE IF NOT EXISTS actions (
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	name text NOT NULL,
-	type_name text,
-	type_version int,
+	type_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	tags jsonb NOT NULL DEFAULT '[]'::jsonb,
 	state text NOT NULL DEFAULT 'inactive',
 	properties jsonb NOT NULL DEFAULT '[]'::jsonb,
@@ -39,13 +38,13 @@ CREATE TABLE IF NOT EXISTS actions (
 	updated_at timestamp NOT NULL DEFAULT now()
 );
 
-CREATE TABLE IF NOT EXISTS actiontypes (
+CREATE TABLE IF NOT EXISTS action_types (
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	name text NOT NULL,
 	version int not NULL DEFAULT 1,
 	properties jsonb NOT NULL DEFAULT '[]'::jsonb,
-	archived bool NOT NULL DEFAULT false,
+	is_archived bool NOT NULL DEFAULT false,
 	created_at timestamp NOT NULL DEFAULT now()
 );
 

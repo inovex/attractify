@@ -5,35 +5,37 @@
         <v-form ref="form" v-model="valid" on>
           <v-card>
             <v-toolbar dark>
-              <v-toolbar-title v-if="actiontype.id">Edit Action Template</v-toolbar-title>
-              <v-toolbar-title v-if="!actiontype.id">Create new Action Template</v-toolbar-title>
+              <v-toolbar-title v-if="actionType.id">Edit Action Type</v-toolbar-title>
+              <v-toolbar-title v-if="!actionType.id">Create new Action Type</v-toolbar-title>
               <v-spacer></v-spacer>
-              <help name="action" />
+              <help name="actionType" />
             </v-toolbar>
             <v-card-text class="raised">
               <v-row>
                 <v-col class="col-lg-6">
                   <v-text-field
-                    :disabled="existed"
+                    :disabled="exists"
                     label="Type of Action"
                     name="type"
                     prepend-icon="mdi-tune"
                     type="text"
                     @input="changes = true"
-                    v-model="actiontype.name"
+                    v-model="actionType.name"
                     :rules="[rules.required]"
                   />
                 </v-col>
                 <v-col align-self="center" class="col-lg-6">
                   <v-row align="center" style="height: 100%; top: auto">
                     <v-icon>mdi-timeline-clock-outline</v-icon>
-                    <v-card-text style="width: auto; font-size: 16px">Version: {{ actiontype.version }}</v-card-text>
+                    <v-card-text style="width: auto; font-size: 16px">Version: {{ actionType.version }}</v-card-text>
                   </v-row>
                 </v-col>
               </v-row>
             </v-card-text>
             <v-divider></v-divider>
-            <PropertiesTemplates :properties="actiontype.properties" @change="changes = true" />
+            <v-card-text>
+              <Properties :typeProperties="null" :properties="actionType.properties" @change="changes = true" />
+            </v-card-text>
           </v-card>
         </v-form>
       </v-col>
@@ -63,22 +65,21 @@
 import { mapActions } from 'vuex'
 import UnsavedContent from './UnsavedContent.vue'
 import Help from './Help'
-import PropertiesTemplates from './action/PropertiesTemplates.vue'
-//import actionClient from '../lib/rest/actions'
+import Properties from './action/Properties.vue'
 import actionTypeClient from '../lib/rest/actionTypes'
 
 export default {
-  components: { Help, UnsavedContent, PropertiesTemplates },
+  components: { Help, UnsavedContent, Properties },
   data() {
     return {
-      actiontype: {
+      actionType: {
         properties: [],
         name: '',
         version: 1
       },
       path: '',
       inUse: false,
-      existed: false,
+      exists: false,
       valid: false,
       changes: false,
       exitUnsaved: false,
@@ -90,20 +91,19 @@ export default {
   },
   methods: {
     cancel() {
-      this.$router.push('/actiontypes')
+      this.$router.push('/action-types')
     },
-    ...mapActions('actiontypes', ['show', 'create', 'update']),
+    ...mapActions('actionTypes', ['show', 'create', 'update']),
     async save() {
       try {
-        let res = null
-        if (this.actiontype.id) {
-          res = await this.update(this.actiontype)
+        if (this.actionType.id) {
+          await this.update(this.actionType)
         } else {
           await actionTypeClient.list().then((types) => {
             let exists = false
             for (let i in types) {
               const type = types[i]
-              if (type.name == this.actiontype.name) {
+              if (type.name == this.actionType.name) {
                 exists = true
                 break
               }
@@ -116,20 +116,23 @@ export default {
             ) {
               return
             }
-            res = this.create(this.actiontype)
+            this.create(this.actionType).then((res) => {
+              console.log(res)
+              if (res && res.id) {
+                this.$router.push({ path: `/action-type/${res.id}` })
+              }
+            })
           })
         }
 
-        if (res && res.id) {
-          this.actiontype.id = res.id
-        }
         this.changes = false
-        this.$notify.success('Your actiontype has been saved.')
+        this.$notify.success('Your action type has been saved.')
+
         if (this.exitUnsaved) {
           this.exit()
         }
       } catch (e) {
-        this.$notify.error('Could not save actiontype.')
+        this.$notify.error('Could not save action type.')
       }
     },
     cancelExit() {
@@ -141,18 +144,18 @@ export default {
       if (this.exitUrl) {
         this.$router.push(this.exitUrl)
       } else {
-        this.$router.push('/actiontypes')
+        this.$router.push('/action-types')
       }
     }
   },
   async created() {
     const id = this.$route.params.id
     if (id) {
-      this.existed = true
+      this.exists = true
       try {
-        this.actiontype = await this.show(id)
+        this.actionType = await this.show(id)
         this.inUse = await actionTypeClient.inUse(this.$route.params.id)
-        delete this.actiontype.trigger
+        delete this.actionType.trigger
       } catch (error) {
         this.$router.push({ path: '/404' })
       }

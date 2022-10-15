@@ -20,32 +20,32 @@ type ActionTypesController struct {
 
 func InitActionTypes(router *gin.RouterGroup, app *app.App) {
 	c := ActionTypesController{Router: router, App: app}
-	c.Router.GET("/actiontypes", c.List)
-	c.Router.GET("/actiontypes/:id", c.Show)
-	c.Router.GET("/actiontypes/:id/used", c.InUse)
-	c.Router.POST("/actiontypes", c.Create)
-	c.Router.DELETE("/actiontypes/:id", c.Archive)
-	c.Router.PUT("/actiontypes/:id", c.Create)
+	c.Router.GET("/action-types", c.List)
+	c.Router.GET("/action-types/:id", c.Show)
+	c.Router.GET("/action-types/:id/used", c.IsInUse)
+	c.Router.POST("/action-types", c.Create)
+	c.Router.DELETE("/action-types/:name", c.Archive)
+	c.Router.PUT("/action-types/:id", c.Create)
 }
 
 func (ac ActionTypesController) List(c *gin.Context) {
 	user := c.MustGet("user").(*db.User)
-	actiontypes, err := ac.App.DB.GetActionTypes(c.Request.Context(), user.OrganizationID)
+	actionTypes, err := ac.App.DB.GetActionTypes(c.Request.Context(), user.OrganizationID)
 	if err != nil {
-		ac.App.Logger.Warn("actiontypes.list.getActiontypes", zap.Error(err))
+		ac.App.Logger.Warn("actionTypes.list.getActiontypes", zap.Error(err))
 		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
 
 	res := []responses.ActionType{}
-	for _, a := range actiontypes {
+	for _, a := range actionTypes {
 		res = append(res, responses.ActionType{
 			ID:             a.ID,
 			OrganizationID: a.OrganizationID,
 			Name:           a.Name,
 			Version:        a.Version,
 			Properties:     a.Properties,
-			Archived:       a.Archived,
+			IsArchived:     a.IsArchived,
 			CreatedAt:      a.CreatedAt,
 		})
 	}
@@ -57,20 +57,20 @@ func (ac ActionTypesController) Show(c *gin.Context) {
 	user := c.MustGet("user").(*db.User)
 
 	id := uuid.FromStringOrNil(c.Param("id"))
-	action, err := ac.App.DB.GetActionTypeByUUID(c.Request.Context(), user.OrganizationID, id)
+	actionType, err := ac.App.DB.GetActionTypeByUUID(c.Request.Context(), user.OrganizationID, id)
 	if err != nil {
-		ac.App.Logger.Warn("actiontypes.show.getActiontype", zap.Error(err))
+		ac.App.Logger.Warn("actionTypes.show.getActiontype", zap.Error(err))
 		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
 
-	res := responses.Action{
-		ID:             action.ID,
-		OrganizationID: action.OrganizationID,
-		Name:           action.Name,
-		Version:        action.Version,
-		Properties:     action.Properties,
-		CreatedAt:      action.CreatedAt,
+	res := responses.ActionType{
+		ID:             actionType.ID,
+		OrganizationID: actionType.OrganizationID,
+		Name:           actionType.Name,
+		Version:        actionType.Version,
+		Properties:     actionType.Properties,
+		CreatedAt:      actionType.CreatedAt,
 	}
 
 	c.JSON(http.StatusOK, res)
@@ -79,7 +79,7 @@ func (ac ActionTypesController) Show(c *gin.Context) {
 func (ac ActionTypesController) Create(c *gin.Context) {
 	var req requests.ActionTypeCreate
 	if err := c.ShouldBindJSON(&req); err != nil {
-		ac.App.Logger.Warn("actiontypes.create.parseRequest", zap.Error(err))
+		ac.App.Logger.Warn("actionTypes.create.parseRequest", zap.Error(err))
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
@@ -87,16 +87,15 @@ func (ac ActionTypesController) Create(c *gin.Context) {
 	user := c.MustGet("user").(*db.User)
 
 	properties, _ := json.Marshal(req.Properties)
-	name := req.Name
-	version := req.Version
 
-	archivedTypes, err := ac.App.DB.GetActionTypesByName(c, user.OrganizationID, name)
+	archivedTypes, err := ac.App.DB.GetActionTypesByName(c, user.OrganizationID, req.Name)
 	if err != nil {
-		ac.App.Logger.Error("actiontypes.create.listArchivedVersions", zap.Error(err))
+		ac.App.Logger.Error("actionTypes.create.listArchivedVersions", zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
+	version := req.Version
 	for _, archivedType := range archivedTypes {
 		ac.App.DB.UnArchiveActionType(c, user.OrganizationID, archivedType.ID)
 		version = archivedType.Version + 1
@@ -111,7 +110,7 @@ func (ac ActionTypesController) Create(c *gin.Context) {
 
 	actionType, err := ac.App.DB.CreateActionType(c.Request.Context(), args)
 	if err != nil {
-		ac.App.Logger.Error("actiontypes.create.createActiontype", zap.Error(err))
+		ac.App.Logger.Error("actionTypes.create.createActiontype", zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
@@ -131,9 +130,9 @@ func (ac ActionTypesController) Create(c *gin.Context) {
 func (ac ActionTypesController) Archive(c *gin.Context) {
 	user := c.MustGet("user").(*db.User)
 
-	name := c.Param("id")
+	name := c.Param("name")
 	if err := ac.App.DB.ArchiveActionType(c.Request.Context(), user.OrganizationID, name); err != nil {
-		ac.App.Logger.Error("actiontypes.archive.archiveType", zap.Error(err))
+		ac.App.Logger.Error("actionTypes.archive.archiveType", zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
@@ -145,37 +144,43 @@ type Usage struct {
 	InUse bool `json:"inUse"`
 }
 
-func (ac ActionTypesController) InUse(c *gin.Context) {
+func (ac ActionTypesController) IsInUse(c *gin.Context) {
+
+	inUse, err := ac.IsActionInUse(c)
+
+	if err != nil {
+		ac.App.Logger.Error("actionTypes.archive.archiveType", zap.Error(err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	res := Usage{
+		InUse: inUse,
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (ac ActionTypesController) IsActionInUse(c *gin.Context) (bool, error) {
 	user := c.MustGet("user").(*db.User)
 
 	id := uuid.FromStringOrNil(c.Param("id"))
 
 	actionType, err := ac.App.DB.GetActionTypeByUUID(c, user.OrganizationID, id)
 	if err != nil {
-		ac.App.Logger.Error("actiontypes.inuse.actionTypeNotFound", zap.Error(err))
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
+		return false, err
 	}
 
 	actions, err := ac.App.DB.GetActions(c, user.OrganizationID)
 
 	if err != nil {
-		ac.App.Logger.Error("actiontypes.inuse.getActions", zap.Error(err))
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-
-	res := Usage{
-		InUse: true,
+		return false, err
 	}
 
 	for _, action := range actions {
-		if action.Type == actionType.Name && action.Version == actionType.Version {
-			c.JSON(http.StatusOK, res)
-			return
+		if action.TypeName == actionType.Name && action.TypeVersion == actionType.Version {
+			return true, nil
 		}
 	}
-	res.InUse = false
-
-	c.JSON(http.StatusOK, res)
+	return false, nil
 }

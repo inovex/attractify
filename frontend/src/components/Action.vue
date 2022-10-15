@@ -31,9 +31,9 @@
                     dense
                     prepend-icon="mdi-tune"
                     :items="actionTypeSelector"
-                    label="Type of Action"
+                    label="Type"
                     @change="selectType"
-                    v-model="action.type"
+                    v-model="action.typeName"
                     :rules="[rules.required]"
                   ></v-select>
                 </v-col>
@@ -42,9 +42,9 @@
                     dense
                     prepend-icon="mdi-tune"
                     :items="versionSelector"
-                    label="Version of Type"
+                    label="Version"
                     @change="selectVersion"
-                    v-model="action.version"
+                    v-model="action.type"
                     :rules="[rules.required]"
                   ></v-select>
                 </v-col>
@@ -177,8 +177,9 @@ export default {
       tabs: '',
       action: {
         state: 'inactive',
-        type: '',
-        version: 1,
+        type: null,
+        typeName: '',
+        typeVersion: 1,
         tags: [],
         properties: [],
         typeProperties: [],
@@ -256,12 +257,12 @@ export default {
 
       this.versionSelector = []
       this.actionTypes.forEach((actionType) => {
-        if (actionType.name == this.action.type) {
-          this.versionSelector.push(actionType.version)
+        if (actionType.name == this.action.typeName) {
+          this.versionSelector.push({ text: actionType.version, value: actionType.id })
         }
       })
 
-      this.action.version = this.versionSelector[this.versionSelector.length - 1]
+      this.action.type = this.versionSelector[this.versionSelector.length - 1].value
       this.selectVersion()
     },
     selectVersion() {
@@ -269,7 +270,7 @@ export default {
 
       let currentVersion
       this.actionTypes.every((actionType) => {
-        if (this.action.version == actionType.version && this.action.type == actionType.name) {
+        if (this.action.type == actionType.id) {
           currentVersion = actionType
           return false
         }
@@ -284,7 +285,6 @@ export default {
     if (id) {
       try {
         this.action = await this.show(id)
-        console.log(this.action)
         delete this.action.trigger
       } catch (error) {
         this.$router.push({ path: '/404' })
@@ -296,7 +296,7 @@ export default {
       .then((actionTypes) => {
         this.actionTypes = actionTypes
         this.actionTypes.forEach((actionType) => {
-          if (!actionType.archived) {
+          if (!actionType.isArchived || actionType.name == this.action.typeName) {
             this.actionTypeSelector.push(actionType.name)
           }
         })
@@ -304,8 +304,8 @@ export default {
       .finally(() => {
         this.versionSelector = []
         this.actionTypes.forEach((actionType) => {
-          if (actionType.name == this.action.type && !actionType.archived) {
-            this.versionSelector.push(actionType.version)
+          if (actionType.name == this.action.typeName) {
+            this.versionSelector.push({ text: actionType.version, value: actionType.id })
           }
         })
       })

@@ -18,8 +18,9 @@ type Action struct {
 	ID             uuid.UUID       `json:"id"`
 	OrganizationID uuid.UUID       `json:"organizationId"`
 	Name           string          `json:"name"`
-	Type           string          `json:"type"`
-	Version        int             `json:"version"`
+	Type           uuid.UUID       `json:"type"`
+	TypeName       string          `json:"typeName"`
+	TypeVersion    int             `json:"typeVersion"`
 	State          string          `json:"state"`
 	Tags           json.RawMessage `json:"tags"`
 	Properties     json.RawMessage `json:"properties"`
