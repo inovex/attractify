@@ -22,10 +22,10 @@ func InitActionTypes(router *gin.RouterGroup, app *app.App) {
 	c := ActionTypesController{Router: router, App: app}
 	c.Router.GET("/action-types", c.List)
 	c.Router.GET("/action-types/:id", c.Show)
-	c.Router.GET("/action-types/:id/used", c.IsInUse)
+	c.Router.GET("/action-types/exists/:name", c.Exists)
 	c.Router.POST("/action-types", c.Create)
 	c.Router.DELETE("/action-types/:name", c.Archive)
-	c.Router.PUT("/action-types/:id", c.Create)
+	c.Router.PUT("/action-types/:id", c.Update)
 }
 
 func (ac ActionTypesController) List(c *gin.Context) {
@@ -46,6 +46,7 @@ func (ac ActionTypesController) List(c *gin.Context) {
 			Version:        a.Version,
 			Properties:     a.Properties,
 			IsArchived:     a.IsArchived,
+			IsInUse:        a.IsInUse,
 			CreatedAt:      a.CreatedAt,
 		})
 	}
@@ -70,6 +71,7 @@ func (ac ActionTypesController) Show(c *gin.Context) {
 		Name:           actionType.Name,
 		Version:        actionType.Version,
 		Properties:     actionType.Properties,
+		IsInUse:        actionType.IsInUse,
 		CreatedAt:      actionType.CreatedAt,
 	}
 
@@ -127,6 +129,35 @@ func (ac ActionTypesController) Create(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+func (ac ActionTypesController) Update(c *gin.Context) {
+	var req requests.ActionTypeUpdate
+	if err := c.ShouldBindJSON(&req); err != nil {
+		ac.App.Logger.Warn("actionTypes.update.parseRequest", zap.Error(err))
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	user := c.MustGet("user").(*db.User)
+	id := uuid.FromStringOrNil(c.Param("id"))
+
+	properties, _ := json.Marshal(req.Properties)
+
+	args := db.UpdateActionTypeParams{
+		ID:             id,
+		OrganizationID: user.OrganizationID,
+		Properties:     properties,
+	}
+
+	err := ac.App.DB.UpdateActionType(c.Request.Context(), args)
+	if err != nil {
+		ac.App.Logger.Error("actionTypes.update", zap.Error(err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	c.AbortWithStatus(http.StatusNoContent)
+}
+
 func (ac ActionTypesController) Archive(c *gin.Context) {
 	user := c.MustGet("user").(*db.User)
 
@@ -140,47 +171,21 @@ func (ac ActionTypesController) Archive(c *gin.Context) {
 	c.AbortWithStatus(http.StatusNoContent)
 }
 
-type Usage struct {
-	InUse bool `json:"inUse"`
-}
+func (ac ActionTypesController) Exists(c *gin.Context) {
+	user := c.MustGet("user").(*db.User)
 
-func (ac ActionTypesController) IsInUse(c *gin.Context) {
-
-	inUse, err := ac.IsActionInUse(c)
-
+	name := c.Param("name")
+	typesByName, err := ac.App.DB.GetActionTypesByName(c, user.OrganizationID, name)
 	if err != nil {
-		ac.App.Logger.Error("actionTypes.archive.archiveType", zap.Error(err))
+		ac.App.Logger.Error("actionTypes.checkExistance.listVersions", zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	res := Usage{
-		InUse: inUse,
+	if len(typesByName) > 0 {
+		c.JSON(http.StatusOK, true)
+		return
 	}
 
-	c.JSON(http.StatusOK, res)
-}
-
-func (ac ActionTypesController) IsActionInUse(c *gin.Context) (bool, error) {
-	user := c.MustGet("user").(*db.User)
-
-	id := uuid.FromStringOrNil(c.Param("id"))
-
-	actionType, err := ac.App.DB.GetActionTypeByUUID(c, user.OrganizationID, id)
-	if err != nil {
-		return false, err
-	}
-
-	actions, err := ac.App.DB.GetActions(c, user.OrganizationID)
-
-	if err != nil {
-		return false, err
-	}
-
-	for _, action := range actions {
-		if action.TypeName == actionType.Name && action.TypeVersion == actionType.Version {
-			return true, nil
-		}
-	}
-	return false, nil
+	c.JSON(http.StatusOK, false)
 }

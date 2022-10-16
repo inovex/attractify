@@ -49,7 +49,7 @@
         elevation="2"
         color="primary"
         style="color: var(--v-buttontext-base)"
-        :disabled="!valid"
+        :disabled="!valid || !changes"
         @click="save()"
         >Save</v-btn
       >
@@ -67,6 +67,7 @@ import UnsavedContent from './UnsavedContent.vue'
 import Help from './Help'
 import Properties from './action/Properties.vue'
 import actionTypeClient from '../lib/rest/actionTypes'
+import actionTypes from '../lib/rest/actionTypes'
 
 export default {
   components: { Help, UnsavedContent, Properties },
@@ -75,10 +76,10 @@ export default {
       actionType: {
         properties: [],
         name: '',
-        version: 1
+        version: 1,
+        isInUse: false
       },
       path: '',
-      inUse: false,
       exists: false,
       valid: false,
       changes: false,
@@ -96,32 +97,29 @@ export default {
     ...mapActions('actionTypes', ['show', 'create', 'update']),
     async save() {
       try {
-        if (this.actionType.id) {
+        let newRoute = false
+        if (this.actionType.id && !this.actionType.isInUse) {
           await this.update(this.actionType)
         } else {
-          await actionTypeClient.list().then((types) => {
-            let exists = false
-            for (let i in types) {
-              const type = types[i]
-              if (type.name == this.actionType.name) {
-                exists = true
-                break
+          let exists = await actionTypeClient.nameExists(this.actionType.name)
+          if (
+            !this.actionType.id &&
+            exists &&
+            !confirm(
+              'This type already exists. Do you want to create a new version of this type and take older versions out of the archive?'
+            )
+          ) {
+            return
+          }
+          await this.create(this.actionType).then((res) => {
+            if (res && res.id) {
+              if (this.actionType.id) {
+                this.actionType.version = this.actionType.version + 1
+              } else {
+                newRoute = true
               }
+              this.actionType.id = res.id
             }
-            if (
-              exists &&
-              !confirm(
-                'This type already exists. Do you want to create a new version of this type and take older versions out of the archive?'
-              )
-            ) {
-              return
-            }
-            this.create(this.actionType).then((res) => {
-              console.log(res)
-              if (res && res.id) {
-                this.$router.push({ path: `/action-type/${res.id}` })
-              }
-            })
           })
         }
 
@@ -130,6 +128,9 @@ export default {
 
         if (this.exitUnsaved) {
           this.exit()
+        }
+        if (newRoute) {
+          this.$router.push(`/action-type/${this.actionType.id}`)
         }
       } catch (e) {
         this.$notify.error('Could not save action type.')
@@ -154,7 +155,6 @@ export default {
       this.exists = true
       try {
         this.actionType = await this.show(id)
-        this.inUse = await actionTypeClient.inUse(this.$route.params.id)
         delete this.actionType.trigger
       } catch (error) {
         this.$router.push({ path: '/404' })

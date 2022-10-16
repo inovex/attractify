@@ -14,5 +14,6 @@ type ActionType struct {
 	Version        int             `json:"version"`
 	Properties     json.RawMessage `json:"properties"`
 	IsArchived     bool            `json:"isArchived"`
+	IsInUse        bool            `json:"isInUse"`
 	CreatedAt      time.Time       `json:"createdAt"`
 }

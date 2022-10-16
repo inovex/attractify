@@ -20,15 +20,6 @@ export default {
             throw e
         }
     },
-    async inUse(id) {
-        try {
-            const res = await restClient.get(`/action-types/${id}/used`)
-
-            return res.data.inUse
-        } catch (e) {
-            throw e
-        }
-    },
     async delete(id) {
         try {
             await restClient.delete(`/action-types/${id}`)
@@ -47,6 +38,14 @@ export default {
     async update(params) {
         try {
             await restClient.put(`/action-types/${params.id}`, params)
+        } catch (e) {
+            throw e
+        }
+    },
+    async nameExists(name) {
+        try {
+            const res = await restClient.get(`/action-types/exists/${name}`)
+            return res.data
         } catch (e) {
             throw e
         }

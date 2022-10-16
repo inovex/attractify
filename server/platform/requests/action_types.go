@@ -14,3 +14,7 @@ type ActionTypeCreate struct {
 	Version    int        `json:"version" binding:"required,min=1"`
 	Properties []property `json:"properties" binding:"dive"`
 }
+
+type ActionTypeUpdate struct {
+	Properties []property `json:"properties" binding:"dive"`
+}

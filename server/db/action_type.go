@@ -15,6 +15,7 @@ type ActionType struct {
 	Version        int             `db:"version"`
 	Properties     json.RawMessage `db:"properties"`
 	IsArchived     bool            `db:"is_archived"`
+	IsInUse        bool            `db:"is_in_use"`
 	CreatedAt      time.Time       `db:"created_at"`
 }
 
@@ -44,6 +45,12 @@ type CreateActionTypeParams struct {
 	Properties     json.RawMessage
 }
 
+type UpdateActionTypeParams struct {
+	ID             uuid.UUID
+	OrganizationID uuid.UUID
+	Properties     json.RawMessage
+}
+
 func (d *DB) CreateActionType(ctx context.Context, arg CreateActionTypeParams) (ActionType, error) {
 	const q = `
 INSERT INTO action_types(
@@ -65,6 +72,18 @@ RETURNING *
 	)
 	var a ActionType
 	return a, row.StructScan(&a)
+}
+
+func (d *DB) UpdateActionType(ctx context.Context, args UpdateActionTypeParams) error {
+	const q = `
+UPDATE action_types
+SET properties = $1
+WHERE organization_id = $2
+AND id = $3
+`
+
+	_, err := d.db.ExecContext(ctx, q, args.Properties, args.OrganizationID, args.ID)
+	return err
 }
 
 func (d *DB) ArchiveActionType(ctx context.Context, orgID uuid.UUID, name string) error {
@@ -93,10 +112,11 @@ AND id = $2
 
 func (d *DB) GetActionTypeByUUID(ctx context.Context, orgID, id uuid.UUID) (ActionType, error) {
 	const q = `
-SELECT *
-FROM action_types
-WHERE organization_id = $1
-AND id = $2
+SELECT t.*, 
+CASE WHEN a.id is not null THEN 'True' ELSE 'False' END as is_in_use
+FROM action_types t LEFT JOIN actions a ON a.type_id = t.id
+WHERE t.organization_id = $1
+AND t.id = $2
 LIMIT 1
 `
 
@@ -107,10 +127,11 @@ LIMIT 1
 
 func (d *DB) GetActionTypes(ctx context.Context, orgID uuid.UUID) ([]ActionType, error) {
 	const q = `
-SELECT *
-FROM action_types
-WHERE organization_id = $1
-ORDER BY name, version
+SELECT t.*, 
+CASE WHEN a.id is not null THEN 'True' ELSE 'False' END as is_in_use
+FROM action_types t LEFT JOIN actions a ON a.type_id = t.id
+WHERE t.organization_id = $1
+ORDER BY t.name, t.version
 `
 
 	var items []ActionType
@@ -119,11 +140,12 @@ ORDER BY name, version
 
 func (d *DB) GetActionTypesByName(ctx context.Context, orgID uuid.UUID, name string) ([]ActionType, error) {
 	const q = `
-SELECT *
-FROM action_types
-WHERE organization_id = $1
-AND name = $2
-ORDER BY version
+SELECT t.*, 
+CASE WHEN a.id is not null THEN 'True' ELSE 'False' END as is_in_use
+FROM action_types t LEFT JOIN actions a ON a.type_id = t.id
+WHERE t.organization_id = $1
+AND t.name = $2
+ORDER BY t.version
 `
 
 	var items []ActionType
@@ -132,11 +154,12 @@ ORDER BY version
 
 func (d *DB) GetActionTypesByNameAndVersion(ctx context.Context, orgID uuid.UUID, name string, version int) ([]ActionType, error) {
 	const q = `
-SELECT *
-FROM action_types
-WHERE organization_id = $1
-AND name = $2
-AND version = $3
+SELECT t.*, 
+CASE WHEN a.id is not null THEN 'True' ELSE 'False' END as is_in_use
+FROM action_types t LEFT JOIN actions a ON a.type_id = t.id
+WHERE t.organization_id = $1
+AND t.name = $2
+AND t.version = $3
 `
 
 	var items []ActionType
