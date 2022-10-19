@@ -105,7 +105,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="(value, key) in totalEvents" :key="key">
-                    <td>{{ key.toUpperCase() }}</td>
+                    <td>{{ capitalizeFirstLetter(key) }}</td>
                     <td class="text-right">{{ value }}</td>
                   </tr>
                 </tbody>
@@ -133,25 +133,25 @@
                   <tr>
                     <td>Delivered / Shown</td>
                     <td class="text-right">
-                      {{ new Intl.NumberFormat().format(rates.delivered / rates.shown) }}
+                      {{ new Intl.NumberFormat().format(rates.delivered / rates.shown) * 100 }}
                     </td>
                   </tr>
                   <tr>
                     <td>Shown / Hidden</td>
                     <td class="text-right">
-                      {{ new Intl.NumberFormat().format(rates.shown / rates.hidden) }}
+                      {{ new Intl.NumberFormat().format(rates.shown / rates.hidden) * 100 }}
                     </td>
                   </tr>
                   <tr>
-                    <td>Shown / Declined</td>
+                    <td>Declined / Shown</td>
                     <td class="text-right">
-                      {{ new Intl.NumberFormat().format(rates.shown / rates.declined) }}
+                      {{ new Intl.NumberFormat().format(rates.declined / rates.shown) * 100 }}
                     </td>
                   </tr>
                   <tr>
-                    <td>Shown / Accepted</td>
+                    <td>Accepted / Shown</td>
                     <td class="text-right">
-                      {{ new Intl.NumberFormat().format(rates.shown / rates.accepted) }}
+                      {{ new Intl.NumberFormat().format(rates.accepted / rates.shown) * 100 }}
                     </td>
                   </tr>
                 </tbody>
@@ -177,7 +177,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="(value, key) of reach" :key="key">
-                    <td>{{ value.channel.toUpperCase() }}</td>
+                    <td>{{ capitalizeFirstLetter(value.channel) }}</td>
                     <td class="text-right">
                       {{ new Intl.NumberFormat().format(value.total) }}
                     </td>
@@ -225,12 +225,8 @@ export default {
         end: false
       },
       range: {
-        start: moment()
-          .startOf('month')
-          .format('YYYY-MM-DD'),
-        end: moment()
-          .endOf('month')
-          .format('YYYY-MM-DD'),
+        start: moment().startOf('month').format('YYYY-MM-DD'),
+        end: moment().endOf('month').format('YYYY-MM-DD'),
         interval: 'day'
       },
       events: {},
@@ -261,7 +257,7 @@ export default {
   methods: {
     async loadActions() {
       const res = await actionsClient.list()
-      return res.map(e => {
+      return res.map((e) => {
         return { text: e.name, value: e.id }
       })
     },
@@ -270,14 +266,8 @@ export default {
         return
       }
 
-      let start = moment(this.range.start)
-        .startOf('day')
-        .utc()
-        .format('YYYY-MM-DD HH:mm:ss')
-      let end = moment(this.range.end)
-        .endOf('day')
-        .utc()
-        .format('YYYY-MM-DD HH:mm:ss')
+      let start = moment(this.range.start).startOf('day').utc().format('YYYY-MM-DD HH:mm:ss')
+      let end = moment(this.range.end).endOf('day').utc().format('YYYY-MM-DD HH:mm:ss')
       let range = {
         start: start,
         end: end,
@@ -409,21 +399,24 @@ export default {
 
       let labels = Array.from(intervals)
       if (interval === 'hour') {
-        labels = labels.map(val => `${val}h`)
+        labels = labels.map((val) => `${val}h`)
       }
 
       if (interval === 'month') {
-        labels = labels.map(val => humanLabels.months[val - 1])
+        labels = labels.map((val) => humanLabels.months[val - 1])
       }
 
       if (interval === 'weekDay') {
-        labels = labels.map(val => humanLabels.weekDays[val - 1])
+        labels = labels.map((val) => humanLabels.weekDays[val - 1])
       }
 
       return {
         labels: labels,
         datasets: Object.values(datasets)
       }
+    },
+    capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1)
     },
     hashCode(input) {
       var hash = 0,
