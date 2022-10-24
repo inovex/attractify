@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-form ref="form" on>
+        <v-form ref="form" v-model="valid" on>
           <v-card>
             <v-toolbar dark>
               <v-toolbar-title>Action Simulation</v-toolbar-title>
@@ -13,18 +13,44 @@
             <v-card-text class="raised">
               <v-card-title>User</v-card-title>
               <v-row>
-                <v-col class="col-5">
+                <v-col class="col-6">
                   <v-autocomplete
                     v-model="selectedProfile"
                     :items="foundProfiles"
                     :loading="isLoading"
                     :search-input.sync="userSearch"
                     prepend-icon="mdi-account"
+                    required
                     hide-no-data
                     item-text="name"
                     label="User ID"
                     return-object
                   ></v-autocomplete>
+                </v-col>
+              </v-row>
+              <!-- are Channel, Type, Tags important? -->
+              <v-row>
+                <v-col class="col-6">
+                  <v-textarea
+                    :rules="[rules.json]"
+                    v-model="user.customProperties"
+                    multi-line
+                    label="Custom Properties"
+                    required
+                  ></v-textarea>
+                </v-col>
+                <v-col class="col-6">
+                  <v-textarea
+                    :rules="[rules.json]"
+                    v-model="user.computedProperties"
+                    label="Computed Properties"
+                    required
+                  ></v-textarea>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col class="col-6">
+                  <v-textarea :rules="[rules.json]" v-model="user.context" label="Context" required></v-textarea>
                 </v-col>
               </v-row>
               <v-row>
@@ -33,7 +59,7 @@
                     rounded
                     color="primary"
                     style="color: var(--v-buttontext-base)"
-                    :disabled="selectedProfile == null"
+                    :disabled="!valid"
                     @click="startSimulation()"
                     >Check Actions</v-btn
                   >
@@ -42,31 +68,23 @@
             </v-card-text>
             <v-divider></v-divider>
             <v-card-text>
-              <div class="grids">
-                <v-card outlined v-for="index in 10" :key="index">
-                  <v-toolbar dark>
-                    <v-toolbar-title>Action {{ index }}</v-toolbar-title>
-                  </v-toolbar>
-                  <br />
-                  <v-row>
-                    <v-column class="col-5">
-                      <v-card-text>
-                        <p style="font-size: 16px">Status:</p>
-                      </v-card-text>
-                    </v-column>
-                    <v-column class="col-5">
-                      <v-chip class="ma-2" color="green">Displayed</v-chip>
-                    </v-column>
-                    <v-column></v-column>
-                  </v-row>
-                  <v-card-text>
-                    <p class="text--primary">Errors: None</p>
-                  </v-card-text>
-                  <v-card-actions>
-                    <v-btn>Details</v-btn>
-                  </v-card-actions>
-                </v-card>
-              </div>
+              <v-expansion-panels focusable>
+                <v-expansion-panel v-for="(action, index) in computedActions" v-bind:key="index">
+                  <v-expansion-panel-header disable-icon-rotate>
+                    {{ action.name }}
+                    <template v-slot:actions>
+                      <v-icon :color="listIcons[action.state].color"> {{ listIcons[action.state].icon }} </v-icon>
+                    </template>
+                  </v-expansion-panel-header>
+
+                  <v-expansion-panel-content>
+                    <div v-for="(step, index) in action.steps" :key="step + index">
+                      {{ step.name }} => {{ step.userValue }} compared to {{ step.dataValue }} <br />
+                      Error: {{ step.error }}
+                    </div>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
             </v-card-text>
           </v-card>
         </v-form>
@@ -84,16 +102,76 @@ export default {
   components: { Help },
   data() {
     return {
+      errorMessages: '',
       selectedProfile: null,
       userSearch: '',
       user: {},
+      listIcons: {
+        error: {
+          icon: 'mdi-alert-circle',
+          color: 'error'
+        },
+        correct: {
+          icon: 'mdi-check',
+          color: 'teal'
+        }
+      },
+      computedActions: [
+        {
+          name: 'Action 1',
+          state: 'correct',
+          steps: [
+            {
+              name: 'Check 1',
+              userValue: '10',
+              dataValue: '20',
+              error: ''
+            },
+            {
+              name: 'Check 2',
+              userValue: '10',
+              dataValue: '20',
+              error: ''
+            }
+          ]
+        },
+        {
+          name: 'Action 2',
+          state: 'error',
+          steps: [
+            {
+              name: 'Check 1',
+              userValue: '10',
+              dataValue: '20',
+              error: 'Value of user not high enough'
+            },
+            {
+              name: 'Check 2',
+              userValue: '10',
+              dataValue: '20',
+              error: 'Value of user not high enough'
+            }
+          ]
+        }
+      ],
       actionId: '',
       foundProfiles: [],
-      isLoading: false
+      isLoading: false,
+      valid: false,
+      rules: {
+        json: (value) => {
+          try {
+            JSON.parse(value)
+          } catch (e) {
+            return 'This textfield must contain a valid json object.'
+          }
+          return true
+        }
+      }
     }
   },
   methods: {
-    // TODO: simulation,
+    // TODO: simulation, when profile is selected load traits for that profile into json field
     async loadActions() {
       const res = await actionsClient.list()
       return res.map((e) => {
