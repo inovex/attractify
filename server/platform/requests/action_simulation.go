@@ -2,6 +2,7 @@ package requests
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/gofrs/uuid"
 )
@@ -14,6 +15,8 @@ type ActionSimulation struct {
 
 type ActionSimulationUser struct {
 	UserID         uuid.UUID       `json:"id"`
+	Channel        string          `json:"channel"`
+	Time           time.Time       `json:"time"`
 	ComputedTraits json.RawMessage `json:"computedTraits" binding:"required"`
 	CustomTraits   json.RawMessage `json:"customTraits" binding:"required"`
 	Context        json.RawMessage `json:"context" binding:"required"`

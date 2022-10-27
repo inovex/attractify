@@ -22,7 +22,7 @@ type Hook struct {
 }
 
 func (a *Action) parseHooks() error {
-	return json.Unmarshal(a.action.Hooks, &a.hooks)
+	return json.Unmarshal(a.Action.Hooks, &a.hooks)
 }
 
 func (a Action) RunHooks(userID, event, channel string, context, properties *json.RawMessage) (json.RawMessage, error) {
@@ -44,7 +44,7 @@ func (a Action) RunHooks(userID, event, channel string, context, properties *jso
 			App:               a.app,
 			Config:            hook.Properties,
 			OrganizationID:    a.organizationID,
-			Action:            a.action,
+			Action:            a.Action,
 			ProfileIdentityID: a.profileIdentity.ID,
 			UserID:            userID,
 			Event:             event,

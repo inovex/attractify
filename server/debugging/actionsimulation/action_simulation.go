@@ -2,6 +2,7 @@ package debugging
 
 import (
 	"attractify.io/platform/actions"
+	"attractify.io/platform/db"
 	"attractify.io/platform/platform/requests"
 	"attractify.io/platform/platform/responses"
 )
@@ -14,49 +15,60 @@ type ActionSimulation struct {
 func (sim ActionSimulation) GetSteps() []responses.Step {
 	steps := []responses.Step{}
 
-	// whats the best way to get access to these Functions?
-	// actions.Action has private atributes. Might make these public
+	step := responses.Step{
+		Name:      "ActionState",
+		UserValue: string(sim.Action.Action.State),
+		DataValue: string(sim.Action.Action.State),
+		Error:     "",
+	}
 
-	/*
-		if sim.Action.Action.State == db.StateInactive || sim.Action.State == "" {
-			return false
+	if sim.Action.Action.State == db.StateInactive || sim.Action.Action.State == "" {
+		step.Error = "Actionstate is inactive"
+	}
+
+	steps = append(steps, step)
+
+	step = responses.Step{
+		Name:      "ActionState",
+		UserValue: string(sim.Action.Action.State),
+		DataValue: string(sim.Action.Action.State),
+		Error:     "",
+	}
+
+	// State == staging with testusers and matching channel
+	if sim.Action.Action.State == db.StateStaging {
+		if !sim.Action.HasTestUser(sim.User.UserID.String(), sim.User.Channel) {
+			step.Error = "Actionstate is staging, User is not a testuser"
 		}
 
-		// State == staging with testusers and matching channel
-		if sim.Action.State == db.StateStaging {
-			if !a.HasTestUser(userID, channel) {
-				return false
-			}
-
-			if a.SkipTargeting(userID, channel) {
-				return true
-			}
+		if sim.Action.SkipTargeting(sim.User.UserID.String(), sim.User.Channel) {
 		}
+	}
 
-		// Time range
-		if !a.InTimeRange(time, timezone) {
-			return false
-		}
+	// Time range
+	if !sim.Action.InTimeRange(sim.User.Time, "UTC") { // TODO: get timezone
+		//return false
+	}
 
-		// Trait conditions
-		if !a.TraitConditions() {
-			return false
-		}
+	// Trait conditions
+	if !sim.Action.TraitConditions() {
+		//return false
+	}
 
-		// Context conditions
-		if !a.ContextConditions(channel, context) {
-			return false
-		}
+	// Context conditions
+	if !sim.Action.ContextConditions(sim.User.Channel, sim.User.Context) {
+		//return false
+	}
 
-		// Is in audience
-		if len(a.targeting.Audiences) > 0 && !a.IsInAudiences() {
-			return false
-		}
+	// Is in audience
+	if len(sim.Action.Targeting.Audiences) > 0 && !sim.Action.IsInAudiences() {
+		//return false
+	}
 
-		// Capping
-		if len(a.capping) > 0 && !a.HasNoCapping() {
-			return false
-		}*/
+	// Capping
+	if len(sim.Action.Capping) > 0 && !sim.Action.HasNoCapping() {
+		//return false
+	}
 
 	return steps
 }
