@@ -131,27 +131,27 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Delivered / Shown</td>
+                    <td>Shown / Delivered</td>
                     <td class="text-right">
-                      {{ new Intl.NumberFormat().format(rates.delivered / rates.shown) * 100 }}
+                      {{ new Intl.NumberFormat().format((rates.shown / rates.delivered) * 100) }}
                     </td>
                   </tr>
                   <tr>
-                    <td>Shown / Hidden</td>
+                    <td>Hidden / Shown</td>
                     <td class="text-right">
-                      {{ new Intl.NumberFormat().format(rates.shown / rates.hidden) * 100 }}
+                      {{ new Intl.NumberFormat().format((rates.hidden / rates.shown) * 100) }}
                     </td>
                   </tr>
                   <tr>
                     <td>Declined / Shown</td>
                     <td class="text-right">
-                      {{ new Intl.NumberFormat().format(rates.declined / rates.shown) * 100 }}
+                      {{ new Intl.NumberFormat().format((rates.declined / rates.shown) * 100) }}
                     </td>
                   </tr>
                   <tr>
                     <td>Accepted / Shown</td>
                     <td class="text-right">
-                      {{ new Intl.NumberFormat().format(rates.accepted / rates.shown) * 100 }}
+                      {{ new Intl.NumberFormat().format((rates.accepted / rates.shown) * 100) }}
                     </td>
                   </tr>
                 </tbody>
