@@ -92,7 +92,7 @@
         <v-card>
           <v-card-title>Events</v-card-title>
           <v-card-text>
-            <LineChart :chart-data="events"></LineChart>
+            <LineChart :chart-data="events" :fontColor="legendFontColor"></LineChart>
           </v-card-text>
           <v-card-text>
             <v-simple-table>
@@ -118,7 +118,7 @@
         <v-card min-height="100%">
           <v-card-title>Rates</v-card-title>
           <v-card-text>
-            <DoughnutChart :chart-data="ratesChart"></DoughnutChart>
+            <DoughnutChart :chart-data="ratesChart" :fontColor="legendFontColor"></DoughnutChart>
           </v-card-text>
           <v-card-text>
             <v-simple-table>
@@ -164,7 +164,7 @@
         <v-card min-height="100%">
           <v-card-title>Reach</v-card-title>
           <v-card-text>
-            <BarChart :chart-data="reachChart"></BarChart>
+            <BarChart :chart-data="reachChart" :fontColor="legendFontColor"></BarChart>
           </v-card-text>
           <v-card-text>
             <v-simple-table>
@@ -209,6 +209,12 @@ const humanLabels = {
 
 export default {
   components: { APISelect, LineChart, DoughnutChart, BarChart, Help },
+  props: {
+    darkmode: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       actionId: null,
@@ -246,12 +252,16 @@ export default {
         close: 0.0,
         dismiss: 0.0,
         accept: 0.0
-      }
+      },
+      legendFontColor: 'rgba(255,255,255,0.7)'
     }
   },
   watch: {
     range() {
       this.render()
+    },
+    darkmode() {
+      this.updateChartColor()
     }
   },
   methods: {
@@ -284,6 +294,9 @@ export default {
       } catch (e) {
         this.$notify.info('No data available for the selected filters.')
       }
+    },
+    updateChartColor() {
+      this.legendFontColor = this.darkmode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)'
     },
     prepareEvents(events) {
       let datasets = {
@@ -344,6 +357,7 @@ export default {
               'rgba(255, 82, 82, 0.3)',
               'rgba(76, 175, 80, 0.3)'
             ],
+            borderColor: 'rgba(255, 255, 255, 0.3)',
             data: [rates.delivered, rates.shown, rates.hidden, rates.declined, rates.accepted]
           }
         ]
@@ -436,6 +450,7 @@ export default {
     this.actionId = this.$route.params.id
     if (this.actionId) {
       this.render()
+      this.updateChartColor()
     }
   }
 }

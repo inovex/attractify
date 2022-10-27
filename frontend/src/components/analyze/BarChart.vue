@@ -3,13 +3,18 @@ import { Bar, mixins } from 'vue-chartjs'
 
 export default {
   extends: Bar,
-  props: ['options'],
+  props: ['options', 'fontColor'],
   mixins: [mixins.reactiveProp],
   methods: {
     render() {
       this.renderChart(this.chartData, {
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
+        legend: {
+          labels: {
+            fontColor: this.fontColor
+          }
+        }
         // scales: {
         //   yAxes: [
         //     {
@@ -22,6 +27,11 @@ export default {
   },
   mounted() {
     this.render()
+  },
+  watch: {
+    fontColor() {
+      this.render()
+    }
   }
 }
 </script>
