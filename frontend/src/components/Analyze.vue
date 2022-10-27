@@ -253,7 +253,7 @@ export default {
         dismiss: 0.0,
         accept: 0.0
       },
-      legendFontColor: 'rgba(255,255,255,0.7)'
+      legendFontColor: 'rgb(100,100,100)'
     }
   },
   watch: {
@@ -294,6 +294,7 @@ export default {
       } catch (e) {
         this.$notify.info('No data available for the selected filters.')
       }
+      this.updateChartColor()
     },
     updateChartColor() {
       this.legendFontColor = this.darkmode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)'
@@ -302,7 +303,7 @@ export default {
       let datasets = {
         delivered: {
           label: 'Delivered',
-          borderColor: 'rgba(235, 235, 235, 0.3)',
+          borderColor: 'rgba(180, 180, 180, 0.3)',
           fill: false,
           data: []
         },
@@ -351,13 +352,12 @@ export default {
         datasets: [
           {
             backgroundColor: [
-              'rgba(235, 235, 235, 0.3)',
+              'rgba(180, 180, 180, 0.3)',
               'rgba(52, 171, 235, 0.3)',
               'rgba(232, 235, 52, 0.3)',
               'rgba(255, 82, 82, 0.3)',
               'rgba(76, 175, 80, 0.3)'
             ],
-            borderColor: 'rgba(255, 255, 255, 0.3)',
             data: [rates.delivered, rates.shown, rates.hidden, rates.declined, rates.accepted]
           }
         ]
