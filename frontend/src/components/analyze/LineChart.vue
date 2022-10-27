@@ -23,7 +23,6 @@ export default {
   },
   watch: {
     fontColor() {
-      console.log('lelele')
       this.render()
     }
   }
