@@ -13,10 +13,10 @@ import (
 )
 
 type Action struct {
-	ctx             context.Context
-	app             *app.App
+	Ctx             context.Context
+	App             *app.App
 	Action          *db.Action
-	profile         *db.Profile
+	Profile         *db.Profile
 	profileIdentity *db.ProfileIdentity
 	organizationID  uuid.UUID
 	tags            []string
@@ -29,11 +29,11 @@ type Action struct {
 
 func New(ctx context.Context, app *app.App, orgID uuid.UUID, action *db.Action, profile *db.Profile, profileIdentity *db.ProfileIdentity) *Action {
 	a := Action{
-		ctx:             ctx,
-		app:             app,
+		Ctx:             ctx,
+		App:             app,
 		organizationID:  orgID,
 		Action:          action,
-		profile:         profile,
+		Profile:         profile,
 		profileIdentity: profileIdentity,
 	}
 
@@ -195,10 +195,10 @@ func (a Action) HasNoCapping() bool {
 			Channels:       c.Channels,
 			Event:          c.Event,
 			IsUser:         c.Group == db.GroupUser,
-			ProfileID:      a.profile.ID,
+			ProfileID:      a.Profile.ID,
 			Within:         c.Within,
 		}
-		count, err := a.app.Analytics.GetReactionCount(args)
+		count, err := a.App.Analytics.GetReactionCount(args)
 		if err != nil {
 			return false
 		}
@@ -220,10 +220,10 @@ func (a Action) HasNoAcceptCapping() bool {
 			Channels:       c.Channels,
 			Event:          c.Event,
 			IsUser:         c.Group == db.GroupUser,
-			ProfileID:      a.profile.ID,
+			ProfileID:      a.Profile.ID,
 			Within:         c.Within,
 		}
-		count, err := a.app.Analytics.GetReactionCount(args)
+		count, err := a.App.Analytics.GetReactionCount(args)
 		if err != nil {
 			return false
 		}
@@ -360,11 +360,11 @@ func (a Action) TraitConditions() bool {
 			Value:    c.Value,
 		}
 		if c.Source == db.TraitConditionTypeCustom {
-			if !tc.eval(a.profile.CustomTraits) {
+			if !tc.eval(a.Profile.CustomTraits) {
 				return false
 			}
 		} else {
-			if !tc.eval(a.profile.ComputedTraits) {
+			if !tc.eval(a.Profile.ComputedTraits) {
 				return false
 			}
 		}
@@ -391,10 +391,10 @@ func (a Action) ContextConditions(channel string, context json.RawMessage) bool 
 }
 
 func (a Action) IsInAudiences() bool {
-	ap, err := a.app.DB.GetAudienceProfile(
-		a.ctx,
+	ap, err := a.App.DB.GetAudienceProfile(
+		a.Ctx,
 		a.organizationID,
-		a.profile.ID,
+		a.Profile.ID,
 		a.Targeting.Audiences,
 	)
 	if err != nil || ap == nil {

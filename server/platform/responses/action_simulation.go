@@ -10,5 +10,6 @@ type Step struct {
 	Name      string `json:"name"`
 	UserValue string `json:"userValue"`
 	DataValue string `json:"dataValue"`
-	Error     string `json:"error"`
+	Blocking  bool   `json:"blocking"`
+	Info      string `json:"info"`
 }

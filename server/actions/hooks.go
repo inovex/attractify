@@ -41,7 +41,7 @@ func (a Action) RunHooks(userID, event, channel string, context, properties *jso
 		}
 
 		h := Hook{
-			App:               a.app,
+			App:               a.App,
 			Config:            hook.Properties,
 			OrganizationID:    a.organizationID,
 			Action:            a.Action,
