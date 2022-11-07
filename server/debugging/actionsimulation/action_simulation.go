@@ -1,6 +1,8 @@
 package debugging
 
 import (
+	"fmt"
+
 	"attractify.io/platform/actions"
 	"attractify.io/platform/db"
 	"attractify.io/platform/platform/requests"
@@ -74,18 +76,40 @@ func (sim ActionSimulation) GetSteps() []responses.Step {
 	steps = append(steps, step)
 
 	// Trait conditions
+	sim.Action.Profile.ComputedTraits = sim.User.ComputedTraits
+	sim.Action.Profile.CustomTraits = sim.User.CustomTraits
+
 	step = responses.Step{
-		Name:      "Trait Conditions",
+		Name:      "Computedtrait Conditions",
 		UserValue: "",
 		DataValue: "",
 		Blocking:  false,
 		Info:      "",
 	}
-	sim.Action.Profile.ComputedTraits = sim.User.ComputedTraits
-	sim.Action.Profile.CustomTraits = sim.User.CustomTraits
-	if !sim.Action.TraitConditions() { //split traitconditions function?
 
-		step.Info = "Trait conditions are not fulfilled"
+	customTraitCondition, tc := sim.Action.CustomTraitConditions()
+
+	computedTraitCondition, tc := sim.Action.ComputedTraitConditions()
+
+	if !customTraitCondition {
+		step.Info = "Computedtrait conditions are not fulfilled"
+		step.UserValue = string(sim.User.ComputedTraits)
+		step.DataValue = tc.Key + " " + tc.Operator + " " + fmt.Sprintf("%v", tc.Value)
+		step.Blocking = true
+	}
+	steps = append(steps, step)
+
+	step = responses.Step{
+		Name:      "Customtrait Conditions",
+		UserValue: "",
+		DataValue: "",
+		Blocking:  false,
+		Info:      "",
+	}
+	if !computedTraitCondition {
+		step.Info = "Computedtrait conditions are not fulfilled"
+		step.UserValue = string(sim.User.CustomTraits)
+		step.DataValue = tc.Key + " " + tc.Operator + " " + fmt.Sprintf("%v", tc.Value)
 		step.Blocking = true
 	}
 	steps = append(steps, step)

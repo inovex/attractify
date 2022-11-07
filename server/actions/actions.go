@@ -84,7 +84,13 @@ func (a *Action) ShouldDisplay(actionType string, tags []string, channel string,
 	}
 
 	// Trait conditions
-	if !a.TraitConditions() {
+	customTraitCondition, _ := a.CustomTraitConditions()
+	if !customTraitCondition {
+		return false
+	}
+
+	computedTraitCondition, _ := a.ComputedTraitConditions()
+	if !computedTraitCondition {
 		return false
 	}
 
@@ -133,7 +139,13 @@ func (a *Action) IsAllowedToAccept(channel string, userID string, time time.Time
 	}
 
 	// Trait conditions
-	if !a.TraitConditions() {
+	customTraitCondition, _ := a.CustomTraitConditions()
+	if !customTraitCondition {
+		return false
+	}
+
+	computedTraitCondition, _ := a.ComputedTraitConditions()
+	if !computedTraitCondition {
 		return false
 	}
 
@@ -351,7 +363,24 @@ func (a Action) InTimeRange(now time.Time, timezone string) bool {
 	return true
 }
 
-func (a Action) TraitConditions() bool {
+func (a Action) ComputedTraitConditions() (bool, targetingCondition) {
+	for _, c := range a.Targeting.TraitConditions {
+		tc := targetingCondition{
+			Key:      c.Key,
+			Operator: c.Operator,
+			Type:     c.Type,
+			Value:    c.Value,
+		}
+		if c.Source != db.TraitConditionTypeCustom {
+			if !tc.eval(a.Profile.ComputedTraits) {
+				return false, tc
+			}
+		}
+	}
+	return true, targetingCondition{}
+}
+
+func (a Action) CustomTraitConditions() (bool, targetingCondition) {
 	for _, c := range a.Targeting.TraitConditions {
 		tc := targetingCondition{
 			Key:      c.Key,
@@ -361,15 +390,11 @@ func (a Action) TraitConditions() bool {
 		}
 		if c.Source == db.TraitConditionTypeCustom {
 			if !tc.eval(a.Profile.CustomTraits) {
-				return false
-			}
-		} else {
-			if !tc.eval(a.Profile.ComputedTraits) {
-				return false
+				return false, tc
 			}
 		}
 	}
-	return true
+	return true, targetingCondition{}
 }
 
 func (a Action) ContextConditions(channel string, context json.RawMessage) bool {
