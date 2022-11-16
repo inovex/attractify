@@ -151,7 +151,6 @@ export default {
     }
   },
   methods: {
-    // TODO: simulation, when profile is selected load traits for that profile into json field
     async startSimulation() {
       let params = {
         userId: this.user.userId,
@@ -162,7 +161,6 @@ export default {
       }
       await actionClient.simulate(params).then((res) => {
         this.computedActions = res
-        console.log(this.computedActions)
       })
     }
   },
@@ -186,6 +184,11 @@ export default {
           }, 200)
         })
     },
+    foundProfiles() {
+      if (this.foundProfiles.length === 1) {
+        this.selectedProfile = this.foundProfiles[0]
+      }
+    },
     selectedProfile(profile) {
       this.user.customTraits = JSON.stringify(profile.value.customTraits)
       this.user.computedTraits = JSON.stringify(profile.value.computedTraits)
@@ -193,7 +196,16 @@ export default {
       this.user.userId = profile.value.userId
     }
   },
-  async created() {}
+  async created() {
+    const id = this.$route.params.id
+    if (id) {
+      try {
+        this.userSearch = id
+      } catch (error) {
+        this.$router.push({ path: '/404' })
+      }
+    }
+  }
 }
 </script>
 

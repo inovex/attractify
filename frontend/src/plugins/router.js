@@ -69,7 +69,7 @@ export default new VueRouter({
   routes: [
     { path: '/', component: Dashboard, beforeEnter: requireAuth },
     { path: '/actions', component: Actions, beforeEnter: requireAuth },
-    { path: '/action-simulation', component: ActionSimulation, beforeEnter: requireAuth },
+    { path: '/action-simulation/:id?', component: ActionSimulation, beforeEnter: requireAuth },
     { path: '/reactions', component: Reactions, beforeEnter: requireAuth },
     { path: '/action/:id?', component: Action, beforeEnter: requireAuth },
     { path: '/analyze/:id?', component: Analyze, beforeEnter: requireAuth },
