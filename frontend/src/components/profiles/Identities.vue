@@ -9,6 +9,7 @@
             <th class="text-left">Is Anonymous</th>
             <th class="text-left">Channel</th>
             <th class="text-left">Created At</th>
+            <th class="text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -18,6 +19,11 @@
             <td>{{ item.isAnonymous }}</td>
             <td>{{ item.channel }}</td>
             <td>{{ item.createdAt }}</td>
+            <td>
+              <v-btn icon @click="simulate(item.userId)">
+                <v-icon title="Simulate Action">mdi-bug-play-outline</v-icon>
+              </v-btn>
+            </td>
           </tr>
         </tbody>
       </template>
@@ -35,7 +41,11 @@ export default {
       identities: []
     }
   },
-  methods: {},
+  methods: {
+    simulate(id) {
+      this.$router.push({ path: '/action-simulation/' + id })
+    }
+  },
   async created() {
     const id = this.$route.params.id
     if (id) {
