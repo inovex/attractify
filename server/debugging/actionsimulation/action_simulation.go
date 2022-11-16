@@ -1,7 +1,7 @@
 package debugging
 
 import (
-	"fmt"
+	"time"
 
 	"attractify.io/platform/actions"
 	"attractify.io/platform/db"
@@ -14,15 +14,13 @@ type ActionSimulation struct {
 	Action *actions.Action
 }
 
-func (sim ActionSimulation) GetSteps() []responses.Step {
+func (sim ActionSimulation) GetSteps() ([]responses.Step, bool) {
 	steps := []responses.Step{}
 
 	step := responses.Step{
-		Name:      "Action State",
-		UserValue: string(sim.Action.Action.State),
-		DataValue: string(sim.Action.Action.State),
-		Blocking:  false,
-		Info:      "",
+		Name:     "Action State",
+		Blocking: false,
+		Info:     "",
 	}
 
 	if sim.Action.Action.State == db.StateInactive || sim.Action.Action.State == "" {
@@ -32,12 +30,25 @@ func (sim ActionSimulation) GetSteps() []responses.Step {
 
 	steps = append(steps, step)
 
+	// Channel
 	step = responses.Step{
-		Name:      "Test User",
-		UserValue: "",
-		DataValue: "",
-		Blocking:  false,
-		Info:      "",
+		Name:     "Channel",
+		Blocking: false,
+		Info:     "",
+	}
+
+	if !sim.Action.HasChannel(sim.User.Channel) {
+		step.Info = "Action is not active for the users Channel"
+		step.Blocking = true
+	}
+
+	steps = append(steps, step)
+
+	// Test User
+	step = responses.Step{
+		Name:     "Test User",
+		Blocking: false,
+		Info:     "",
 	}
 
 	// State == staging with testusers and matching channel
@@ -49,28 +60,24 @@ func (sim ActionSimulation) GetSteps() []responses.Step {
 			step.Info = "User skips targeting."
 		}
 	} else {
-		step.Info = "Testuser are disabled. Actionstate is not staging."
+		step.Info = "Testusers are disabled. Actionstate is not staging."
 	}
 
 	steps = append(steps, step)
 
 	// Time range
 	step = responses.Step{
-		Name:      "Time Range",
-		UserValue: "",
-		DataValue: "",
-		Blocking:  false,
-		Info:      "",
+		Name:     "Time Range",
+		Blocking: false,
+		Info:     "",
 	}
 	orgDB := db.New(sim.Action.App.Analytics.DB)
 	organization, err := orgDB.GetOrganization(sim.Action.Ctx, sim.Action.Action.OrganizationID)
 	if err != nil {
 		step.Info = "Internal server error! Could not get organizations timezone."
-	} else if !sim.Action.InTimeRange(sim.User.Time, organization.Timezone) { // TODO: get timezone
+	} else if !sim.Action.InTimeRange(time.Now(), organization.Timezone) { // TODO: fix time
 		step.Info = "Time range does not match"
 		step.Blocking = true
-		step.UserValue = sim.User.Time.UTC().String()
-		step.DataValue = *sim.Action.Targeting.Start.Date + " " + *sim.Action.Targeting.Start.Time + " -> " + *sim.Action.Targeting.End.Date + " " + *sim.Action.Targeting.End.Time
 	}
 
 	steps = append(steps, step)
@@ -80,51 +87,39 @@ func (sim ActionSimulation) GetSteps() []responses.Step {
 	sim.Action.Profile.CustomTraits = sim.User.CustomTraits
 
 	step = responses.Step{
-		Name:      "Computedtrait Conditions",
-		UserValue: "",
-		DataValue: "",
-		Blocking:  false,
-		Info:      "",
+		Name:     "Computedtrait Conditions",
+		Blocking: false,
+		Info:     "",
 	}
 
-	customTraitCondition, tc := sim.Action.CustomTraitConditions()
+	customTraitCondition := sim.Action.CustomTraitConditions()
 
-	computedTraitCondition, tc := sim.Action.ComputedTraitConditions()
+	computedTraitCondition := sim.Action.ComputedTraitConditions()
 
 	if !customTraitCondition {
 		step.Info = "Computedtrait conditions are not fulfilled"
-		step.UserValue = string(sim.User.ComputedTraits)
-		step.DataValue = tc.Key + " " + tc.Operator + " " + fmt.Sprintf("%v", tc.Value)
 		step.Blocking = true
 	}
 	steps = append(steps, step)
 
 	step = responses.Step{
-		Name:      "Customtrait Conditions",
-		UserValue: "",
-		DataValue: "",
-		Blocking:  false,
-		Info:      "",
+		Name:     "Customtrait Conditions",
+		Blocking: false,
+		Info:     "",
 	}
 	if !computedTraitCondition {
 		step.Info = "Computedtrait conditions are not fulfilled"
-		step.UserValue = string(sim.User.CustomTraits)
-		step.DataValue = tc.Key + " " + tc.Operator + " " + fmt.Sprintf("%v", tc.Value)
 		step.Blocking = true
 	}
 	steps = append(steps, step)
 
 	// Context conditions
 	step = responses.Step{
-		Name:      "Context Conditions",
-		UserValue: "",
-		DataValue: "",
-		Blocking:  false,
-		Info:      "",
+		Name:     "Context Conditions",
+		Blocking: false,
+		Info:     "",
 	}
 	if !sim.Action.ContextConditions(sim.User.Channel, sim.User.Context) {
-		step.UserValue = string(sim.User.Context)
-		step.DataValue = "" //sim.Action.Action.Context TODO
 		step.Info = "Context conditions are not fulfilled"
 		step.Blocking = true
 	}
@@ -133,29 +128,36 @@ func (sim ActionSimulation) GetSteps() []responses.Step {
 
 	// Is in audience
 	step = responses.Step{
-		Name:      "Audience",
-		UserValue: "",
-		DataValue: "",
-		Blocking:  false,
-		Info:      "",
+		Name:     "Audience",
+		Blocking: false,
+		Info:     "",
 	}
 	if len(sim.Action.Targeting.Audiences) > 0 && !sim.Action.IsInAudiences() {
-		//return false
+		step.Info = "User is not in a given audience"
+		step.Blocking = true
 	}
 	steps = append(steps, step)
 
 	// Capping
 	step = responses.Step{
-		Name:      "Capping",
-		UserValue: "",
-		DataValue: "",
-		Blocking:  false,
-		Info:      "",
+		Name:     "Capping",
+		Blocking: false,
+		Info:     "",
 	}
 	if len(sim.Action.Capping) > 0 && !sim.Action.HasNoCapping() {
-		//return false
+		step.Info = "Capping blocks the action"
+		step.Blocking = true
 	}
 	steps = append(steps, step)
 
-	return steps
+	display := true
+
+	for _, step := range steps {
+		if step.Blocking {
+			display = false
+			break
+		}
+	}
+
+	return steps, display
 }

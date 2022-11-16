@@ -65,5 +65,14 @@ export default {
     } catch (e) {
       throw e
     }
+  },
+  async simulate(params) {
+    try {
+      params.time = Date.now()
+      const res = await restClient.post(`/action-simulation`, params)
+      return res.data
+    } catch (e) {
+      throw e
+    }
   }
 }

@@ -24,7 +24,7 @@ type Action struct {
 	Targeting       *db.ActionTargeting
 	Capping         []db.ActionCapping
 	hooks           []db.ActionHook
-	testUsers       []db.ActionTestUser
+	TestUsers       []db.ActionTestUser
 }
 
 func New(ctx context.Context, app *app.App, orgID uuid.UUID, action *db.Action, profile *db.Profile, profileIdentity *db.ProfileIdentity) *Action {
@@ -41,7 +41,7 @@ func New(ctx context.Context, app *app.App, orgID uuid.UUID, action *db.Action, 
 	json.Unmarshal(a.Action.Properties, &a.properties)
 	json.Unmarshal(a.Action.Targeting, &a.Targeting)
 	json.Unmarshal(a.Action.Capping, &a.Capping)
-	json.Unmarshal(a.Action.TestUsers, &a.testUsers)
+	json.Unmarshal(a.Action.TestUsers, &a.TestUsers)
 
 	return &a
 }
@@ -84,13 +84,11 @@ func (a *Action) ShouldDisplay(actionType string, tags []string, channel string,
 	}
 
 	// Trait conditions
-	customTraitCondition, _ := a.CustomTraitConditions()
-	if !customTraitCondition {
+	if !a.CustomTraitConditions() {
 		return false
 	}
 
-	computedTraitCondition, _ := a.ComputedTraitConditions()
-	if !computedTraitCondition {
+	if !a.ComputedTraitConditions() {
 		return false
 	}
 
@@ -139,13 +137,11 @@ func (a *Action) IsAllowedToAccept(channel string, userID string, time time.Time
 	}
 
 	// Trait conditions
-	customTraitCondition, _ := a.CustomTraitConditions()
-	if !customTraitCondition {
+	if !a.CustomTraitConditions() {
 		return false
 	}
 
-	computedTraitCondition, _ := a.ComputedTraitConditions()
-	if !computedTraitCondition {
+	if !a.ComputedTraitConditions() {
 		return false
 	}
 
@@ -159,7 +155,7 @@ func (a *Action) IsAllowedToAccept(channel string, userID string, time time.Time
 
 func (a Action) HasTestUser(userID, channel string) bool {
 	var testUser *db.ActionTestUser
-	for _, t := range a.testUsers {
+	for _, t := range a.TestUsers {
 		if t.UserID == userID {
 			for _, c := range t.Channels {
 				if c == channel {
@@ -180,7 +176,7 @@ func (a Action) HasTestUser(userID, channel string) bool {
 func (a Action) SkipTargeting(userID, channel string) bool {
 	var testUser db.ActionTestUser
 	var foundTestUser bool
-	for _, t := range a.testUsers {
+	for _, t := range a.TestUsers {
 		if t.UserID == userID {
 			for _, c := range t.Channels {
 				if c == channel {
@@ -363,7 +359,7 @@ func (a Action) InTimeRange(now time.Time, timezone string) bool {
 	return true
 }
 
-func (a Action) ComputedTraitConditions() (bool, targetingCondition) {
+func (a Action) ComputedTraitConditions() bool {
 	for _, c := range a.Targeting.TraitConditions {
 		tc := targetingCondition{
 			Key:      c.Key,
@@ -373,14 +369,14 @@ func (a Action) ComputedTraitConditions() (bool, targetingCondition) {
 		}
 		if c.Source != db.TraitConditionTypeCustom {
 			if !tc.eval(a.Profile.ComputedTraits) {
-				return false, tc
+				return false
 			}
 		}
 	}
-	return true, targetingCondition{}
+	return true
 }
 
-func (a Action) CustomTraitConditions() (bool, targetingCondition) {
+func (a Action) CustomTraitConditions() bool {
 	for _, c := range a.Targeting.TraitConditions {
 		tc := targetingCondition{
 			Key:      c.Key,
@@ -390,11 +386,11 @@ func (a Action) CustomTraitConditions() (bool, targetingCondition) {
 		}
 		if c.Source == db.TraitConditionTypeCustom {
 			if !tc.eval(a.Profile.CustomTraits) {
-				return false, tc
+				return false
 			}
 		}
 	}
-	return true, targetingCondition{}
+	return true
 }
 
 func (a Action) ContextConditions(channel string, context json.RawMessage) bool {

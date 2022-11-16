@@ -20,20 +20,19 @@
                     :loading="isLoading"
                     :search-input.sync="userSearch"
                     prepend-icon="mdi-account"
-                    required
                     hide-no-data
                     item-text="name"
                     label="User ID"
+                    required
                     return-object
                   ></v-autocomplete>
                 </v-col>
               </v-row>
-              <!-- are Channel, Type, Tags important? -->
               <v-row>
                 <v-col class="col-6">
                   <v-textarea
                     :rules="[rules.json]"
-                    v-model="user.customProperties"
+                    v-model="user.customTraits"
                     multi-line
                     label="Custom Properties"
                     required
@@ -42,7 +41,7 @@
                 <v-col class="col-6">
                   <v-textarea
                     :rules="[rules.json]"
-                    v-model="user.computedProperties"
+                    v-model="user.computedTraits"
                     label="Computed Properties"
                     required
                   ></v-textarea>
@@ -59,7 +58,7 @@
                     rounded
                     color="primary"
                     style="color: var(--v-buttontext-base)"
-                    :disabled="!valid"
+                    :disabled="!valid || !selectedProfile"
                     @click="startSimulation()"
                     >Check Actions</v-btn
                   >
@@ -69,19 +68,32 @@
             <v-divider></v-divider>
             <v-card-text>
               <v-expansion-panels focusable>
-                <v-expansion-panel v-for="(action, index) in computedActions" v-bind:key="index">
+                <v-expansion-panel v-for="(action, index) in computedActions" :key="index">
                   <v-expansion-panel-header disable-icon-rotate>
                     {{ action.name }}
                     <template v-slot:actions>
-                      <v-icon :color="listIcons[action.state].color"> {{ listIcons[action.state].icon }} </v-icon>
+                      <v-icon :color="listIcons[action.display].color"> {{ listIcons[action.display].icon }} </v-icon>
                     </template>
                   </v-expansion-panel-header>
 
-                  <v-expansion-panel-content>
-                    <div v-for="(step, index) in action.steps" :key="step + index">
-                      {{ step.name }} => {{ step.userValue }} compared to {{ step.dataValue }} <br />
-                      Error: {{ step.error }}
-                    </div>
+                  <v-expansion-panel-content style="padding-top: 1rem">
+                    <v-expansion-panels focusable>
+                      <v-expansion-panel v-for="(step, index) in action.steps" :key="'test' + index">
+                        <v-expansion-panel-header disable-icon-rotate>
+                          {{ step.name }}
+                          <template v-slot:actions>
+                            <v-icon :color="listIcons[!step.blocking].color">
+                              {{ listIcons[!step.blocking].icon }}
+                            </v-icon>
+                          </template>
+                        </v-expansion-panel-header>
+
+                        <v-expansion-panel-content>
+                          {{ step.name }}<br />
+                          Info: {{ step.info }}
+                        </v-expansion-panel-content>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
               </v-expansion-panels>
@@ -94,7 +106,7 @@
 </template>
   
 <script>
-import actionsClient from '../lib/rest/actions'
+import actionClient from '../lib/rest/actions'
 import profilesClient from '../lib/rest/profiles'
 import Help from './Help'
 
@@ -105,55 +117,23 @@ export default {
       errorMessages: '',
       selectedProfile: null,
       userSearch: '',
-      user: {},
+      user: {
+        customTraits: '{}',
+        computedTraits: '{}',
+        context: '{}',
+        channel: ''
+      },
       listIcons: {
-        error: {
+        false: {
           icon: 'mdi-alert-circle',
           color: 'error'
         },
-        correct: {
+        true: {
           icon: 'mdi-check',
           color: 'teal'
         }
       },
-      computedActions: [
-        {
-          name: 'Action 1',
-          state: 'correct',
-          steps: [
-            {
-              name: 'Check 1',
-              userValue: '10',
-              dataValue: '20',
-              error: ''
-            },
-            {
-              name: 'Check 2',
-              userValue: '10',
-              dataValue: '20',
-              error: ''
-            }
-          ]
-        },
-        {
-          name: 'Action 2',
-          state: 'error',
-          steps: [
-            {
-              name: 'Check 1',
-              userValue: '10',
-              dataValue: '20',
-              error: 'Value of user not high enough'
-            },
-            {
-              name: 'Check 2',
-              userValue: '10',
-              dataValue: '20',
-              error: 'Value of user not high enough'
-            }
-          ]
-        }
-      ],
+      computedActions: [],
       actionId: '',
       foundProfiles: [],
       isLoading: false,
@@ -172,14 +152,18 @@ export default {
   },
   methods: {
     // TODO: simulation, when profile is selected load traits for that profile into json field
-    async loadActions() {
-      const res = await actionsClient.list()
-      return res.map((e) => {
-        return { text: e.name, value: e.id }
+    async startSimulation() {
+      let params = {
+        userId: this.user.userId,
+        customTraits: JSON.parse(this.user.customTraits),
+        computedTraits: JSON.parse(this.user.computedTraits),
+        context: JSON.parse(this.user.context),
+        channel: this.user.channel
+      }
+      await actionClient.simulate(params).then((res) => {
+        this.computedActions = res
+        console.log(this.computedActions)
       })
-    },
-    startSimulation() {
-      console.log('TODO: start simulation')
     }
   },
   watch: {
@@ -197,8 +181,16 @@ export default {
           })
         })
         .finally(() => {
-          this.isLoading = false
+          setTimeout(() => {
+            this.isLoading = false
+          }, 200)
         })
+    },
+    selectedProfile(profile) {
+      this.user.customTraits = JSON.stringify(profile.value.customTraits)
+      this.user.computedTraits = JSON.stringify(profile.value.computedTraits)
+      this.user.channel = profile.value.channel
+      this.user.userId = profile.value.userId
     }
   },
   async created() {}
