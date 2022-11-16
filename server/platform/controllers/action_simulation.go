@@ -61,6 +61,7 @@ func (ac ActionSimulationController) Simulate(c *gin.Context) {
 		steps, display := as.GetSteps()
 		res = append(res, responses.CheckedAction{
 			Name:    a.Name,
+			Id:      a.ID.String(),
 			Display: display,
 			Steps:   steps,
 		})

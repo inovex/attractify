@@ -77,6 +77,13 @@
                   </v-expansion-panel-header>
 
                   <v-expansion-panel-content style="padding-top: 1rem">
+                    <v-btn
+                      rounded
+                      color="primary"
+                      style="color: var(--v-buttontext-base); margin-bottom: 1rem"
+                      @click="gotoAction(action.id)"
+                      >Goto Action</v-btn
+                    >
                     <v-expansion-panels focusable>
                       <v-expansion-panel v-for="(step, index) in action.steps" :key="'test' + index">
                         <v-expansion-panel-header disable-icon-rotate>
@@ -88,10 +95,7 @@
                           </template>
                         </v-expansion-panel-header>
 
-                        <v-expansion-panel-content>
-                          {{ step.name }}<br />
-                          Info: {{ step.info }}
-                        </v-expansion-panel-content>
+                        <v-expansion-panel-content> Info: {{ step.info }} </v-expansion-panel-content>
                       </v-expansion-panel>
                     </v-expansion-panels>
                   </v-expansion-panel-content>
@@ -162,6 +166,10 @@ export default {
       await actionClient.simulate(params).then((res) => {
         this.computedActions = res
       })
+    },
+    gotoAction(id) {
+      let route = this.$router.resolve({ path: '/action/' + id })
+      window.open(route.href)
     }
   },
   watch: {
