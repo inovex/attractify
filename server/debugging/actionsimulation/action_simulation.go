@@ -18,44 +18,44 @@ func (sim ActionSimulation) GetSteps() ([]responses.Step, bool) {
 	steps := []responses.Step{}
 
 	step := responses.Step{
-		Name:     "Action State",
-		Blocking: false,
-		Info:     "",
+		Name:  "Action State",
+		State: "correct",
+		Info:  "",
 	}
 
 	if sim.Action.Action.State == db.StateInactive || sim.Action.Action.State == "" {
 		step.Info = "Actionstate is inactive"
-		step.Blocking = true
+		step.State = "error"
 	}
 
 	steps = append(steps, step)
 
 	// Channel
 	step = responses.Step{
-		Name:     "Channel",
-		Blocking: false,
-		Info:     "",
+		Name:  "Channel",
+		State: "correct",
+		Info:  "",
 	}
 
 	if !sim.Action.HasChannel(sim.User.Channel) {
 		step.Info = "Action is not active for the users Channel"
-		step.Blocking = true
+		step.State = "error"
 	}
 
 	steps = append(steps, step)
 
 	// Test User
 	step = responses.Step{
-		Name:     "Test User",
-		Blocking: false,
-		Info:     "",
+		Name:  "Test User",
+		State: "correct",
+		Info:  "",
 	}
 
 	// State == staging with testusers and matching channel
 	if sim.Action.Action.State == db.StateStaging {
 		if !sim.Action.HasTestUser(sim.User.UserID.String(), sim.User.Channel) {
 			step.Info = "User is not a testuser of this staging action."
-			step.Blocking = true
+			step.State = "error"
 		} else if sim.Action.SkipTargeting(sim.User.UserID.String(), sim.User.Channel) {
 			step.Info = "User skips targeting."
 		}
@@ -67,17 +67,18 @@ func (sim ActionSimulation) GetSteps() ([]responses.Step, bool) {
 
 	// Time range
 	step = responses.Step{
-		Name:     "Time Range",
-		Blocking: false,
-		Info:     "",
+		Name:  "Time Range",
+		State: "correct",
+		Info:  "",
 	}
 	orgDB := db.New(sim.Action.App.Analytics.DB)
 	organization, err := orgDB.GetOrganization(sim.Action.Ctx, sim.Action.Action.OrganizationID)
 	if err != nil {
 		step.Info = "Internal server error! Could not get organizations timezone."
+		step.State = "server_error"
 	} else if !sim.Action.InTimeRange(time.Now(), organization.Timezone) { // TODO: fix time
 		step.Info = "Time range does not match"
-		step.Blocking = true
+		step.State = "error"
 	}
 
 	steps = append(steps, step)
@@ -87,9 +88,9 @@ func (sim ActionSimulation) GetSteps() ([]responses.Step, bool) {
 	sim.Action.Profile.CustomTraits = sim.User.CustomTraits
 
 	step = responses.Step{
-		Name:     "Computedtrait Conditions",
-		Blocking: false,
-		Info:     "",
+		Name:  "Computedtrait Conditions",
+		State: "correct",
+		Info:  "",
 	}
 
 	customTraitCondition := sim.Action.CustomTraitConditions()
@@ -98,62 +99,62 @@ func (sim ActionSimulation) GetSteps() ([]responses.Step, bool) {
 
 	if !customTraitCondition {
 		step.Info = "Computedtrait conditions are not fulfilled"
-		step.Blocking = true
+		step.State = "error"
 	}
 	steps = append(steps, step)
 
 	step = responses.Step{
-		Name:     "Customtrait Conditions",
-		Blocking: false,
-		Info:     "",
+		Name:  "Customtrait Conditions",
+		State: "correct",
+		Info:  "",
 	}
 	if !computedTraitCondition {
 		step.Info = "Computedtrait conditions are not fulfilled"
-		step.Blocking = true
+		step.State = "error"
 	}
 	steps = append(steps, step)
 
 	// Context conditions
 	step = responses.Step{
-		Name:     "Context Conditions",
-		Blocking: false,
-		Info:     "",
+		Name:  "Context Conditions",
+		State: "correct",
+		Info:  "",
 	}
 	if !sim.Action.ContextConditions(sim.User.Channel, sim.User.Context) {
 		step.Info = "Context conditions are not fulfilled"
-		step.Blocking = true
+		step.State = "error"
 	}
 
 	steps = append(steps, step)
 
 	// Is in audience
 	step = responses.Step{
-		Name:     "Audience",
-		Blocking: false,
-		Info:     "",
+		Name:  "Audience",
+		State: "correct",
+		Info:  "",
 	}
 	if len(sim.Action.Targeting.Audiences) > 0 && !sim.Action.IsInAudiences() {
 		step.Info = "User is not in a given audience"
-		step.Blocking = true
+		step.State = "error"
 	}
 	steps = append(steps, step)
 
 	// Capping
 	step = responses.Step{
-		Name:     "Capping",
-		Blocking: false,
-		Info:     "",
+		Name:  "Capping",
+		State: "correct",
+		Info:  "",
 	}
 	if len(sim.Action.Capping) > 0 && !sim.Action.HasNoCapping() {
 		step.Info = "Capping blocks the action"
-		step.Blocking = true
+		step.State = "error"
 	}
 	steps = append(steps, step)
 
 	display := true
 
 	for _, step := range steps {
-		if step.Blocking {
+		if step.State == "error" {
 			display = false
 			break
 		}

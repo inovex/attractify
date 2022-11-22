@@ -72,7 +72,9 @@
                   <v-expansion-panel-header disable-icon-rotate>
                     {{ action.name }}
                     <template v-slot:actions>
-                      <v-icon :color="listIcons[action.display].color"> {{ listIcons[action.display].icon }} </v-icon>
+                      <v-icon :color="listIcons[action.display ? 'correct' : 'error'].color">
+                        {{ listIcons[action.display ? 'correct' : 'error'].icon }}
+                      </v-icon>
                     </template>
                   </v-expansion-panel-header>
 
@@ -89,8 +91,8 @@
                         <v-expansion-panel-header disable-icon-rotate>
                           {{ step.name }}
                           <template v-slot:actions>
-                            <v-icon :color="listIcons[!step.blocking].color">
-                              {{ listIcons[!step.blocking].icon }}
+                            <v-icon :color="listIcons[step.state].color">
+                              {{ listIcons[step.state].icon }}
                             </v-icon>
                           </template>
                         </v-expansion-panel-header>
@@ -128,17 +130,20 @@ export default {
         channel: ''
       },
       listIcons: {
-        false: {
+        error: {
           icon: 'mdi-alert-circle',
           color: 'error'
         },
-        true: {
+        correct: {
           icon: 'mdi-check',
           color: 'teal'
+        },
+        server_error: {
+          icon: 'mdi-alert-circle',
+          color: 'orange'
         }
       },
       computedActions: [],
-      actionId: '',
       foundProfiles: [],
       isLoading: false,
       valid: false,

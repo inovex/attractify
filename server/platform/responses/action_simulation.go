@@ -11,6 +11,6 @@ type Step struct {
 	Name string `json:"name"`
 	//UserValue string `json:"userValue"`
 	//DataValue string `json:"dataValue"`
-	Blocking bool   `json:"blocking"`
-	Info     string `json:"info"`
+	State string `json:"state"`
+	Info  string `json:"info"`
 }
