@@ -95,27 +95,32 @@
                 <v-tab href="#capping">Capping</v-tab>
                 <v-tab href="#hooks">Hooks</v-tab>
                 <v-tab href="#testUsers">Testusers</v-tab>
+                <v-tab href="#simulation">Simulation</v-tab>
               </v-tabs>
 
               <v-tabs-items v-model="tabs">
                 <v-tab-item value="properties">
-                  <Properties :properties="action.properties" @change="changes=true" />
+                  <Properties :properties="action.properties" @change="changes = true" />
                 </v-tab-item>
 
                 <v-tab-item value="targeting">
-                  <Targeting :targeting="action.targeting" @change="changes=true" />
+                  <Targeting :targeting="action.targeting" @change="changes = true" />
                 </v-tab-item>
 
                 <v-tab-item value="capping">
-                  <Capping :capping="action.capping" @change="changes=true" />
+                  <Capping :capping="action.capping" @change="changes = true" />
                 </v-tab-item>
 
                 <v-tab-item value="hooks">
-                  <Hooks :hooks="action.hooks" @change="changes=true" />
+                  <Hooks :hooks="action.hooks" @change="changes = true" />
                 </v-tab-item>
 
                 <v-tab-item value="testUsers">
-                  <TestUsers :test-users="action.testUsers" @change="changes=true" />
+                  <TestUsers :test-users="action.testUsers" @change="changes = true" />
+                </v-tab-item>
+
+                <v-tab-item value="simulation">
+                  <Simulation :action="action" />
                 </v-tab-item>
               </v-tabs-items>
             </v-card-text>
@@ -127,11 +132,19 @@
     <v-col class="sticky text-center">
       <v-spacer />
       <v-btn rounded elevation="2" @click="cancel()">Cancel</v-btn>
-      <v-btn rounded elevation="2" color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="save()">Save</v-btn>
+      <v-btn
+        rounded
+        elevation="2"
+        color="primary"
+        style="color: var(--v-buttontext-base)"
+        :disabled="!valid"
+        @click="save()"
+        >Save</v-btn
+      >
     </v-col>
 
     <v-dialog v-model="exitUnsaved" max-width="700px" closeable>
-      <UnsavedContent :valid="valid" @cancel="cancelExit" @save="save" @exit="exit"/>
+      <UnsavedContent :valid="valid" @cancel="cancelExit" @save="save" @exit="exit" />
     </v-dialog>
   </v-container>
 </template>
@@ -143,11 +156,12 @@ import Targeting from './action/Targeting.vue'
 import Capping from './action/Capping.vue'
 import Hooks from './action/Hooks.vue'
 import TestUsers from './action/TestUsers.vue'
+import Simulation from './action/Simulation.vue'
 import UnsavedContent from './UnsavedContent.vue'
 import Help from './Help'
 
 export default {
-  components: { Properties, Targeting, Capping, Hooks, TestUsers, Help, UnsavedContent },
+  components: { Properties, Targeting, Capping, Hooks, TestUsers, Help, UnsavedContent, Simulation },
   data() {
     return {
       tabs: '',
@@ -178,12 +192,12 @@ export default {
       exitUnsaved: false,
       exitUrl: null,
       rules: {
-        required: value => !!value || 'Required.'
+        required: (value) => !!value || 'Required.'
       }
     }
   },
   methods: {
-    cancel(){
+    cancel() {
       this.$router.push('/actions')
     },
     ...mapActions('actions', ['show', 'create', 'update']),
@@ -201,22 +215,22 @@ export default {
         }
 
         this.$notify.success('Your action has been saved.')
-        if(this.exitUnsaved){
+        if (this.exitUnsaved) {
           this.exit()
         }
       } catch (e) {
         this.$notify.error('Could not save action.')
       }
     },
-    cancelExit(){
+    cancelExit() {
       this.exitUnsaved = false
       this.exitUrl = null
     },
-    exit(){
+    exit() {
       this.changes = false
-      if(this.exitUrl){
+      if (this.exitUrl) {
         this.$router.push(this.exitUrl)
-      }else{
+      } else {
         this.$router.push('/actions')
       }
     }
@@ -233,13 +247,13 @@ export default {
     }
   },
   beforeRouteLeave(to, from, next) {
-    if(this.changes){
+    if (this.changes) {
       this.exitUnsaved = true
       this.exitUrl = to.path
       return false
     }
     next()
-  },
+  }
 }
 </script>
 
@@ -254,7 +268,7 @@ export default {
   bottom: 1rem;
   z-index: 1;
 }
-.sticky button{
+.sticky button {
   margin: 0 0.5rem;
 }
 </style>

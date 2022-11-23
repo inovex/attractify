@@ -26,16 +26,17 @@ func InitActionSimulation(router *gin.RouterGroup, app *app.App) {
 
 func (ac ActionSimulationController) Simulate(c *gin.Context) {
 	user := c.MustGet("user").(*db.User)
-	actionss, err := ac.App.DB.GetActions(c.Request.Context(), user.OrganizationID)
-	if err != nil {
-		ac.App.Logger.Warn("actionSimulation.list.getActions", zap.Error(err))
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
-	}
 
 	var req requests.ActionSimulationUser
 	if err := c.ShouldBindJSON(&req); err != nil {
 		ac.App.Logger.Warn("actionsimulation.simulate.parseRequest", zap.Error(err))
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	actionss, err := ac.App.DB.GetActions(c.Request.Context(), user.OrganizationID)
+	if err != nil {
+		ac.App.Logger.Warn("actionSimulation.list.getActions", zap.Error(err))
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
@@ -51,21 +52,45 @@ func (ac ActionSimulationController) Simulate(c *gin.Context) {
 		},
 	}
 
-	res := []responses.CheckedAction{}
-	for _, a := range actionss {
-		as.Action.Action = &a
+	if req.ActionID == "" {
+		res := []responses.CheckedAction{}
+		for _, a := range actionss {
+			as.Action.Action = &a
 
-		json.Unmarshal(a.Targeting, &as.Action.Targeting)
-		json.Unmarshal(a.Capping, &as.Action.Capping)
-		json.Unmarshal(a.TestUsers, &as.Action.TestUsers)
-		steps, display := as.GetSteps()
-		res = append(res, responses.CheckedAction{
-			Name:    a.Name,
-			Id:      a.ID.String(),
-			Display: display,
-			Steps:   steps,
-		})
+			json.Unmarshal(a.Targeting, &as.Action.Targeting)
+			json.Unmarshal(a.Capping, &as.Action.Capping)
+			json.Unmarshal(a.TestUsers, &as.Action.TestUsers)
+			steps, display := as.GetSteps()
+			res = append(res, responses.CheckedAction{
+				Name:    a.Name,
+				Id:      a.ID.String(),
+				Display: display,
+				Steps:   steps,
+			})
+		}
+		c.JSON(http.StatusOK, res)
+		return
 	}
 
+	res := responses.CheckedAction{}
+	for _, a := range actionss {
+		if a.ID.String() == req.ActionID {
+			as.Action.Action = &a
+
+			json.Unmarshal(a.Targeting, &as.Action.Targeting)
+			json.Unmarshal(a.Capping, &as.Action.Capping)
+			json.Unmarshal(a.TestUsers, &as.Action.TestUsers)
+			steps, display := as.GetSteps()
+			res = responses.CheckedAction{
+				Name:    a.Name,
+				Id:      a.ID.String(),
+				Display: display,
+				Steps:   steps,
+			}
+			break
+		}
+	}
 	c.JSON(http.StatusOK, res)
+	return
+
 }

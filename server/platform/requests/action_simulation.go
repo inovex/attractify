@@ -13,8 +13,9 @@ type ActionSimulation struct {
 }
 
 type ActionSimulationUser struct {
-	UserID  uuid.UUID `json:"userId"`
-	Channel string    `json:"channel"`
+	UserID   uuid.UUID `json:"userId"`
+	Channel  string    `json:"channel"`
+	ActionID string    `json:"actionId"`
 	//Time           int64           `json:"time"`
 	ComputedTraits json.RawMessage `json:"computedTraits"`
 	CustomTraits   json.RawMessage `json:"customTraits"`
