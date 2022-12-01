@@ -1,6 +1,7 @@
 package debugging
 
 import (
+	"fmt"
 	"time"
 
 	"attractify.io/platform/actions"
@@ -71,12 +72,13 @@ func (sim ActionSimulation) GetSteps() ([]responses.Step, bool) {
 		State: "correct",
 		Info:  "",
 	}
-	orgDB := db.New(sim.Action.App.Analytics.DB)
-	organization, err := orgDB.GetOrganization(sim.Action.Ctx, sim.Action.Action.OrganizationID)
+	// orgDB := db.New()
+	organization, err := sim.Action.App.DB.GetOrganization(sim.Action.Ctx, sim.Action.Action.OrganizationID)
 	if err != nil {
+		fmt.Println(err)
 		step.Info = "Internal server error! Could not get organizations timezone."
 		step.State = "server_error"
-	} else if !sim.Action.InTimeRange(time.Now(), organization.Timezone) { // TODO: fix time
+	} else if !sim.Action.InTimeRange(time.Now(), organization.Timezone) {
 		step.Info = "Time range does not match"
 		step.State = "error"
 	}

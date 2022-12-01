@@ -97,7 +97,9 @@
                           </template>
                         </v-expansion-panel-header>
 
-                        <v-expansion-panel-content> Info: {{ step.info }} </v-expansion-panel-content>
+                        <v-expansion-panel-content>
+                          <v-card-text>Info: {{ step.info }} </v-card-text>
+                        </v-expansion-panel-content>
                       </v-expansion-panel>
                     </v-expansion-panels>
                   </v-expansion-panel-content>
