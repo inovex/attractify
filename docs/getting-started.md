@@ -137,6 +137,8 @@ You can find the **actions** in the left menu of the Attractify backend. In the 
  - `Targeting`: who and when receives the **action**, e.g. `only user with department property set to marketing`.
  - `Capping`: how often should a user receive the action, e.g. `once per week`.
  - `Hooks`: define what happens if a user received the **action**.
+ - `Testusers`: define specific users which receive the **action** in staging state.
+ - `Simulation`: here you can simulate the **action** with a testuser.
 
 JavaScript code for actions:
 
