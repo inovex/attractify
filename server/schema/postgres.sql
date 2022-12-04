@@ -45,8 +45,9 @@ CREATE TABLE IF NOT EXISTS action_types (
 	version int not NULL DEFAULT 1,
 	properties jsonb NOT NULL DEFAULT '[]'::jsonb,
 	is_archived bool NOT NULL DEFAULT false,
-	created_at timestamp NOT NULL DEFAULT now()
-) UNIQUE (organization_id, name);
+	created_at timestamp NOT NULL DEFAULT now(),
+	UNIQUE (organization_id, name)
+) ;
 
 CREATE TABLE IF NOT EXISTS profiles (
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
