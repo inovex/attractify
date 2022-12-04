@@ -30,7 +30,7 @@
               </v-btn>
             </template>
             <template v-slot:item.type_name="{ item }">
-              <span>{{ item.type }} v{{ item.version }}</span>
+              <span>{{ item.typeName }} v{{ item.typeVersion }}</span>
             </template>
             <template v-slot:item.state="{ item }">
               <span v-if="item.state === 'inactive'"> <v-icon size="medium">mdi-pause</v-icon>Inactive </span>
