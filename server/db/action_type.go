@@ -165,3 +165,15 @@ AND t.version = $3
 	var items []ActionType
 	return items, d.db.SelectContext(ctx, &items, q, orgID, name, version)
 }
+
+func (d *DB) GetNewActionTypeVersion(ctx context.Context, orgID uuid.UUID, name string) (int, error) {
+	const q = `
+SELECT COUNT(*)
+FROM action_types t 
+WHERE t.organization_id = $1
+AND t.name = $2
+`
+
+	var version []int
+	return (version[0] + 1), d.db.SelectContext(ctx, &version, q, orgID, name)
+}

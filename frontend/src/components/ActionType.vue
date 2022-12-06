@@ -110,11 +110,10 @@ export default {
           ) {
             return
           }
+          this.actionType.version = this.actionType.version + 1
           await this.create(this.actionType).then((res) => {
             if (res && res.id) {
-              if (this.actionType.id) {
-                this.actionType.version = this.actionType.version + 1
-              } else {
+              if (!this.actionType.id) {
                 newRoute = true
               }
               this.actionType.id = res.id

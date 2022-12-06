@@ -97,10 +97,15 @@ func (ac ActionTypesController) Create(c *gin.Context) {
 		return
 	}
 
-	version := req.Version
 	for _, archivedType := range archivedTypes {
 		ac.App.DB.UnArchiveActionType(c, user.OrganizationID, archivedType.ID)
-		version = archivedType.Version + 1
+	}
+
+	version, err := ac.App.DB.GetNewActionTypeVersion(c, user.OrganizationID, req.Name)
+	if err != nil {
+		ac.App.Logger.Error("actionTypes.create.getNewVersion", zap.Error(err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 
 	args := db.CreateActionTypeParams{

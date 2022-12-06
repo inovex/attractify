@@ -279,7 +279,27 @@ export default {
         return true
       })
 
-      this.action.typeProperties = currentVersion.properties
+      for (const key in this.action.typeProperties) {
+        let currentProperty = this.action.properties[key]
+        let edited = false
+
+        let newProperty = null
+        for (const key2 in currentVersion.properties) {
+          newProperty = currentVersion.properties[key2]
+          if (currentProperty.name !== newProperty.name) {
+            continue
+          }
+          currentProperty.channels = newProperty.channels
+          currentProperty.type = newProperty.type
+          currentProperty.value = newProperty.value
+          edited = true
+          break
+        }
+        if (!edited || newProperty === null) {
+          continue
+        }
+        this.action.typeProperties.push(newProperty)
+      }
     },
     splitProperties() {
       let currentVersion
@@ -310,8 +330,8 @@ export default {
       for (const key in this.action.typeProperties) {
         let currentProperty = this.action.typeProperties[key]
         this.action.properties.push(currentProperty)
-        this.action.typeProperties.pop(key)
       }
+      this.action.typeProperties = []
     }
   },
   async created() {
