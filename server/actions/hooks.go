@@ -25,7 +25,7 @@ func (a *Action) parseHooks() error {
 	return json.Unmarshal(a.action.Hooks, &a.hooks)
 }
 
-func (a Action) RunHooks(userID, event, channel string, context, properties *json.RawMessage) (json.RawMessage, error) {
+func (a Action) RunHooks(userID, event, channel string, context, properties *json.RawMessage, successfull *bool) (json.RawMessage, error) {
 	if err := a.parseHooks(); err != nil {
 		return nil, err
 	}
@@ -60,6 +60,9 @@ func (a Action) RunHooks(userID, event, channel string, context, properties *jso
 				return nil, err
 			}
 			if res != nil {
+				if res.StatusCode >= 300 {
+					*successfull = false
+				}
 				result, _ = json.Marshal(res)
 			}
 		case "track_event":
