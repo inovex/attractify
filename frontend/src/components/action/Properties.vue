@@ -18,7 +18,7 @@
     <v-card-subtitle>
       Action Properties are used to assign values to names and use them later in the actions.
     </v-card-subtitle>
-    <v-card outlined v-for="(prop, index) in typeProperties" v-bind:key="index" class="mb-4">
+    <v-card outlined v-for="(prop, index) in typeProperties" v-bind:key="'fromType' + index" class="mb-4">
       <v-card-text>
         <h4 v-if="prop.type === 'text'">Text</h4>
         <h4 v-if="prop.type === 'custom_trait'">Custom Trait</h4>
@@ -91,7 +91,7 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <v-card outlined v-for="(prop, index) in properties" v-bind:key="index" class="mb-4">
+    <v-card outlined v-for="(prop, index) in properties" v-bind:key="'fromAction' + index" class="mb-4">
       <v-card-text>
         <h4 v-if="prop.type === 'text'">Text</h4>
         <h4 v-if="prop.type === 'custom_trait'">Custom Trait</h4>

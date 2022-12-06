@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS actions (
 	tags jsonb NOT NULL DEFAULT '[]'::jsonb,
 	state text NOT NULL DEFAULT 'inactive',
 	properties jsonb NOT NULL DEFAULT '[]'::jsonb,
-	type_properties jsonb NOT NULL DEFAULT '[]'::jsonb,
 	targeting jsonb NOT NULL DEFAULT '{}'::jsonb,
 	capping jsonb NOT NULL DEFAULT '{}'::jsonb,
 	hooks jsonb NOT NULL DEFAULT '[]'::jsonb,

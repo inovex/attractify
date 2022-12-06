@@ -63,7 +63,6 @@ func (ac ActionsController) List(c *gin.Context) {
 			State:          string(a.State),
 			Tags:           a.Tags,
 			Properties:     a.Properties,
-			TypeProperties: a.TypeProperties,
 			Targeting:      a.Targeting,
 			Capping:        a.Capping,
 			Hooks:          a.Hooks,
@@ -97,7 +96,6 @@ func (ac ActionsController) Show(c *gin.Context) {
 		State:          string(action.State),
 		Tags:           action.Tags,
 		Properties:     action.Properties,
-		TypeProperties: action.TypeProperties,
 		Targeting:      action.Targeting,
 		Capping:        action.Capping,
 		Hooks:          action.Hooks,
@@ -120,7 +118,6 @@ func (ac ActionsController) Create(c *gin.Context) {
 	user := c.MustGet("user").(*db.User)
 	tags, _ := json.Marshal(req.Tags)
 	properties, _ := json.Marshal(req.Properties)
-	typeProperties, _ := json.Marshal(req.TypeProperties)
 	targeting, _ := json.Marshal(req.Targeting)
 	capping, _ := json.Marshal(req.Capping)
 	hooks, _ := json.Marshal(req.Hooks)
@@ -145,7 +142,6 @@ func (ac ActionsController) Create(c *gin.Context) {
 		State:          db.ActionState(req.State),
 		Tags:           tags,
 		Properties:     properties,
-		TypeProperties: typeProperties,
 		Targeting:      targeting,
 		Capping:        capping,
 		Hooks:          hooks,
@@ -166,7 +162,6 @@ func (ac ActionsController) Create(c *gin.Context) {
 		TypeName:       action.TypeName,
 		TypeVersion:    action.TypeVersion,
 		Properties:     action.Properties,
-		TypeProperties: action.TypeProperties,
 		Targeting:      action.Targeting,
 		Capping:        action.Capping,
 		Hooks:          action.Hooks,
@@ -201,7 +196,6 @@ func (ac ActionsController) Duplicate(c *gin.Context) {
 		State:          db.ActionState(db.StateInactive),
 		Tags:           action.Tags,
 		Properties:     action.Properties,
-		TypeProperties: action.TypeProperties,
 		Targeting:      action.Targeting,
 		Capping:        action.Capping,
 		Hooks:          action.Hooks,
@@ -227,7 +221,6 @@ func (ac ActionsController) Update(c *gin.Context) {
 	user := c.MustGet("user").(*db.User)
 	tags, _ := json.Marshal(req.Tags)
 	properties, _ := json.Marshal(req.Properties)
-	typeProperties, _ := json.Marshal(req.TypeProperties)
 	targeting, _ := json.Marshal(req.Targeting)
 	capping, _ := json.Marshal(req.Capping)
 	hooks, _ := json.Marshal(req.Hooks)
@@ -252,7 +245,6 @@ func (ac ActionsController) Update(c *gin.Context) {
 		Tags:           tags,
 		State:          db.ActionState(req.State),
 		Properties:     properties,
-		TypeProperties: typeProperties,
 		Targeting:      targeting,
 		Capping:        capping,
 		Hooks:          hooks,

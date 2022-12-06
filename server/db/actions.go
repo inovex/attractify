@@ -34,7 +34,6 @@ type Action struct {
 	TypeVersion    int             `db:"type_version"`
 	Tags           json.RawMessage `db:"tags"`
 	Properties     json.RawMessage `db:"properties"`
-	TypeProperties json.RawMessage `db:"type_properties"`
 	Targeting      json.RawMessage `db:"targeting"`
 	Capping        json.RawMessage `db:"capping"`
 	Hooks          json.RawMessage `db:"hooks"`
@@ -125,7 +124,6 @@ type CreateActionParams struct {
 	Tags           json.RawMessage
 	State          ActionState
 	Properties     json.RawMessage
-	TypeProperties json.RawMessage
 	Targeting      json.RawMessage
 	Capping        json.RawMessage
 	Hooks          json.RawMessage
@@ -141,13 +139,12 @@ INSERT INTO actions (
 	tags,
 	state,
     properties,
-    type_properties,
     targeting,
     capping,
 	hooks,
 	test_users
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
 )
 RETURNING *
 `
@@ -159,7 +156,6 @@ RETURNING *
 		arg.Tags,
 		arg.State,
 		arg.Properties,
-		arg.TypeProperties,
 		arg.Targeting,
 		arg.Capping,
 		arg.Hooks,
@@ -225,7 +221,6 @@ type UpdateActionParams struct {
 	Tags           json.RawMessage
 	State          ActionState
 	Properties     json.RawMessage
-	TypeProperties json.RawMessage
 	Targeting      json.RawMessage
 	Capping        json.RawMessage
 	Hooks          json.RawMessage
@@ -242,14 +237,13 @@ SET name = $1,
 	tags = $3,
 	state = $4,
     properties = $5,
-    type_properties = $6,
-    targeting = $7,
-    capping = $8,
-	hooks = $9,
-	test_users = $10,
+    targeting = $6,
+    capping = $7,
+	hooks = $8,
+	test_users = $9,
     updated_at = now()
-WHERE organization_id = $11
-AND id = $12
+WHERE organization_id = $10
+AND id = $11
 `
 
 	_, err := d.db.ExecContext(ctx, q,
@@ -258,7 +252,6 @@ AND id = $12
 		arg.Tags,
 		arg.State,
 		arg.Properties,
-		arg.TypeProperties,
 		arg.Targeting,
 		arg.Capping,
 		arg.Hooks,

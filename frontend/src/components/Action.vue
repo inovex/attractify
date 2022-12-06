@@ -220,6 +220,7 @@ export default {
     ...mapActions('actions', ['show', 'create', 'update']),
     async save() {
       try {
+        this.mergeProperties()
         let res = null
         if (this.action.id) {
           res = await this.update(this.action)
@@ -239,6 +240,7 @@ export default {
       } catch (e) {
         this.$notify.error('Could not save action.')
       }
+      this.splitProperties()
     },
     cancelExit() {
       this.exitUnsaved = false
@@ -278,6 +280,38 @@ export default {
       })
 
       this.action.typeProperties = currentVersion.properties
+    },
+    splitProperties() {
+      let currentVersion
+      this.actionTypes.every((actionType) => {
+        if (this.action.type == actionType.id) {
+          currentVersion = actionType
+          return false
+        }
+        return true
+      })
+
+      this.action.typeProperties = []
+      for (const key in this.action.properties) {
+        let currentProperty = this.action.properties[key]
+
+        for (const keyType in currentVersion.properties) {
+          let currentTypeProperty = currentVersion.properties[keyType]
+
+          if (currentProperty.name === currentTypeProperty.name) {
+            this.action.typeProperties.push(currentProperty)
+            this.action.properties.pop(key)
+            break
+          }
+        }
+      }
+    },
+    mergeProperties() {
+      for (const key in this.action.typeProperties) {
+        let currentProperty = this.action.typeProperties[key]
+        this.action.properties.push(currentProperty)
+        this.action.typeProperties.pop(key)
+      }
     }
   },
   async created() {
@@ -295,6 +329,7 @@ export default {
       .list()
       .then((actionTypes) => {
         this.actionTypes = actionTypes
+        this.splitProperties()
         this.actionTypes.forEach((actionType) => {
           if (!actionType.isArchived || actionType.name == this.action.typeName) {
             this.actionTypeSelector.push(actionType.name)
