@@ -67,7 +67,6 @@ import UnsavedContent from './UnsavedContent.vue'
 import Help from './Help'
 import Properties from './action/Properties.vue'
 import actionTypeClient from '../lib/rest/actionTypes'
-import actionTypes from '../lib/rest/actionTypes'
 
 export default {
   components: { Help, UnsavedContent, Properties },
