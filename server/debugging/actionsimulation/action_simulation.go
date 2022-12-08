@@ -72,7 +72,7 @@ func (sim ActionSimulation) GetSteps() ([]responses.Step, bool) {
 		State: "correct",
 		Info:  "",
 	}
-	// orgDB := db.New()
+
 	organization, err := sim.Action.App.DB.GetOrganization(sim.Action.Ctx, sim.Action.Action.OrganizationID)
 	if err != nil {
 		fmt.Println(err)

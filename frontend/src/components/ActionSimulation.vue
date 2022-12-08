@@ -8,7 +8,6 @@
               <v-toolbar-title>Action Simulation</v-toolbar-title>
               <v-spacer></v-spacer>
               <help name="actionsimulation" />
-              <!-- TODO: write help page -->
             </v-toolbar>
             <v-card-text class="raised">
               <v-card-title>User</v-card-title>
