@@ -112,7 +112,7 @@ AND id = $2
 
 func (d *DB) GetActionTypeByUUID(ctx context.Context, orgID, id uuid.UUID) (ActionType, error) {
 	const q = `
-SELECT t.*, 
+SELECT DISTINCT t.*, 
 CASE WHEN a.id is not null THEN 'True' ELSE 'False' END as is_in_use
 FROM action_types t LEFT JOIN actions a ON a.type_id = t.id
 WHERE t.organization_id = $1
@@ -127,7 +127,7 @@ LIMIT 1
 
 func (d *DB) GetActionTypes(ctx context.Context, orgID uuid.UUID) ([]ActionType, error) {
 	const q = `
-SELECT t.*, 
+SELECT DISTINCT t.*, 
 CASE WHEN a.id is not null THEN 'True' ELSE 'False' END as is_in_use
 FROM action_types t LEFT JOIN actions a ON a.type_id = t.id
 WHERE t.organization_id = $1
@@ -140,7 +140,7 @@ ORDER BY t.name, t.version
 
 func (d *DB) GetActionTypesByName(ctx context.Context, orgID uuid.UUID, name string) ([]ActionType, error) {
 	const q = `
-SELECT t.*, 
+SELECT DISTINCT t.*, 
 CASE WHEN a.id is not null THEN 'True' ELSE 'False' END as is_in_use
 FROM action_types t LEFT JOIN actions a ON a.type_id = t.id
 WHERE t.organization_id = $1
@@ -154,7 +154,7 @@ ORDER BY t.version
 
 func (d *DB) GetActionTypesByNameAndVersion(ctx context.Context, orgID uuid.UUID, name string, version int) ([]ActionType, error) {
 	const q = `
-SELECT t.*, 
+SELECT DISTINCT t.*, 
 CASE WHEN a.id is not null THEN 'True' ELSE 'False' END as is_in_use
 FROM action_types t LEFT JOIN actions a ON a.type_id = t.id
 WHERE t.organization_id = $1
