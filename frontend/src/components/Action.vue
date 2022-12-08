@@ -312,19 +312,19 @@ export default {
       })
 
       this.action.typeProperties = []
-      for (const key in this.action.properties) {
-        let currentProperty = this.action.properties[key]
-
+      for (let i = this.action.properties.length - 1; i >= 0; i--) {
+        let currentProperty = this.action.properties[i]
         for (const keyType in currentVersion.properties) {
           let currentTypeProperty = currentVersion.properties[keyType]
 
           if (currentProperty.name === currentTypeProperty.name) {
             this.action.typeProperties.push(currentProperty)
-            this.action.properties.pop(key)
+            this.action.properties.pop(i)
             break
           }
         }
       }
+      this.action.typeProperties.reverse()
     },
     mergeProperties() {
       for (const key in this.action.typeProperties) {
@@ -349,7 +349,6 @@ export default {
       .list()
       .then((actionTypes) => {
         this.actionTypes = actionTypes
-        this.splitProperties()
         this.actionTypes.forEach((actionType) => {
           if (!actionType.isArchived || actionType.name == this.action.typeName) {
             this.actionTypeSelector.push(actionType.name)
@@ -357,6 +356,7 @@ export default {
         })
       })
       .finally(() => {
+        this.splitProperties()
         this.versionSelector = []
         this.actionTypes.forEach((actionType) => {
           if (actionType.name == this.action.typeName) {
