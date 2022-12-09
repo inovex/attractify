@@ -46,7 +46,7 @@ func New(ctx context.Context, app *app.App, orgID uuid.UUID, action *db.Action, 
 	return &a
 }
 
-func (a *Action) ShouldDisplay(actionType uuid.UUID, tags []string, channel string, userID string, context json.RawMessage, time time.Time, timezone string) bool {
+func (a *Action) ShouldDisplay(actionType string, tags []string, channel string, userID string, context json.RawMessage, time time.Time, timezone string) bool {
 	// State
 	if a.action.State == db.StateInactive || a.action.State == "" {
 		return false
@@ -240,9 +240,9 @@ func (a Action) HasChannel(channel string) bool {
 	return false
 }
 
-func (a Action) HasAndMatchesType(actionType uuid.UUID) bool {
+func (a Action) HasAndMatchesType(actionType string) bool {
 	if len(actionType) > 0 {
-		return a.action.Type == actionType
+		return a.action.TypeName == actionType
 	}
 	return true
 }
