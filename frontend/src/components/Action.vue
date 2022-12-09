@@ -279,13 +279,13 @@ export default {
         return true
       })
 
-      for (const key in this.action.typeProperties) {
-        let currentProperty = this.action.properties[key]
+      this.mergeProperties()
+      for (const key in currentVersion.properties) {
         let edited = false
+        let newProperty = currentVersion.properties[key]
 
-        let newProperty = null
-        for (const key2 in currentVersion.properties) {
-          newProperty = currentVersion.properties[key2]
+        for (const key2 in this.action.properties) {
+          let currentProperty = this.action.properties[key2]
           if (currentProperty.name !== newProperty.name) {
             continue
           }
@@ -295,11 +295,13 @@ export default {
           edited = true
           break
         }
-        if (!edited || newProperty === null) {
+
+        if (edited || newProperty === null) {
           continue
         }
-        this.action.typeProperties.push(newProperty)
+        this.action.properties.push(newProperty)
       }
+      this.splitProperties()
     },
     splitProperties() {
       let currentVersion
