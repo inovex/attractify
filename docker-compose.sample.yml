@@ -14,8 +14,8 @@ services:
     hostname: postgres
     environment:
       POSTGRES_DB: attractify
-      POSTGRES_PASSWORD: attractify
-      POSTGRES_USER: attractify
+      POSTGRES_PASSWORD: <YOUR_PASSWORD>
+      POSTGRES_USER: <YOUR_USER>
     networks:
       - attractify
     ports:
@@ -54,6 +54,6 @@ services:
       - clickhouse
     restart: always
     volumes:
-      - ./server/config.prod.json:/app/config.json
+      - ./server/config.json:/app/config.json
     deploy:
       replicas: 1

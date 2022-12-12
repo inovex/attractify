@@ -46,6 +46,7 @@ func apiHandler(app *app.App) http.Handler {
 		platform.InitUsers(p, app)
 		platform.InitActions(p, app)
 		platform.InitActionSimulation(p, app)
+		platform.InitActionTypes(p, app)
 		platform.InitReactions(p, app)
 		platform.InitPrivacy(p, app)
 		platform.InitAnalyze(p, app)

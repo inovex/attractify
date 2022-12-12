@@ -253,7 +253,7 @@ func (a Action) HasChannel(channel string) bool {
 
 func (a Action) HasAndMatchesType(actionType string) bool {
 	if len(actionType) > 0 {
-		return a.Action.Type == actionType
+		return a.Action.TypeName == actionType
 	}
 	return true
 }

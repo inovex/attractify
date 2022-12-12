@@ -26,16 +26,27 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col class="col-lg-6">
-                  <v-text-field
-                    label="Type of Action"
-                    name="type"
+                <v-col class="col-lg-3">
+                  <v-select
+                    dense
                     prepend-icon="mdi-tune"
-                    type="text"
-                    @input="changes = true"
+                    :items="actionTypeSelector"
+                    label="Type"
+                    @change="selectType"
+                    v-model="action.typeName"
+                    :rules="[rules.required]"
+                  ></v-select>
+                </v-col>
+                <v-col class="col-lg-3">
+                  <v-select
+                    dense
+                    prepend-icon="mdi-tune"
+                    :items="versionSelector"
+                    label="Version"
+                    @change="selectVersion"
                     v-model="action.type"
                     :rules="[rules.required]"
-                  />
+                  ></v-select>
                 </v-col>
               </v-row>
             </v-card-text>
@@ -100,7 +111,11 @@
 
               <v-tabs-items v-model="tabs">
                 <v-tab-item value="properties">
-                  <Properties :properties="action.properties" @change="changes = true" />
+                  <Properties
+                    :properties="action.properties"
+                    :typeProperties="action.typeProperties"
+                    @change="changes = true"
+                  />
                 </v-tab-item>
 
                 <v-tab-item value="targeting">
@@ -158,6 +173,7 @@ import Hooks from './action/Hooks.vue'
 import TestUsers from './action/TestUsers.vue'
 import Simulation from './action/Simulation.vue'
 import UnsavedContent from './UnsavedContent.vue'
+import actionTypesClient from '../lib/rest/actionTypes'
 import Help from './Help'
 
 export default {
@@ -167,8 +183,12 @@ export default {
       tabs: '',
       action: {
         state: 'inactive',
+        type: null,
+        typeName: '',
+        typeVersion: 1,
         tags: [],
         properties: [],
+        typeProperties: [],
         targeting: {
           channels: [],
           start: {},
@@ -193,7 +213,10 @@ export default {
       exitUrl: null,
       rules: {
         required: (value) => !!value || 'Required.'
-      }
+      },
+      actionTypes: [],
+      actionTypeSelector: [],
+      versionSelector: []
     }
   },
   methods: {
@@ -203,6 +226,7 @@ export default {
     ...mapActions('actions', ['show', 'create', 'update']),
     async save() {
       try {
+        this.mergeProperties()
         let res = null
         if (this.action.id) {
           res = await this.update(this.action)
@@ -214,6 +238,7 @@ export default {
           this.action.id = res.id
         }
 
+        this.changes = false
         this.$notify.success('Your action has been saved.')
         if (this.exitUnsaved) {
           this.exit()
@@ -221,6 +246,7 @@ export default {
       } catch (e) {
         this.$notify.error('Could not save action.')
       }
+      this.splitProperties()
     },
     cancelExit() {
       this.exitUnsaved = false
@@ -233,6 +259,87 @@ export default {
       } else {
         this.$router.push('/actions')
       }
+    },
+    selectType() {
+      this.changes = true
+
+      this.versionSelector = []
+      this.actionTypes.forEach((actionType) => {
+        if (actionType.name == this.action.typeName) {
+          this.versionSelector.push({ text: actionType.version, value: actionType.id })
+        }
+      })
+
+      this.action.type = this.versionSelector[this.versionSelector.length - 1].value
+      this.selectVersion()
+    },
+    selectVersion() {
+      this.changes = true
+
+      let currentVersion
+      this.actionTypes.every((actionType) => {
+        if (this.action.type == actionType.id) {
+          currentVersion = actionType
+          return false
+        }
+        return true
+      })
+
+      this.mergeProperties()
+      for (const key in currentVersion.properties) {
+        let edited = false
+        let newProperty = currentVersion.properties[key]
+
+        for (const key2 in this.action.properties) {
+          let currentProperty = this.action.properties[key2]
+          if (currentProperty.name !== newProperty.name) {
+            continue
+          }
+          currentProperty.channels = newProperty.channels
+          currentProperty.type = newProperty.type
+          currentProperty.value = newProperty.value
+          edited = true
+          break
+        }
+
+        if (edited || newProperty === null) {
+          continue
+        }
+        this.action.properties.push(newProperty)
+      }
+      this.splitProperties()
+    },
+    splitProperties() {
+      let currentVersion
+      this.actionTypes.every((actionType) => {
+        if (this.action.type == actionType.id) {
+          currentVersion = actionType
+          return false
+        }
+        return true
+      })
+
+      this.action.typeProperties = []
+      for (let i = this.action.properties.length - 1; i >= 0; i--) {
+        let currentProperty = this.action.properties[i]
+        for (const keyType in currentVersion.properties) {
+          let currentTypeProperty = currentVersion.properties[keyType]
+
+          if (currentProperty.name === currentTypeProperty.name) {
+            this.action.typeProperties.push(currentProperty)
+            this.action.properties.pop(i)
+            break
+          }
+        }
+      }
+      this.action.typeProperties.reverse()
+    },
+    mergeProperties() {
+      for (const key in this.action.typeProperties) {
+        let currentProperty = this.action.typeProperties[key]
+        this.action.properties.push(currentProperty)
+      }
+      this.action.typeProperties = []
     }
   },
   async created() {
@@ -245,6 +352,26 @@ export default {
         this.$router.push({ path: '/404' })
       }
     }
+
+    actionTypesClient
+      .list()
+      .then((actionTypes) => {
+        this.actionTypes = actionTypes
+        this.actionTypes.forEach((actionType) => {
+          if (!actionType.isArchived || actionType.name == this.action.typeName) {
+            this.actionTypeSelector.push(actionType.name)
+          }
+        })
+      })
+      .finally(() => {
+        this.splitProperties()
+        this.versionSelector = []
+        this.actionTypes.forEach((actionType) => {
+          if (actionType.name == this.action.typeName) {
+            this.versionSelector.push({ text: actionType.version, value: actionType.id })
+          }
+        })
+      })
   },
   beforeRouteLeave(to, from, next) {
     if (this.changes) {

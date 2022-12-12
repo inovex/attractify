@@ -27,8 +27,16 @@ class Attractify {
   queueWorker() {
     const tasks = this.queue.get()
     for (const [k, v] of Object.entries(tasks)) {
-      this.request('POST', '/track', v).then(() => {
+      if (v.locked) {
+        continue;
+      }
+      v.locked = true
+      this.queue.set(k, v)
+      this.request('POST', '/track', v.params).then(() => {
         this.queue.remove(k)
+      }).catch(() => {
+        v.locked = false
+        this.queue.set(k, v)
       })
     }
   }
@@ -165,14 +173,17 @@ class Attractify {
   }
 
   async track(event, properties) {
-    const params = {
-      event: event,
-      userId: this.state.userId,
-      properties: properties,
-      context: this.getContext(),
+    const queueItem = {
+      locked: false,
+      params: {
+        event: event,
+        userId: this.state.userId,
+        properties: properties,
+        context: this.getContext(),
+      }
     }
 
-    this.queue.set(this.uuidv4(), params)
+    this.queue.set(this.uuidv4(), queueItem)
   }
 
   // Track event
