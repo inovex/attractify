@@ -19,9 +19,9 @@ func (a Action) MapProperties(channel string) map[string]interface{} {
 		if s.Type == "text" {
 			propMap[s.Name] = s.Value
 		} else if s.Type == "custom_trait" {
-			propMap[s.Name] = a.extractVal(a.profile.CustomTraits, s)
+			propMap[s.Name] = a.extractVal(a.Profile.CustomTraits, s)
 		} else if s.Type == "computed_trait" {
-			propMap[s.Name] = a.extractVal(a.profile.ComputedTraits, s)
+			propMap[s.Name] = a.extractVal(a.Profile.ComputedTraits, s)
 		}
 	}
 

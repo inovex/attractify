@@ -106,6 +106,7 @@
                 <v-tab href="#capping">Capping</v-tab>
                 <v-tab href="#hooks">Hooks</v-tab>
                 <v-tab href="#testUsers">Testusers</v-tab>
+                <v-tab href="#simulation">Simulation</v-tab>
               </v-tabs>
 
               <v-tabs-items v-model="tabs">
@@ -131,6 +132,10 @@
 
                 <v-tab-item value="testUsers">
                   <TestUsers :test-users="action.testUsers" @change="changes = true" />
+                </v-tab-item>
+
+                <v-tab-item value="simulation">
+                  <Simulation :action="action" />
                 </v-tab-item>
               </v-tabs-items>
             </v-card-text>
@@ -166,12 +171,13 @@ import Targeting from './action/Targeting.vue'
 import Capping from './action/Capping.vue'
 import Hooks from './action/Hooks.vue'
 import TestUsers from './action/TestUsers.vue'
+import Simulation from './action/Simulation.vue'
 import UnsavedContent from './UnsavedContent.vue'
 import actionTypesClient from '../lib/rest/actionTypes'
 import Help from './Help'
 
 export default {
-  components: { Properties, Targeting, Capping, Hooks, TestUsers, Help, UnsavedContent },
+  components: { Properties, Targeting, Capping, Hooks, TestUsers, Help, UnsavedContent, Simulation },
   data() {
     return {
       tabs: '',

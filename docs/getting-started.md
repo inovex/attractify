@@ -138,6 +138,8 @@ First we have to define the type of action, before we can create the action itse
  - `Targeting`: who and when receives the **action**, e.g. `only user with department property set to marketing`.
  - `Capping`: how often should a user receive the action, e.g. `once per week`.
  - `Hooks`: define what happens if a user received the **action**.
+ - `Testusers`: define specific users which receive the **action** in staging state.
+ - `Simulation`: here you can simulate the **action** with a testuser.
 
 JavaScript code for actions:
 
@@ -163,6 +165,15 @@ After we have created events and custom traits and accumulated results, actions 
 Display the statistics for played out discount codes:
 
 ![](/docs/assets/analyze-action.gif)
+
+## Simulation  of Actions
+Checking your actions can be quite tough, since you have many parameters to check. That's why attractify has an easy simulation tool where you can check whether your actions are defined correctly or not. 
+
+First you select an user via the `userID`. You can either search, select an user via the user profiles, or select a testuser from an action directly in the action definition. Then you define traits to specify your request.
+
+Afterwards you can identify errors or varify that your action is defined correctly.
+
+![](/docs/assets/action-simulation.gif)
 
 ## Process DSGVO requests
 Data protection is more important than ever. At Attractify, we want to help you comprehensively provide user data to the appropriate user with minimal effort. You can easily delete or export his data. Another feature allows you to "lock" profiles. Once a profile has this status, no further data from Attractify will be assigned to that user.

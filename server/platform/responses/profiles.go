@@ -15,6 +15,18 @@ type Profile struct {
 	UpdatedAt      time.Time       `json:"updatedAt"`
 }
 
+type IdentityWithTraits struct {
+	ID             uuid.UUID       `json:"id"`
+	Channel        string          `json:"channel"`
+	Type           string          `json:"type"`
+	UserID         string          `json:"userId"`
+	CustomTraits   json.RawMessage `json:"customTraits"`
+	ComputedTraits json.RawMessage `json:"computedTraits"`
+	IsAnonymous    bool            `json:"isAnonymous"`
+	CreatedAt      time.Time       `json:"createdAt"`
+	UpdatedAt      time.Time       `json:"updatedAt"`
+}
+
 type Identity struct {
 	ID          uuid.UUID `json:"id"`
 	Channel     string    `json:"channel"`

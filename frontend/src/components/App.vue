@@ -162,6 +162,11 @@ export default {
           text: 'Reactions',
           link: '/reactions'
         },
+
+        { divider: true },
+        { header: true, text: 'Debugging' },
+        { icon: 'mdi-debug-step-over', text: 'Action Simulation', link: '/action-simulation' },
+
         { divider: true },
         { header: true, text: 'Insights' },
         { icon: 'mdi-chart-bar', text: 'Analyze', link: '/analyze' },
