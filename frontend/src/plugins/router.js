@@ -107,23 +107,24 @@ export default new VueRouter({
       beforeEnter: requireAuth
     },
 
-    { path: '/user', component: User },
+    { path: '/profiles', component: Profiles, beforeEnter: requireAuth },
+    { path: '/profile/:id?', component: Profile, beforeEnter: requireAuth },
+    { path: '*', component: NotFound, beforeEnter: requireAuth },
+
+    { path: '/audiences', component: Audiences, beforeEnter: requireAuth },
+    { path: '/audience/:id?', component: Audience, beforeEnter: requireAuth },
+
+    { path: '/custom-traits', component: CustomTraits, beforeEnter: requireAuth },
+    { path: '/computed-traits', component: ComputedTraits, beforeEnter: requireAuth },
+    { path: '/computed-trait/:id?', component: ComputedTrait, beforeEnter: requireAuth },
+
+    { path: '/privacy', component: Privacy, beforeEnter: requireAuth },
+
+    { path: '/user', component: User, beforeEnter: requireAuth },
     { path: '/user/login', component: Login },
     { path: '/user/reset-password', component: ResetPassword },
     { path: '/user/reset-password/:token?', component: ResetPassword },
-    { path: '/user/activate/:token', component: Activate },
+    { path: '/user/activate/:token', component: Activate }
 
-    { path: '/profiles', component: Profiles },
-    { path: '/profile/:id?', component: Profile },
-    { path: '*', component: NotFound },
-
-    { path: '/audiences', component: Audiences },
-    { path: '/audience/:id?', component: Audience },
-
-    { path: '/custom-traits', component: CustomTraits },
-    { path: '/computed-traits', component: ComputedTraits },
-    { path: '/computed-trait/:id?', component: ComputedTrait },
-
-    { path: '/privacy', component: Privacy }
   ]
 })

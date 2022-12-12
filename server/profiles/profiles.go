@@ -122,17 +122,19 @@ func (p *Profile) UpdateOrCreate() error {
 	}
 
 	// Update custom traits.
-	var traits db.Traits
-	if err := json.Unmarshal(profile.CustomTraits, &traits); err != nil {
-		return err
-	}
-	if !reflect.DeepEqual(traits, p.traits) {
-		p.traitsJSON = *p.params.Traits
-		profile.CustomTraits = *p.params.Traits
-		profile.UpdatedAt = time.Now().UTC()
+	if p.params.Traits != nil {
+		var traits db.Traits
+		if err := json.Unmarshal(profile.CustomTraits, &traits); err != nil {
+			return err
+		}
+		if !reflect.DeepEqual(traits, p.traits) {
+			p.traitsJSON = *p.params.Traits
+			profile.CustomTraits = *p.params.Traits
+			profile.UpdatedAt = time.Now().UTC()
 
-		if err := p.updateProfile(profile); err != nil {
-			return fmt.Errorf("could not update profile (%v): %w", profile, err)
+			if err := p.updateProfile(profile); err != nil {
+				return fmt.Errorf("could not update profile (%v): %w", profile, err)
+			}
 		}
 	}
 

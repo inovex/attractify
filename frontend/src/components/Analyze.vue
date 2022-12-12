@@ -92,7 +92,7 @@
         <v-card>
           <v-card-title>Events</v-card-title>
           <v-card-text>
-            <LineChart :chart-data="events"></LineChart>
+            <LineChart :chart-data="events" :fontColor="legendFontColor"></LineChart>
           </v-card-text>
           <v-card-text>
             <v-simple-table>
@@ -105,7 +105,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="(value, key) in totalEvents" :key="key">
-                    <td>{{ key.toUpperCase() }}</td>
+                    <td>{{ capitalizeFirstLetter(key) }}</td>
                     <td class="text-right">{{ value }}</td>
                   </tr>
                 </tbody>
@@ -118,7 +118,7 @@
         <v-card min-height="100%">
           <v-card-title>Rates</v-card-title>
           <v-card-text>
-            <DoughnutChart :chart-data="ratesChart"></DoughnutChart>
+            <DoughnutChart :chart-data="ratesChart" :fontColor="legendFontColor"></DoughnutChart>
           </v-card-text>
           <v-card-text>
             <v-simple-table>
@@ -131,27 +131,27 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Delivered / Shown</td>
+                    <td>Shown / Delivered</td>
                     <td class="text-right">
-                      {{ new Intl.NumberFormat().format(rates.delivered / rates.shown) }}
+                      {{ new Intl.NumberFormat().format((rates.shown / rates.delivered) * 100) }}
                     </td>
                   </tr>
                   <tr>
-                    <td>Shown / Hidden</td>
+                    <td>Hidden / Shown</td>
                     <td class="text-right">
-                      {{ new Intl.NumberFormat().format(rates.shown / rates.hidden) }}
+                      {{ new Intl.NumberFormat().format((rates.hidden / rates.shown) * 100) }}
                     </td>
                   </tr>
                   <tr>
-                    <td>Shown / Declined</td>
+                    <td>Declined / Shown</td>
                     <td class="text-right">
-                      {{ new Intl.NumberFormat().format(rates.shown / rates.declined) }}
+                      {{ new Intl.NumberFormat().format((rates.declined / rates.shown) * 100) }}
                     </td>
                   </tr>
                   <tr>
-                    <td>Shown / Accepted</td>
+                    <td>Accepted / Shown</td>
                     <td class="text-right">
-                      {{ new Intl.NumberFormat().format(rates.shown / rates.accepted) }}
+                      {{ new Intl.NumberFormat().format((rates.accepted / rates.shown) * 100) }}
                     </td>
                   </tr>
                 </tbody>
@@ -164,7 +164,7 @@
         <v-card min-height="100%">
           <v-card-title>Reach</v-card-title>
           <v-card-text>
-            <BarChart :chart-data="reachChart"></BarChart>
+            <BarChart :chart-data="reachChart" :fontColor="legendFontColor"></BarChart>
           </v-card-text>
           <v-card-text>
             <v-simple-table>
@@ -177,7 +177,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="(value, key) of reach" :key="key">
-                    <td>{{ value.channel.toUpperCase() }}</td>
+                    <td>{{ capitalizeFirstLetter(value.channel) }}</td>
                     <td class="text-right">
                       {{ new Intl.NumberFormat().format(value.total) }}
                     </td>
@@ -209,6 +209,12 @@ const humanLabels = {
 
 export default {
   components: { APISelect, LineChart, DoughnutChart, BarChart, Help },
+  props: {
+    darkmode: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       actionId: null,
@@ -225,12 +231,8 @@ export default {
         end: false
       },
       range: {
-        start: moment()
-          .startOf('month')
-          .format('YYYY-MM-DD'),
-        end: moment()
-          .endOf('month')
-          .format('YYYY-MM-DD'),
+        start: moment().startOf('month').format('YYYY-MM-DD'),
+        end: moment().endOf('month').format('YYYY-MM-DD'),
         interval: 'day'
       },
       events: {},
@@ -250,18 +252,22 @@ export default {
         close: 0.0,
         dismiss: 0.0,
         accept: 0.0
-      }
+      },
+      legendFontColor: 'rgb(100,100,100)'
     }
   },
   watch: {
     range() {
       this.render()
+    },
+    darkmode() {
+      this.updateChartColor()
     }
   },
   methods: {
     async loadActions() {
       const res = await actionsClient.list()
-      return res.map(e => {
+      return res.map((e) => {
         return { text: e.name, value: e.id }
       })
     },
@@ -270,14 +276,8 @@ export default {
         return
       }
 
-      let start = moment(this.range.start)
-        .startOf('day')
-        .utc()
-        .format('YYYY-MM-DD HH:mm:ss')
-      let end = moment(this.range.end)
-        .endOf('day')
-        .utc()
-        .format('YYYY-MM-DD HH:mm:ss')
+      let start = moment(this.range.start).startOf('day').utc().format('YYYY-MM-DD HH:mm:ss')
+      let end = moment(this.range.end).endOf('day').utc().format('YYYY-MM-DD HH:mm:ss')
       let range = {
         start: start,
         end: end,
@@ -294,12 +294,16 @@ export default {
       } catch (e) {
         this.$notify.info('No data available for the selected filters.')
       }
+      this.updateChartColor()
+    },
+    updateChartColor() {
+      this.legendFontColor = this.darkmode ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)'
     },
     prepareEvents(events) {
       let datasets = {
         delivered: {
           label: 'Delivered',
-          borderColor: 'rgba(235, 235, 235, 0.3)',
+          borderColor: 'rgba(180, 180, 180, 0.3)',
           fill: false,
           data: []
         },
@@ -348,7 +352,7 @@ export default {
         datasets: [
           {
             backgroundColor: [
-              'rgba(235, 235, 235, 0.3)',
+              'rgba(180, 180, 180, 0.3)',
               'rgba(52, 171, 235, 0.3)',
               'rgba(232, 235, 52, 0.3)',
               'rgba(255, 82, 82, 0.3)',
@@ -409,21 +413,24 @@ export default {
 
       let labels = Array.from(intervals)
       if (interval === 'hour') {
-        labels = labels.map(val => `${val}h`)
+        labels = labels.map((val) => `${val}h`)
       }
 
       if (interval === 'month') {
-        labels = labels.map(val => humanLabels.months[val - 1])
+        labels = labels.map((val) => humanLabels.months[val - 1])
       }
 
       if (interval === 'weekDay') {
-        labels = labels.map(val => humanLabels.weekDays[val - 1])
+        labels = labels.map((val) => humanLabels.weekDays[val - 1])
       }
 
       return {
         labels: labels,
         datasets: Object.values(datasets)
       }
+    },
+    capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1)
     },
     hashCode(input) {
       var hash = 0,
@@ -443,6 +450,7 @@ export default {
     this.actionId = this.$route.params.id
     if (this.actionId) {
       this.render()
+      this.updateChartColor()
     }
   }
 }
