@@ -179,7 +179,9 @@ AND id = $2
 func (d *DB) GetAction(ctx context.Context, orgID, id uuid.UUID) (Action, error) {
 	const q = `
 SELECT a.*, t.name as type_name, t.version as type_version
-FROM actions a INNER JOIN action_types t ON a.type_id = t.id
+FROM actions a 
+INNER JOIN action_types t 
+ON a.type_id = t.id
 WHERE a.organization_id = $1
 AND a.id = $2
 LIMIT 1
@@ -193,7 +195,9 @@ LIMIT 1
 func (d *DB) GetActions(ctx context.Context, orgID uuid.UUID) ([]Action, error) {
 	const q = `
 SELECT a.*, t.name as type_name, t.version as type_version
-FROM actions a INNER JOIN action_types t ON a.type_id = t.id
+FROM actions a 
+INNER JOIN action_types t 
+ON a.type_id = t.id
 WHERE a.organization_id = $1
 `
 
