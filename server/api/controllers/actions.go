@@ -187,8 +187,7 @@ func (ac ActionsController) Act(c *gin.Context) {
 		}
 	}
 
-	successfullHooks := true
-	res, err := a.RunHooks(req.UserID, event, auth.Channel, req.Context, req.Properties, &successfullHooks)
+	res, isHookSuccessful, err := a.RunHooks(req.UserID, event, auth.Channel, req.Context, req.Properties)
 	if err != nil {
 		ac.App.Logger.Error("api.actions.act.executeWebhook", zap.Error(err))
 		c.AbortWithStatus(http.StatusBadRequest)
@@ -216,10 +215,13 @@ func (ac ActionsController) Act(c *gin.Context) {
 	// 	caArgs.Result = string(res)
 	// }
 
-	if successfullHooks {
-		if err := ac.App.Analytics.CreateReaction(caArgs); err != nil {
-			ac.App.Logger.Error("api.actions.act.createReactions", zap.Error(err))
-		}
+	if ! isHookSuccessful {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	if err := ac.App.Analytics.CreateReaction(caArgs); err != nil {
+		ac.App.Logger.Error("api.actions.act.createReactions", zap.Error(err))
 	}
 
 	if res == nil {

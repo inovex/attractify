@@ -25,11 +25,12 @@ func (a *Action) parseHooks() error {
 	return json.Unmarshal(a.action.Hooks, &a.hooks)
 }
 
-func (a Action) RunHooks(userID, event, channel string, context, properties *json.RawMessage, successfull *bool) (json.RawMessage, error) {
+func (a Action) RunHooks(userID, event, channel string, context, properties *json.RawMessage) (json.RawMessage, bool, error) {
 	if err := a.parseHooks(); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
+	isHookSuccessful := true
 	var result json.RawMessage
 	for _, hook := range a.hooks {
 		if len(hook.Channels) > 0 && !a.inChannel(hook.Channels, channel) {
@@ -57,22 +58,22 @@ func (a Action) RunHooks(userID, event, channel string, context, properties *jso
 		case "execute_webhook":
 			res, err := h.ExecuteWebhook()
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 			if res != nil {
 				if res.StatusCode >= 300 {
-					*successfull = false
+					isHookSuccessful = false
 				}
 				result, _ = json.Marshal(res)
 			}
 		case "track_event":
 			if err := h.TrackEvent(); err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 		}
 	}
 
-	return result, nil
+	return result, isHookSuccessful, nil
 }
 
 func (a Action) inChannel(channels []string, channel string) bool {
