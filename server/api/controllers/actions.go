@@ -95,7 +95,7 @@ func (ac ActionsController) list(c *gin.Context, req requests.Actions) {
 		if a.ShouldDisplay(req.TypeName, req.Tags, auth.Channel, req.UserID, req.Context, time.Now().UTC(), auth.Timezone) {
 			res = append(res, responses.Action{
 				ID:         ca.ID,
-				Type:       ca.TypeName,
+				TypeName:   ca.TypeName,
 				Version:    ca.TypeVersion,
 				Tags:       ca.Tags,
 				Properties: a.MapProperties(auth.Channel),
