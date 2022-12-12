@@ -92,10 +92,11 @@ func (ac ActionsController) list(c *gin.Context, req requests.Actions) {
 	var caArgs []analytics.CreateReactionParams
 	for _, ca := range acts {
 		a := actions.New(c.Request.Context(), ac.App, auth.OrganizationID, &ca, profile, identity)
-		if a.ShouldDisplay(req.Type, req.Tags, auth.Channel, req.UserID, req.Context, time.Now().UTC(), auth.Timezone) {
+		if a.ShouldDisplay(req.TypeName, req.Tags, auth.Channel, req.UserID, req.Context, time.Now().UTC(), auth.Timezone) {
 			res = append(res, responses.Action{
 				ID:         ca.ID,
-				Type:       ca.Type,
+				TypeName:   ca.TypeName,
+				Version:    ca.TypeVersion,
 				Tags:       ca.Tags,
 				Properties: a.MapProperties(auth.Channel),
 			})

@@ -127,7 +127,8 @@ Now let's check if the Custom Trait is set when a new user comes to the page and
 ## Actions
 **Actions** are played to actively improve the user experience. The preparation of data or texts is done in the frontend.
 
-You can find the **actions** in the left menu of the Attractify backend. In the example, we will take a closer look at how, the user's most popular dress size can be set if a user chooses a product. The prerequisite is an event that tracks the dress size, as well as a computed trait that calculates the most common size.
+You can find the **actions** in the left menu of the Attractify backend. In the example, we will take a closer look at how, the user's most popular dress size can be set if a user chooses a product. The prerequisites are an event that tracks the dress size, as well as a computed trait that calculates the most common size.
+First we have to define the type of action, before we can create the action itself.
 
  - `Name`:  identify the **action** later in Attractify, e.g. `Preselect Size`.
  - `type of action`:  reference the **action** from the SDK and in API calls, e.g. `size_preset`.
