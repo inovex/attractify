@@ -82,7 +82,7 @@ func (pc ProfilesController) SearchByUserID(c *gin.Context) {
 	user := c.MustGet("user").(*db.User)
 
 	id := escape(c.Param("id"))
-	profiles, err := pc.App.DB.SearchForUserID(c.Request.Context(), user.OrganizationID, id)
+	profiles, err := pc.App.DB.SearchByUserID(c.Request.Context(), user.OrganizationID, id)
 	if err != nil {
 		pc.App.Logger.Warn("profile.search.searchForUserID", zap.Error(err))
 		c.AbortWithStatus(http.StatusNotFound)
