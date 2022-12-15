@@ -215,7 +215,7 @@ func (ac ActionsController) Act(c *gin.Context) {
 	// 	caArgs.Result = string(res)
 	// }
 
-	if ! isHookSuccessful {
+	if !isHookSuccessful {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}

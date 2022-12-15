@@ -27,7 +27,7 @@ func (a *Action) parseHooks() error {
 
 func (a Action) RunHooks(userID, event, channel string, context, properties *json.RawMessage) (json.RawMessage, bool, error) {
 	if err := a.parseHooks(); err != nil {
-		return nil, nil, err
+		return nil, false, err
 	}
 
 	isHookSuccessful := true
@@ -58,7 +58,7 @@ func (a Action) RunHooks(userID, event, channel string, context, properties *jso
 		case "execute_webhook":
 			res, err := h.ExecuteWebhook()
 			if err != nil {
-				return nil, nil, err
+				return nil, false, err
 			}
 			if res != nil {
 				if res.StatusCode >= 300 {
@@ -68,7 +68,7 @@ func (a Action) RunHooks(userID, event, channel string, context, properties *jso
 			}
 		case "track_event":
 			if err := h.TrackEvent(); err != nil {
-				return nil, nil, err
+				return nil, false, err
 			}
 		}
 	}
