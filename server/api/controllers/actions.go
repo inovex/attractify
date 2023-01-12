@@ -183,7 +183,7 @@ func (ac ActionsController) Act(c *gin.Context) {
 	if event == analytics.ReactionEventAccepted {
 		err = a.IsAllowedToAccept(auth.Channel, req.UserID, time.Now().UTC(), auth.Timezone)
 		if err != nil {
-			ac.App.Logger.Warn("api.actions.act.canAccept" + err.Error())
+			ac.App.Logger.Warn("api.actions.act.canAccept " + err.Error())
 			c.AbortWithStatus(http.StatusBadRequest)
 			return
 		}

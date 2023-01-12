@@ -147,7 +147,11 @@ func (a *Action) IsAllowedToAccept(channel string, userID string, time time.Time
 	}
 
 	// Capping
+	fmt.Println(a.Action.ID)
+	fmt.Println(a.Capping)
+	fmt.Println(userID)
 	if len(a.Capping) > 0 && !a.HasNoAcceptCapping() {
+		fmt.Println("Error")
 		return errors.New("capping")
 	}
 
@@ -220,6 +224,8 @@ func (a Action) HasNoCapping() bool {
 
 func (a Action) HasNoAcceptCapping() bool {
 	for _, c := range a.Capping {
+		fmt.Println("Capping test")
+		fmt.Println(c.Event)
 		if c.Event != analytics.ReactionEventAccepted {
 			continue
 		}
@@ -234,9 +240,11 @@ func (a Action) HasNoAcceptCapping() bool {
 		}
 		count, err := a.App.Analytics.GetReactionCount(args)
 		if err != nil {
+			fmt.Println("Capping test - err")
 			return false
 		}
 		if count >= c.Count {
+			fmt.Println("Capping test - count")
 			return false
 		}
 	}
