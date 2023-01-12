@@ -181,8 +181,9 @@ func (ac ActionsController) Act(c *gin.Context) {
 	// Make sure the user is allowed to accept the event.
 	a := actions.New(c.Request.Context(), ac.App, auth.OrganizationID, &action, &profile, &pIdentity)
 	if event == analytics.ReactionEventAccepted {
-		if !a.IsAllowedToAccept(auth.Channel, req.UserID, time.Now().UTC(), auth.Timezone) {
-			ac.App.Logger.Warn("api.actions.act.canAccept")
+		err = a.IsAllowedToAccept(auth.Channel, req.UserID, time.Now().UTC(), auth.Timezone)
+		if err != nil {
+			ac.App.Logger.Warn("api.actions.act.canAccept" + err.Error())
 			c.AbortWithStatus(http.StatusBadRequest)
 			return
 		}

@@ -3,6 +3,7 @@ package actions
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -110,47 +111,47 @@ func (a *Action) ShouldDisplay(actionType string, tags []string, channel string,
 	return true
 }
 
-func (a *Action) IsAllowedToAccept(channel string, userID string, time time.Time, timezone string) bool {
+func (a *Action) IsAllowedToAccept(channel string, userID string, time time.Time, timezone string) error {
 	// State
 	if a.Action.State == db.StateInactive || a.Action.State == "" {
-		return false
+		return errors.New("action inactive")
 	}
 
 	// Channel
 	if !a.HasChannel(channel) {
-		return false
+		return errors.New("wrong channel")
 	}
 
 	// State == staging with testusers and matching channel
 	if a.Action.State == db.StateStaging && !a.HasTestUser(userID, channel) {
-		return false
+		return errors.New("user is not a testuser")
 	}
 
 	// Time range
 	if !a.InTimeRange(time, timezone) {
-		return false
+		return errors.New("wrong timerange")
 	}
 
 	// Is in audience
 	if len(a.Targeting.Audiences) > 0 && !a.IsInAudiences() {
-		return false
+		return errors.New("user not in audience")
 	}
 
 	// Trait conditions
 	if !a.CustomTraitConditions() {
-		return false
+		return errors.New("wrong customtraits")
 	}
 
 	if !a.ComputedTraitConditions() {
-		return false
+		return errors.New("wrong computedtraits")
 	}
 
 	// Capping
 	if len(a.Capping) > 0 && !a.HasNoAcceptCapping() {
-		return false
+		return errors.New("capping")
 	}
 
-	return true
+	return nil
 }
 
 func (a Action) HasTestUser(userID, channel string) bool {
