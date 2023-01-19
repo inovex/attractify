@@ -33,14 +33,14 @@ type payload struct {
 	Timestamp        time.Time       `json:"timestamp"`
 }
 
-type result struct {
+type Result struct {
 	StatusCode int    `json:"statusCode"`
 	Body       string `json:"body"`
 	Signature  string `json:"signature"`
 	Error      string `json:"error"`
 }
 
-func (h Hook) ExecuteWebhook() (*result, error) {
+func (h Hook) ExecuteWebhook() (*Result, error) {
 	config := executeWebhook{}
 	if err := json.Unmarshal(h.Config, &config); err != nil {
 		return nil, err
@@ -81,7 +81,7 @@ func (h Hook) ExecuteWebhook() (*result, error) {
 	req.Header.Set("X-Attractify-Signature", signature)
 	req.Header.Set("User-Agent", "Attractify Webhook Client")
 
-	res := result{Signature: signature}
+	res := Result{Signature: signature}
 
 	client := &http.Client{Timeout: timeout}
 	webhookRes, err := client.Do(req)

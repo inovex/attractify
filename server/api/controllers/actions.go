@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"net/http"
 	"time"
 
@@ -196,6 +197,13 @@ func (ac ActionsController) Act(c *gin.Context) {
 		return
 	}
 
+	if !isHookSuccessful {
+		var hookResult actions.Result
+		json.Unmarshal(res, &hookResult)
+		c.JSON(hookResult.StatusCode, res) //TODO: test with bad webhook
+		return
+	}
+
 	caArgs := analytics.CreateReactionParams{
 		OrganizationID: auth.OrganizationID,
 		ActionID:       actionID,
@@ -216,11 +224,6 @@ func (ac ActionsController) Act(c *gin.Context) {
 	// if res != nil {
 	// 	caArgs.Result = string(res)
 	// }
-
-	if !isHookSuccessful {
-		c.AbortWithStatus(http.StatusBadRequest)
-		return
-	}
 
 	if err := ac.App.Analytics.CreateReaction(caArgs); err != nil {
 		ac.App.Logger.Error("api.actions.act.createReactions", zap.Error(err))
