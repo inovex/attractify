@@ -15,10 +15,11 @@
           <v-card-text>
             <v-col class="col-lg-6">
               <v-text-field
+                v-model="search.userId"
                 label="User ID"
                 persistent-hint
                 prepend-icon="mdi-account-search"
-                v-on="on"
+                @keydown.enter="searchProfile"
                 clearable
               ></v-text-field>
             </v-col>
@@ -64,7 +65,8 @@ export default {
         { text: 'Created', value: 'createdAt' },
         { text: 'Updated', value: 'updatedAt' },
         { text: 'Actions', value: 'action', align: 'right', sortable: false }
-      ]
+      ],
+      search: {}
     }
   },
   methods: {
@@ -101,6 +103,13 @@ export default {
         this.profiles = await client.list()
       } catch (_) {
         _
+      }
+    },
+    async searchProfile() {
+      try {
+        this.profiles = await client.search(this.search.userId)
+      } catch (_) {
+        this.profiles = {}
       }
     }
   },
