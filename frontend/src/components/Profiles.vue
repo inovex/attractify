@@ -5,12 +5,24 @@
         <v-card>
           <v-toolbar dark>
             <v-toolbar-title>User Profiles</v-toolbar-title>
+
             <v-spacer></v-spacer>
             <help name="profiles" />
             <v-btn icon @click="load()">
               <v-icon>mdi-refresh</v-icon>
             </v-btn>
           </v-toolbar>
+          <v-card-text>
+            <v-col class="col-lg-6">
+              <v-text-field
+                label="User ID"
+                persistent-hint
+                prepend-icon="mdi-account-search"
+                v-on="on"
+                clearable
+              ></v-text-field>
+            </v-col>
+          </v-card-text>
           <v-data-table disable-pagination hide-default-footer :headers="headers" :items="profiles">
             <template v-slot:item.action="{ item }">
               <v-btn icon @click="show(item)"> <v-icon title="Show profile">mdi-magnify</v-icon> </v-btn>&nbsp;
