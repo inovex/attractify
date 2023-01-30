@@ -22,6 +22,7 @@
                 @keydown.enter="searchProfile"
                 clearable
               ></v-text-field>
+              <!-- TODO: add search icon -->
             </v-col>
           </v-card-text>
           <v-data-table disable-pagination hide-default-footer :headers="headers" :items="profiles">

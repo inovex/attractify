@@ -85,6 +85,7 @@ AND id = $2
 	return p, row.StructScan(&p)
 }
 
+// TODO: improve search speed
 func (d *DB) SearchByUserID(ctx context.Context, orgID uuid.UUID, id string) ([]ProfileIdentityWithTraits, error) {
 	q := `
 SELECT i.*, p.custom_traits, p.computed_traits

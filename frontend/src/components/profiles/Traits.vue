@@ -3,6 +3,10 @@
     <v-row>
       <v-col>
         <v-list v-if="hasTraits()">
+          <v-card-text>
+            <!-- TODO: show values and make them editable -->
+            <Structure :structure="traits" />
+          </v-card-text>
           <v-list-item v-for="(value, key) in traits" :key="key">
             <v-list-item-content>
               <strong>{{ key }}</strong>
