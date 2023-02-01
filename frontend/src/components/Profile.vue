@@ -10,6 +10,9 @@
             <v-btn icon @click="load()">
               <v-icon>mdi-reload</v-icon>
             </v-btn>
+            <v-btn icon color="red" @click="deleteProfile()">
+              <v-icon>mdi-trash-can</v-icon>
+            </v-btn>
           </v-toolbar>
           <v-card-text>
             <v-tabs v-model="tabs" centered>
@@ -79,6 +82,16 @@ export default {
       if (id) {
         try {
           this.profile = await profiles.show(id)
+        } catch (error) {
+          this.$router.push({ path: '/404' })
+        }
+      }
+    },
+    async deleteProfile() {
+      const id = this.$route.params.id
+      if (id) {
+        try {
+          profiles.delete(id)
         } catch (error) {
           this.$router.push({ path: '/404' })
         }
