@@ -2,9 +2,7 @@
   <div>
     <v-card outlined>
       <v-card-text>
-        <div v-if="structure && structure.length === 0">
-          No properties defined yet
-        </div>
+        <div v-if="structure && structure.length === 0">No properties defined yet</div>
         <v-treeview :items="structure" open-all hoverable dense open-on-click>
           <template slot="label" slot-scope="{ item }">
             <span class="structure__property">{{ item.name }}</span>
@@ -20,7 +18,7 @@
               <v-icon title="Edit property">mdi-pencil</v-icon>
             </v-btn>
             <v-btn @click="removeChild(item.id)" small icon>
-              <v-icon title="Delete property">mdi-trash-can-outline</v-icon>
+              <v-icon title="Delete property">mdi-delete</v-icon>
             </v-btn>
           </template>
         </v-treeview>
@@ -76,7 +74,9 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn rounded @click="cancel()">Cancel</v-btn>
-            <v-btn rounded color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="save()">Save</v-btn>
+            <v-btn rounded color="primary" style="color: var(--v-buttontext-base)" :disabled="!valid" @click="save()"
+              >Save</v-btn
+            >
           </v-card-actions>
         </v-form>
       </v-card>
@@ -105,7 +105,7 @@ export default {
       ],
       valid: false,
       rules: {
-        required: value => !!value || 'Required.'
+        required: (value) => !!value || 'Required.'
       }
     }
   },
@@ -127,13 +127,13 @@ export default {
       this.cancel()
     },
     openAddRootDialog() {
-      this.saveCallback = property => {
+      this.saveCallback = (property) => {
         this.addNode(this.structure, property)
       }
       this.openDialog()
     },
     openAddChildDialog(item) {
-      this.saveCallback = property => {
+      this.saveCallback = (property) => {
         item.properties.type = 'object'
         if (!item.children) {
           this.$set(item, 'children', [])
@@ -143,7 +143,7 @@ export default {
       this.openDialog()
     },
     openEditDialog(item) {
-      this.saveCallback = property => {
+      this.saveCallback = (property) => {
         item.id = property.key
         item.name = property.key
         item.properties = property
