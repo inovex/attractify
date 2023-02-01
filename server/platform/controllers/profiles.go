@@ -28,6 +28,7 @@ func InitProfiles(router *gin.RouterGroup, app *app.App) {
 	p.Router.GET("/profiles/:id", p.Show)
 	p.Router.GET("/profiles/searchbyuserid/:id", p.SearchByUserID)
 	p.Router.DELETE("/profiles/:id", p.Delete)
+	p.Router.DELETE("/profiles/:id/identity", p.DeleteIdentity)
 	p.Router.GET("/profiles/:id/identities", p.ListIdentities)
 	p.Router.GET("/profiles/:id/events", p.ListEvents)
 	p.Router.POST("/profiles/:id/refresh-computed-traits", p.RefreshComputedTraits)
@@ -113,6 +114,19 @@ func (pc ProfilesController) Delete(c *gin.Context) {
 	p := privacy.NewDeletionByProfileID(pc.App, user.OrganizationID, uuid.FromStringOrNil(c.Param("id")))
 	if err := p.Run(); err != nil {
 		pc.App.Logger.Warn("profiles.delete.run", zap.Error(err))
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	c.AbortWithStatus(http.StatusNoContent)
+}
+
+func (pc ProfilesController) DeleteIdentity(c *gin.Context) {
+	user := c.MustGet("user").(*db.User)
+
+	p := privacy.NewDeletionByUserID(pc.App, user.OrganizationID, c.Param("id"))
+	if err := p.DeleteSingleIdentity(); err != nil {
+		pc.App.Logger.Warn("profiles.delete.DeleteSingleIdentity", zap.Error(err))
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}

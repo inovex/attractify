@@ -27,6 +27,13 @@ export default {
       throw e
     }
   },
+  async deleteIdentity(id) {
+    try {
+      await restClient.delete(`/profiles/${id}/identity`)
+    } catch (e) {
+      throw e
+    }
+  },
   async listIdentities(id) {
     try {
       const res = await restClient.get(`/profiles/${id}/identities`)

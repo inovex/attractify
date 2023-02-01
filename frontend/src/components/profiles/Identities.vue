@@ -23,6 +23,9 @@
               <v-btn icon @click="simulate(item.userId)">
                 <v-icon title="Simulate Action">mdi-bug-play-outline</v-icon>
               </v-btn>
+              <v-btn icon @click="deleteIdentity(item.userId)">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
             </td>
           </tr>
         </tbody>
@@ -44,6 +47,10 @@ export default {
   methods: {
     simulate(id) {
       this.$router.push({ path: '/action-simulation/' + id })
+    },
+    deleteIdentity(id) {
+      profiles.deleteIdentity(id)
+      this.created()
     }
   },
   async created() {

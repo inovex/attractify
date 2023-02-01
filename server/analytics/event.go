@@ -272,24 +272,24 @@ type DeleteEventParams struct {
 }
 
 func (a Analytics) DeleteEvent(arg DeleteEventParams) error {
-	_, err := a.DB.Exec(a.createAlterStatement(deleteEventsByIdentityIDs, "events"), arg.OrganizationID, arg.ID)
+	_, err := a.DB.Exec(a.createAlterStatement(deleteEvent, "events"), arg.OrganizationID, arg.ID)
 	return err
 }
 
-const deleteEventByIdentityID = `
+const deleteEventsByIdentityID = `
 ALTER TABLE %s
 DELETE
 WHERE organization_id = ?
 AND identity_id = ?
 `
 
-type DeleteEventByIdentityIDParams struct {
+type DeleteEventsByIdentityIDParams struct {
 	OrganizationID uuid.UUID
 	IdentityID     uuid.UUID
 }
 
-func (a Analytics) DeleteEventByIdentityID(arg DeleteEventByIdentityIDParams) error {
-	_, err := a.DB.Exec(a.createAlterStatement(deleteEventsByIdentityIDs, "events"), arg.OrganizationID, arg.IdentityID)
+func (a Analytics) DeleteEventsByIdentityID(arg DeleteEventsByIdentityIDParams) error {
+	_, err := a.DB.Exec(a.createAlterStatement(deleteEventsByIdentityID, "events"), arg.OrganizationID, arg.IdentityID)
 	return err
 }
 

@@ -128,6 +128,17 @@ AND profile_id = $2
 	return err
 }
 
+func (d *DB) DeleteProfileIdentityByID(ctx context.Context, orgID, identityID uuid.UUID) error {
+	const q = `
+DELETE FROM profile_identities
+WHERE organization_id = $1
+AND id = $2
+`
+
+	_, err := d.db.ExecContext(ctx, q, orgID, identityID)
+	return err
+}
+
 func (d *DB) UpdateProfileIdentitiesWithProfileID(ctx context.Context, orgID, oldID, newID uuid.UUID) error {
 	const q = `
 UPDATE profile_identities

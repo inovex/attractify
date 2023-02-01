@@ -10,8 +10,8 @@
             <v-btn icon @click="load()">
               <v-icon>mdi-reload</v-icon>
             </v-btn>
-            <v-btn icon color="red" @click="deleteProfile()">
-              <v-icon>mdi-trash-can</v-icon>
+            <v-btn icon @click="deleteProfile()">
+              <v-icon>mdi-delete</v-icon>
             </v-btn>
           </v-toolbar>
           <v-card-text>
@@ -26,7 +26,6 @@
               <!-- TODO: make events deletable (all and single events) -->
               <!-- TODO: add reactions and make them deletable aswell -->
             </v-tabs>
-            <!-- TODO: make whole profile deletable (events, reactions, identities) -->
 
             <v-tabs-items v-model="tabs">
               <v-tab-item value="identities">
