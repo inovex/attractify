@@ -22,6 +22,7 @@
               <v-tab href="#computedTraits">Computed Traits</v-tab>
               <!-- TODO: make them editable -->
               <v-tab href="#events">Latest Events</v-tab>
+              <!-- TODO: list events with pages-->
               <!-- TODO: make events deletable (all and single events) -->
               <!-- TODO: add reactions and make them deletable aswell -->
             </v-tabs>
