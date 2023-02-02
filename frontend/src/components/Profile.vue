@@ -17,7 +17,6 @@
           <v-card-text>
             <v-tabs v-model="tabs" centered>
               <v-tab href="#identities">Identities</v-tab>
-              <!-- TODO: make identities deleteable -->
               <v-tab href="#customTraits">Custom Traits</v-tab>
               <!-- TODO: make them editable -->
               <v-tab href="#computedTraits">Computed Traits</v-tab>
