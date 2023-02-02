@@ -36,7 +36,7 @@ func NewDeletionByProfileID(app *app.App, organizationID uuid.UUID, profileID uu
 	}
 }
 
-func (d Deletion) Run() error { // TODO: error if all identities were deleted
+func (d Deletion) Run() error {
 	if len(d.userID) > 0 {
 		identity, err := d.getIdentityByUserID()
 		if err != nil {
