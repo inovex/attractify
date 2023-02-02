@@ -54,10 +54,10 @@ func (sim ActionSimulation) GetSteps() ([]responses.Step, bool) {
 
 	// State == staging with testusers and matching channel
 	if sim.Action.Action.State == db.StateStaging {
-		if !sim.Action.HasTestUser(sim.User.UserID.String(), sim.User.Channel) {
+		if !sim.Action.HasTestUser(sim.User.UserID, sim.User.Channel) {
 			step.Info = "User is not a testuser of this staging action."
 			step.State = "error"
-		} else if sim.Action.SkipTargeting(sim.User.UserID.String(), sim.User.Channel) {
+		} else if sim.Action.SkipTargeting(sim.User.UserID, sim.User.Channel) {
 			step.Info = "User skips targeting."
 		}
 	} else {
