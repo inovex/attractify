@@ -55,12 +55,14 @@ func (d Deletion) Run() error { // TODO: error if all identities were deleted
 		identityIDs = append(identityIDs, i.ID)
 	}
 
-	if err := d.deleteEvents(identityIDs); err != nil {
-		return err
-	}
+	if len(identityIDs) > 0 {
+		if err := d.deleteEvents(identityIDs); err != nil {
+			return err
+		}
 
-	if err := d.deleteReactions(identityIDs); err != nil {
-		return err
+		if err := d.deleteReactions(identityIDs); err != nil {
+			return err
+		}
 	}
 
 	if err := d.deleteProfile(d.profileID); err != nil {

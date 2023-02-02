@@ -91,6 +91,7 @@ export default {
       if (id) {
         try {
           profiles.delete(id)
+          this.$router.push({ path: '/profiles' })
         } catch (error) {
           this.$router.push({ path: '/404' })
         }
