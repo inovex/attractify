@@ -90,8 +90,10 @@ export default {
       const id = this.$route.params.id
       if (id) {
         try {
-          profiles.delete(id)
-          this.$router.push({ path: '/profiles' })
+          if (confirm('Do you really want to delete this profile?')) {
+            profiles.delete(id)
+            this.$router.push({ path: '/profiles' })
+          }
         } catch (error) {
           this.$router.push({ path: '/404' })
         }
