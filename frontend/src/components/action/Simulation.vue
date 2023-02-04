@@ -158,7 +158,7 @@ export default {
     this.action.testUsers.forEach((testUser) => {
       this.isLoading = true
       profilesClient
-        .search(testUser.userId)
+        .searchWithTraits(testUser.userId)
         .then((res) => {
           res.map((e) => {
             this.testUserList.push({ text: e.userId + ' - ' + testUser.description, value: e })

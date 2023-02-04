@@ -8,10 +8,10 @@
             <v-spacer></v-spacer>
             <help name="profile" />
             <v-btn icon @click="load()">
-              <v-icon>mdi-reload</v-icon>
+              <v-icon title="reload profile">mdi-reload</v-icon>
             </v-btn>
             <v-btn icon @click="deleteProfile()">
-              <v-icon>mdi-delete</v-icon>
+              <v-icon title="Delete profile">mdi-delete</v-icon>
             </v-btn>
           </v-toolbar>
           <v-card-text>

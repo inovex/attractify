@@ -66,5 +66,13 @@ export default {
     } catch (e) {
       throw e
     }
+  },
+  async searchWithTraits(id) {
+    try {
+      const res = await restClient.get(`/profiles/searchbyuserid/${id}/traits`)
+      return res.data
+    } catch (e) {
+      throw e
+    }
   }
 }

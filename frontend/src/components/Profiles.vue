@@ -13,17 +13,21 @@
             </v-btn>
           </v-toolbar>
           <v-card-text>
-            <v-col class="col-lg-6">
-              <v-text-field
-                v-model="search.userId"
-                label="User ID"
-                persistent-hint
-                prepend-icon="mdi-account-search"
-                @keydown.enter="searchProfile"
-                clearable
-              ></v-text-field>
-              <!-- TODO: add search button -->
-            </v-col>
+            <v-row>
+              <v-col class="col-lg-6">
+                <v-text-field
+                  v-model="search.userId"
+                  label="User ID"
+                  persistent-hint
+                  prepend-icon="mdi-account-search"
+                  @keydown.enter="searchProfile"
+                  clearable
+                ></v-text-field>
+              </v-col>
+              <v-col class="col-lg-6" style="display: flex; align-items: center">
+                <v-btn icon @click="searchProfile()"> <v-icon title="Search">mdi-magnify</v-icon> </v-btn>
+              </v-col>
+            </v-row>
           </v-card-text>
           <v-data-table disable-pagination hide-default-footer :headers="headers" :items="profiles">
             <template v-slot:item.action="{ item }">

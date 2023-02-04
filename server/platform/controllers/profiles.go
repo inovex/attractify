@@ -26,6 +26,7 @@ func InitProfiles(router *gin.RouterGroup, app *app.App) {
 	p := ProfilesController{Router: router, App: app}
 	p.Router.GET("/profiles", p.List)
 	p.Router.GET("/profiles/:id", p.Show)
+	p.Router.GET("/profiles/searchbyuserid/:id/traits", p.SearchByUserIDWithTraits)
 	p.Router.GET("/profiles/searchbyuserid/:id", p.SearchByUserID)
 	p.Router.DELETE("/profiles/:id", p.Delete)
 	p.Router.DELETE("/profiles/:id/identity", p.DeleteIdentity)
@@ -80,6 +81,31 @@ func (pc ProfilesController) Show(c *gin.Context) {
 }
 
 func (pc ProfilesController) SearchByUserID(c *gin.Context) {
+	user := c.MustGet("user").(*db.User)
+
+	id := escape(c.Param("id"))
+	profiles, err := pc.App.DB.SearchByUserID(c.Request.Context(), user.OrganizationID, id)
+	if err != nil {
+		pc.App.Logger.Warn("profile.search.searchForUserID", zap.Error(err))
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	res := []responses.Profile{}
+	for _, p := range profiles {
+		res = append(res, responses.Profile{
+			ID:             p.ProfileID,
+			CustomTraits:   p.CustomTraits,
+			ComputedTraits: p.ComputedTraits,
+			CreatedAt:      p.CreatedAt,
+			UpdatedAt:      p.UpdatedAt,
+		})
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (pc ProfilesController) SearchByUserIDWithTraits(c *gin.Context) {
 	user := c.MustGet("user").(*db.User)
 
 	id := escape(c.Param("id"))

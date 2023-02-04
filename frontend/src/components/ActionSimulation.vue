@@ -186,7 +186,7 @@ export default {
       this.foundProfiles = []
 
       profilesClient
-        .search(u)
+        .searchWithTraits(u)
         .then((res) => {
           res.map((e) => {
             this.foundProfiles.push({ name: e.userId, value: e })
