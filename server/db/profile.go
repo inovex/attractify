@@ -85,18 +85,40 @@ AND id = $2
 	return p, row.StructScan(&p)
 }
 
-// TODO: improve search speed
 func (d *DB) SearchByUserID(ctx context.Context, orgID uuid.UUID, id string) ([]ProfileIdentityWithTraits, error) {
+	identity, err := d.GetProfileIdentityForUserID(ctx, orgID, id)
+	if err != nil {
+		return nil, err
+	}
+
 	q := `
-SELECT i.*, p.custom_traits, p.computed_traits
+SELECT *
 FROM profiles p 
-INNER JOIN profile_identities i 
-ON p.id = i.profile_id
 WHERE p.organization_id = $1
-AND i.user_id = $2
+AND p.id = $2
 `
+	var profiles []Profile
+	err = d.db.SelectContext(ctx, &profiles, q, orgID, identity.ProfileID)
+	if err != nil {
+		return nil, err
+	}
 
 	var items []ProfileIdentityWithTraits
+	for _, p := range profiles {
+		items = append(items, ProfileIdentityWithTraits{
+			ID:             identity.ID,
+			OrganizationID: identity.OrganizationID,
+			ProfileID:      p.ID,
+			Channel:        identity.Channel,
+			Type:           identity.Type,
+			UserID:         identity.UserID,
+			ComputedTraits: p.ComputedTraits,
+			CustomTraits:   p.CustomTraits,
+			IsAnonymous:    identity.IsAnonymous,
+			CreatedAt:      identity.CreatedAt,
+			UpdatedAt:      identity.UpdatedAt,
+		})
+	}
 	return items, d.db.SelectContext(ctx, &items, q, orgID, id)
 }
 
