@@ -18,9 +18,7 @@
             <v-tabs v-model="tabs" centered>
               <v-tab href="#identities">Identities</v-tab>
               <v-tab href="#customTraits">Custom Traits</v-tab>
-              <!-- TODO: make them editable -->
               <v-tab href="#computedTraits">Computed Traits</v-tab>
-              <!-- TODO: make them editable -->
               <v-tab href="#events">Latest Events</v-tab>
             </v-tabs>
 
@@ -30,11 +28,11 @@
               </v-tab-item>
 
               <v-tab-item value="customTraits">
-                <Traits :traits="profile.customTraits" />
+                <Traits @updatedTraits="updatedTraitsCallback" :traits="profile.customTraits" />
               </v-tab-item>
 
               <v-tab-item value="computedTraits">
-                <Traits :traits="profile.computedTraits" />
+                <Traits @updatedTraits="updatedTraitsCallback" :traits="profile.computedTraits" />
               </v-tab-item>
 
               <v-tab-item value="events">
@@ -95,6 +93,10 @@ export default {
           this.$router.push({ path: '/404' })
         }
       }
+    },
+    async updatedTraitsCallback() {
+      console.log('update')
+      // TODO: update changes in DB
     }
   },
   async created() {
