@@ -27,8 +27,11 @@ func OpenDB(dsn string) (*Analytics, error) {
 	if strings.Contains(dsn, "tls_config=") {
 		configPath := "../certs/clickhouse/ca/ca.crt"
 		if strings.Contains(dsn, "sslrootcert=") {
-			configPath = strings.Split(dsn, "sslrootcert=")[1]
-			configPath = strings.Split(configPath, "&")[0]
+			urlParse, err := url.Parse(dsn)
+			if err != nil {
+				return nil, errors.New("could not parse dsn")
+			}
+			configPath = urlParse.Query()["sslrootcert"][0]
 		}
 		caCert, err := ioutil.ReadFile(configPath)
 		if err != nil {
