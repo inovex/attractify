@@ -25,7 +25,15 @@ type ClusterArgs struct {
 
 func OpenDB(dsn string) (*Analytics, error) {
 	if strings.Contains(dsn, "tls_config=") {
-		caCert, err := ioutil.ReadFile("../certs/clickhouse/ca/ca.crt")
+		configPath := "../certs/clickhouse/ca/ca.crt"
+		if strings.Contains(dsn, "sslrootcert=") {
+			urlParse, err := url.Parse(dsn)
+			if err != nil {
+				return nil, errors.New("could not parse dsn")
+			}
+			configPath = urlParse.Query()["sslrootcert"][0]
+		}
+		caCert, err := ioutil.ReadFile(configPath)
 		if err != nil {
 			return nil, err
 		}
