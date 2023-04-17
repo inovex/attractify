@@ -48,7 +48,7 @@ func main() {
 		panic(err)
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx := context.Background()
 
 	log.Println("Starting audience update...")
 
@@ -67,5 +67,4 @@ func main() {
 	fmt.Println("Audience update completed...")
 	app.DB.Close()
 	app.Analytics.Close()
-	cancel()
 }
